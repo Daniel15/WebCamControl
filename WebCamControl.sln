@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCamControl.Gtk", "src\WebCamControl.Gtk\WebCamControl.Gtk.csproj", "{12D4FDE5-1D85-493E-B994-440565471C37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCamControl.Core", "src\WebCamControl.Core\WebCamControl.Core.csproj", "{D83A1E40-9B0E-4571-B73C-C8ADE0A6F885}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12D4FDE5-1D85-493E-B994-440565471C37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D4FDE5-1D85-493E-B994-440565471C37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D4FDE5-1D85-493E-B994-440565471C37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D4FDE5-1D85-493E-B994-440565471C37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D83A1E40-9B0E-4571-B73C-C8ADE0A6F885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D83A1E40-9B0E-4571-B73C-C8ADE0A6F885}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D83A1E40-9B0E-4571-B73C-C8ADE0A6F885}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D83A1E40-9B0E-4571-B73C-C8ADE0A6F885}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

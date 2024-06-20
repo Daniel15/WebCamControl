@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <SelfContained>true</SelfContained>
+        <PublishTrimmed>false</PublishTrimmed>
+		<!-- Workaround for Rider bug https://youtrack.jetbrains.com/issue/RIDER-56918/Cannot-start-debugging-net5-project-on-Linux-when-using-PublishSingleFile-in-.proj-file -->
+		<PublishSingleFile  Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GirCore.Adw-1" Version="0.5.0" />
+      <PackageReference Include="GirCore.Gdk-4.0" Version="0.5.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+    </ItemGroup>
+
+
+    <Target Name="BlueprintBuild" BeforeTargets="PrepareForBuild;Restore">
+        <!-- Build Blueprints -->
+        <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/obj/blueprints/ $(MSBuildProjectDirectory) $(MSBuildProjectDirectory)/*.blp"/>
+    </Target>
+
+
+    <Target Name="ExtraCleanup" AfterTargets="Clean">
+        <!-- Remove obj folder -->
+        <RemoveDir Directories="$(BaseIntermediateOutputPath)"/>
+        <!-- Remove bin folder -->
+        <RemoveDir Directories="$(BaseOutputPath)"/>
+
+        <!-- Remove compiled blueprints -->
+        <RemoveDir Directories="$(MSBuildProjectDirectory)/obj/blueprints"/>
+    </Target>
+
+    <!-- Add the blueprints as a resource -->
+    <ItemGroup>
+        <None Remove="obj\blueprints\*.ui"/>
+        <EmbeddedResource Include="obj\blueprints\*.ui">
+            <LogicalName>%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\WebCamControl.Core\WebCamControl.Core.csproj" />
+    </ItemGroup>
+
+</Project>
