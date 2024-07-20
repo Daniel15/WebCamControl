@@ -1,5 +1,5 @@
-using System.Text.RegularExpressions;
 using Adw;
+using GObject;
 using Gtk;
 using WebCamControl.Core;
 
@@ -7,6 +7,10 @@ namespace WebCamControl.Gtk;
 
 public class SavePresetDialog : Adw.AlertDialog
 {
+	private const string _changedSignalName = "changed";
+	private static readonly Signal<EntryRow> _changedSignal =
+		new(_changedSignalName, _changedSignalName);
+
 	private readonly ICamera _camera;
 	private readonly IPresets _presets;
 	
@@ -33,15 +37,7 @@ public class SavePresetDialog : Adw.AlertDialog
 
 	private void AttachEvents()
 	{
-		_name.OnNotify += (_, args) =>
-		{
-			// FIXME: This is messy. I couldn't find the editable signal in Gir.Core though
-			// https://docs.gtk.org/gtk4/signal.Editable.changed.html
-			if (args.Pspec.GetName() == "text")
-			{
-				Validate();
-			}
-		};
+		_changedSignal.Connect(_name, (_, _) => Validate());
 		OnResponse += (_, args) =>
 		{
 			if (args.Response == "save")
