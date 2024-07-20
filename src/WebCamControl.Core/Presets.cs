@@ -48,14 +48,22 @@ public class Presets : IPresets
 	/// <summary>
 	/// Saves the camera's current settings as a preset.
 	/// </summary>
-	public void SaveCurrent(ICamera camera, string name)
+	public void SaveCurrent(ICamera camera, string name, int? index)
 	{
 		var newPreset = new PresetConfig(
 			Name: name,
 			Pan: camera.Pan?.Value,
 			Tilt: camera.Tilt?.Value
 		);
-		PresetConfigs.Add(newPreset);
+		if (index == null)
+		{
+			PresetConfigs.Add(newPreset);			
+		}
+		else
+		{
+			PresetConfigs[index.Value] = newPreset;
+		}
+		
 		_configManager.Save();
 		OnChange?.Invoke(this, EventArgs.Empty);
 	}

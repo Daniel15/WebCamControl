@@ -28,6 +28,7 @@ public interface IPresets
 	/// <summary>
 	/// Saves the camera's current settings as a preset.
 	/// </summary>
-	public void SaveCurrent(ICamera camera, string name);
+	/// <param name="index">Preset index to overwrite. If <c>null</c>, a new preset will be saved.</param>
+	public void SaveCurrent(ICamera camera, string name, int? index);
 }
 
