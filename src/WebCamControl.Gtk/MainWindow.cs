@@ -18,7 +18,6 @@ public class MainWindow : Adw.Window
 	
 	private readonly ICamera _camera;
 	private readonly IPresets _presets;
-	private readonly IOptionsMonitor<Config> _config;
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 	[Connect] private readonly PressAndHoldButton _up = default!;

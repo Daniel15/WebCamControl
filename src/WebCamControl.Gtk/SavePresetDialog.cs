@@ -5,17 +5,14 @@ using WebCamControl.Core;
 
 namespace WebCamControl.Gtk;
 
-public partial class SavePresetDialog : Adw.AlertDialog
+public class SavePresetDialog : Adw.AlertDialog
 {
-	[GeneratedRegex(@"^Replace #(?<index>\d+):")]
-	private static partial Regex SaveAsNameRegex();
-	
 	private readonly ICamera _camera;
 	private readonly IPresets _presets;
 	
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 	[Connect] private readonly EntryRow _name = default!;
-	[Connect] private readonly ComboRow _destination = default!;
+	[Connect] private readonly CustomComboRow<DestinationRow> _destination = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 	
 	public SavePresetDialog(ICamera camera, IPresets presets)
@@ -56,20 +53,12 @@ public partial class SavePresetDialog : Adw.AlertDialog
 
 	private void PopulateSaveDropdown()
 	{
-		var options = new List<string>
-		{
-			"New preset"
-		};
-		
-		var presetCount = _presets.PresetConfigs.Count;
-		for (var i = 0; i < presetCount; i++)
-		{
-			var preset = _presets.PresetConfigs[i];
-			options.Add($"Replace #{i + 1}: {preset.Name}");
-		}
-
-		var model = StringList.New(options.ToArray());
-		_destination.Model = model;
+		var existingPresetOptions = _presets.PresetConfigs.Select(
+			(config, index) => new DestinationRow(index, $"Replace #{index + 1}: {config.Name}")
+		);
+		_destination.LabelCallback = item => item.Name;
+		_destination.Items = new[] { new DestinationRow(null, "New preset") }
+			.Concat(existingPresetOptions);
 	}
 
 	private void Validate()
@@ -80,20 +69,15 @@ public partial class SavePresetDialog : Adw.AlertDialog
 
 	private void Save()
 	{
-		var destination = (StringObject?)_destination.SelectedItem;
-		int? index = null;
-
-		if (destination != null && destination.String != null)
-		{
-			// FIXME: This is super sketchy, but Gir.Core doesn't properly support ListStores
-			// at the moment: https://github.com/gircore/gir.core/discussions/1099
-			var matches = SaveAsNameRegex().Matches(destination.String);
-			if (matches.Count > 0)
-			{
-				index = int.Parse(matches[0].Groups["index"].Value);
-			}
-		}
-		
-		_presets.SaveCurrent(_camera, _name.Text_, index);
+		_presets.SaveCurrent(
+			_camera, 
+			_name.Text_, 
+			index: _destination.SelectedItem?.Index
+		);
 	}
+
+	private record DestinationRow(
+		int? Index,
+		string Name
+	);
 }
