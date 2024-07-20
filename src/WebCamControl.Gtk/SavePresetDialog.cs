@@ -37,6 +37,7 @@ public class SavePresetDialog : Adw.AlertDialog
 
 	private void AttachEvents()
 	{
+		_name.OnEntryActivated += (_, _) => Save();
 		_changedSignal.Connect(_name, (_, _) => Validate());
 		OnResponse += (_, args) =>
 		{
@@ -70,6 +71,7 @@ public class SavePresetDialog : Adw.AlertDialog
 			_name.Text_, 
 			index: _destination.SelectedItem?.Index
 		);
+		Close();
 	}
 
 	private record DestinationRow(
