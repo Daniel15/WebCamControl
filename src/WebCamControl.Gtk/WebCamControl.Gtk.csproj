@@ -9,6 +9,7 @@
         <PublishTrimmed>false</PublishTrimmed>
 		<!-- Workaround for Rider bug https://youtrack.jetbrains.com/issue/RIDER-56918/Cannot-start-debugging-net5-project-on-Linux-when-using-PublishSingleFile-in-.proj-file -->
 		<PublishSingleFile  Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
+		<AssemblyName>webcamcontrol</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
