@@ -7,6 +7,11 @@ namespace WebCamControl.Core;
 public interface ICameraControl<T>
 {
 	/// <summary>
+	/// User-friendly name of the control
+	/// </summary>
+	string Name { get; }
+	
+	/// <summary>
 	/// Gets the minimum value this control can be set to.
 	/// </summary>
 	T Minimum { get; }

@@ -28,6 +28,7 @@ public class LinuxCameraControl : ICameraControl
 		_logger = logger;
 		_id = controlData.ID;
 	}
+	public string Name => _controlData.Name;
 	public int Minimum => _controlData.Minimum;
 	public int Maximum => _controlData.Maximum;
 	public int Step => _controlData.Step;
@@ -76,6 +77,7 @@ public class LinuxCameraControl : ICameraControl
 			var err = Marshal.GetLastPInvokeError();
 			if (err == InappropriateIoctlForDevice)
 			{
+				logger.LogInformation(" => Does not support {ControlID}", controlId);
 				return null;
 			}
 			if (err != 0)
@@ -83,11 +85,12 @@ public class LinuxCameraControl : ICameraControl
 				throw new InteropException(Marshal.GetPInvokeErrorMessage(err));
 			}
 
+			logger.LogInformation("=> Supports {ControlID}", controlId);
 			return new LinuxCameraControl(fd, queryControl, logger);
 		}
 		catch (Exception ex)
 		{
-			logger.LogWarning("Could not create control {ControlID}: {Error}", controlId, ex.Message);
+			logger.LogWarning(" => ERROR for {ControlID}: {Error}", controlId, ex.Message);
 			return null;
 		}
 	}

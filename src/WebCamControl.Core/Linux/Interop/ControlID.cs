@@ -633,4 +633,12 @@ public enum ControlID : uint
 	/// </summary>
 	HdrSensorMode = V4L2_CID_CAMERA_CLASS_BASE + 36,
 	
+	
+	/// <summary>
+	/// Flag used to enumerate all available controls. This is NOT a control itself, but it's
+	/// passed in as a control ID in v4l2_queryctrl.
+	/// V4L2_CTRL_FLAG_NEXT_CTRL
+	/// </summary>
+	NextControl = 0x80000000,
+	
 }

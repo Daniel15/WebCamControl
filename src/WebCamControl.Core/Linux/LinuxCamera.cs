@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using WebCamControl.Core.Exceptions;
 using WebCamControl.Linux.Interop;
@@ -37,8 +39,7 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 		_deviceFile = File.Open(devicePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		_fd = _deviceFile.SafeFileHandle.DangerousGetHandle();
 		_caps = GetCapabilities();
-		CreateControls();
-
+		
 		logger.LogInformation(
 			"Found camera: {name}. \nCapabilities: 0x{caps:X}\nDevice Capabilities: 0x{deviceCaps:X}\nSupported? {isSupported}", 
 			Name,
@@ -46,6 +47,11 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 			_caps.DeviceCapabilities,
 			IsSupported
 		);
+
+		if (IsSupported)
+		{
+			CreateControls();
+		}
 	}
 	
 	/// <summary>
@@ -65,13 +71,11 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 
 	/// <summary>
 	/// Gets or sets the brightness
-	/// TODO: should be a percentage
 	/// </summary>
-	public ICameraControl? Brightness { get; private set; }
+	public PercentControl? Brightness { get; private set; }
 	
 	/// <summary>
 	/// Gets or sets the pan. This is a number of degrees between -180 and 180.
-	/// TODO: Should be an angle
 	/// </summary>
 	public AngleControl? Pan { get; private set; }
 	
@@ -80,18 +84,78 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 	/// </summary>
 	public AngleControl? Tilt { get; private set; }
 
-
+	/// <summary>
+	/// Any controls that are not supported as one of the high-level fields above.
+	/// </summary>
+	public LinuxCameraAdvancedControls RawControls { get; private set; } = new();
+	
 	private void CreateControls()
 	{
-		LinuxCameraControl? TryCreate(ControlID controlId)
-			=> LinuxCameraControl.TryCreate(_fd, controlId, _controlLogger);
+		var integers = new Dictionary<ControlID, LinuxCameraControl>();
+		var booleans = new Dictionary<ControlID, BooleanControl>();
 		
-		Brightness = TryCreate(ControlID.Brightness);
+		// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/control.html#example-enumerating-all-controls
+		var controlData = new QueryControl
+		{
+			ID = ControlID.NextControl
+		};
+		while (ioctl(_fd, IoctlCommand.QueryControl, ref controlData) == 0)
+		{
+			_logger.LogInformation(
+				"Supports control: {Name} ({ControlID}). Type = {Type}",
+				controlData.Name,
+				controlData.ID,
+				controlData.Type
+			);
 
-		var pan = TryCreate(ControlID.PanAbsolute);
-		Pan = pan == null ? null : new AngleControl(pan);
-		var tilt = TryCreate(ControlID.TiltAbsolute);
-		Tilt = tilt == null ? null : new AngleControl(tilt);
+			var control = new LinuxCameraControl(_fd, controlData, _controlLogger);
+
+			switch (controlData.Type)
+			{
+				case ControlType.Integer:
+					integers.Add(controlData.ID, control);
+					break;
+					
+				case ControlType.Boolean:
+					booleans.Add(controlData.ID, new BooleanControl(control));
+					break;
+				
+				case ControlType.ControlClass:
+					// Intentionally not supported
+					break;
+
+				case ControlType.Menu:
+				case ControlType.Button:
+				case ControlType.Integer64:
+				case ControlType.String:
+				default:
+					_logger.LogInformation("=> Unsupported control type {Type}", controlData.Type);
+					break;
+			}
+			
+			// ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
+			controlData.ID |= ControlID.NextControl;
+		}
+		
+		_logger.LogInformation(
+			"Finished enumerating controls. Errno = {Errno}", 
+			Marshal.GetLastPInvokeError()
+		);
+
+		integers.Remove(ControlID.Brightness, out var brightness);
+		Brightness = PercentControl.CreateIfNotNull(brightness);
+		
+		integers.Remove(ControlID.PanAbsolute, out var pan);
+		Pan = AngleControl.CreateIfNotNull(pan);
+		
+		integers.Remove(ControlID.TiltAbsolute, out var tilt);
+		Tilt = AngleControl.CreateIfNotNull(tilt);
+		
+		RawControls = new LinuxCameraAdvancedControls
+		{
+			Booleans = booleans.ToImmutableDictionary(),
+			Integers = integers.ToImmutableDictionary(),
+		};
 	}
 	
 	private Capability GetCapabilities()

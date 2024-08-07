@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 namespace WebCamControl.Linux.Interop;
 
 /// <summary>
+/// v4l2_queryctrl
+/// 
 /// https://github.com/torvalds/linux/blob/e5b3efbe1ab1793bb49ae07d56d0973267e65112/include/uapi/linux/videodev2.h#L1942
 /// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/control.html#example-enumerating-all-controls
 /// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/vidioc-queryctrl.html
@@ -17,9 +19,8 @@ public struct QueryControl
 	
 	/// <summary>
 	/// Type of control
-	/// TODO: v4l2_ctrl_type
 	/// </summary>
-	public uint Type;
+	public ControlType Type;
 	
 	/// <summary>
 	/// Name of the control, a NUL-terminated ASCII string. This information is intended for the
