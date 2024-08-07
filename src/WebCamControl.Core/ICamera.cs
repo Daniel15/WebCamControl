@@ -20,9 +20,8 @@ public interface ICamera
 	
 	/// <summary>
 	/// Gets or sets the brightness
-	/// TODO: should be a percentage
 	/// </summary>
-	public ICameraControl? Brightness { get; }
+	public PercentControl? Brightness { get; }
 	
 	/// <summary>
 	/// Gets or sets the pan. This is a number of degrees between -180 and 180.
