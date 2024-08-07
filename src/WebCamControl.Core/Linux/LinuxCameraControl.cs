@@ -49,15 +49,43 @@ public class LinuxCameraControl : ICameraControl
 
 		set
 		{
+			var clampedValue = ClampValue(value);
 			var control = new Control
 			{
 				ID = _id,
-				Value = value,
+				Value = clampedValue,
 			};
 			ioctl(_fd, IoctlCommand.SetControl, ref control);
 			InteropException.ThrowIfError();
-			_logger.LogInformation("SetControl({id}, {value})", _id, value);
+			_logger.LogInformation("SetControl({id}, {value})", _id, clampedValue);
 		}
+	}
+
+	private int ClampValue(int value)
+	{
+		if (value > Maximum)
+		{
+			_logger.LogWarning(
+				"SetControl({id}): {value} is above the maximum of {maximum}!",
+				_id,
+				value,
+				Maximum
+			);
+			return Maximum;
+		}
+			
+		if (value < Minimum)
+		{
+			_logger.LogWarning(
+				"SetControl({id}): {value} is below the minimum of {minimum}!",
+				_id,
+				value,
+				Minimum
+			);
+			return Minimum;
+		}
+
+		return value;
 	}
 
 	public static LinuxCameraControl? TryCreate(
