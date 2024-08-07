@@ -8,6 +8,6 @@ indent_size = 4
 indent_style = tab
 insert_final_newline = true
 
-[.blp]
+[*.blp]
 indent_size = 2
 indent_style = space

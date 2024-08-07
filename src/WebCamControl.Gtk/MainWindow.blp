@@ -6,104 +6,104 @@ Adw.ApplicationWindow main_window {
   resizable: false;
 
   Adw.ToolbarView {
-	[top]
-	Adw.HeaderBar {
-	  [end]
-	  MenuButton {
-		tooltip-text: _("Main Menu");
-		icon-name: "open-menu-symbolic";
-		menu-model: primary_menu;
-		primary: true;
-	  }
-	}
+    [top]
+    Adw.HeaderBar {
+      [end]
+      MenuButton {
+        tooltip-text: _("Main Menu");
+        icon-name: "open-menu-symbolic";
+        menu-model: primary_menu;
+        primary: true;
+      }
+    }
 
-	content: Box {
-	  margin-start: 12;
-	  margin-bottom: 12;
-	  margin-end: 12;
+    content: Box {
+      margin-start: 12;
+      margin-bottom: 12;
+      margin-end: 12;
 
-	  Grid {
-		column-spacing: 4;
-		row-spacing: 4;
+      Grid {
+        column-spacing: 4;
+        row-spacing: 4;
 
-		Button _up {
-		  label: _('Up');
-		  icon-name: 'go-up';
-		  width-request: 50;
-		  height-request: 50;
+        Button _up {
+          label: _('Up');
+          icon-name: 'go-up';
+          width-request: 50;
+          height-request: 50;
 
-		  layout {
-			row: '0';
-			column: '1';
-		  }
-		}
+          layout {
+            row: '0';
+            column: '1';
+          }
+        }
 
-		Button _down {
-		  label: _('Down');
-		  icon-name: 'go-down';
-		  width-request: 50;
-		  height-request: 50;
+        Button _down {
+          label: _('Down');
+          icon-name: 'go-down';
+          width-request: 50;
+          height-request: 50;
 
-		  layout {
-			row: '1';
-			column: '1';
-		  }
-		}
+          layout {
+            row: '1';
+            column: '1';
+          }
+        }
 
-		Button _left {
-		  label: _('Left');
-		  icon-name: 'go-previous';
-		  width-request: 50;
-		  height-request: 50;
+        Button _left {
+          label: _('Left');
+          icon-name: 'go-previous';
+          width-request: 50;
+          height-request: 50;
 
-		  layout {
-			row: '1';
-			column: '0';
-		  }
-		}
+          layout {
+            row: '1';
+            column: '0';
+          }
+        }
 
-		Button _right {
-		  label: _('Right');
-		  icon-name: 'go-next';
-		  width-request: 50;
-		  height-request: 50;
+        Button _right {
+          label: _('Right');
+          icon-name: 'go-next';
+          width-request: 50;
+          height-request: 50;
 
-		  layout {
-			row: '1';
-			column: '2';
-		  }
-		}
-	  }
+          layout {
+            row: '1';
+            column: '2';
+          }
+        }
+      }
 
-	  Separator {
-		orientation: horizontal;
-		margin-start: 12;
-		margin-end: 12;
-	  }
+      Separator {
+        orientation: horizontal;
+        margin-start: 12;
+        margin-end: 12;
+      }
 
-	  Box _buttonsBox {
-		homogeneous: true;
-		valign: center;
-		spacing: 4;
+      Box _buttonsBox {
+        homogeneous: true;
+        valign: center;
+        spacing: 4;
 
-		// Dummy buttons for previewing in Workbench - not actually used in the app
-		Button _preset1 {
-		  label: '1';
-		}
-		Button _preset2 {
-		  label: '2';
-		  sensitive: false;
-		}
-	  }
-	};
+        // Dummy buttons for previewing in Workbench - not actually used in the app
+        Button _preset1 {
+          label: '1';
+        }
+        Button _preset2 {
+          label: '2';
+          sensitive: false;
+        }
+      }
+    };
   }
 }
 
 menu primary_menu {
   section {
-	item (_("Save Preset..."), "app.save_preset")
+    item (_("Save Preset..."), "app.save_preset")
   }
   section {
-	item (_("Quit"), "app.quit")
+    item (_("Quit"), "app.quit")
   }
 }
