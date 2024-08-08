@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Adw.ApplicationWindow main_window {
+Adw.ApplicationWindow mini_window {
   title: _('WebCamControl');
   resizable: false;
 
@@ -27,7 +27,7 @@ Adw.ApplicationWindow main_window {
         row-spacing: 4;
 
         Button _up {
-          label: _('Up');
+          tooltip-text: _('Up');
           icon-name: 'go-up';
           width-request: 50;
           height-request: 50;
@@ -39,7 +39,7 @@ Adw.ApplicationWindow main_window {
         }
 
         Button _down {
-          label: _('Down');
+          tooltip-text: _('Down');
           icon-name: 'go-down';
           width-request: 50;
           height-request: 50;
@@ -51,7 +51,7 @@ Adw.ApplicationWindow main_window {
         }
 
         Button _left {
-          label: _('Left');
+          tooltip-text: _('Left');
           icon-name: 'go-previous';
           width-request: 50;
           height-request: 50;
@@ -63,7 +63,7 @@ Adw.ApplicationWindow main_window {
         }
 
         Button _right {
-          label: _('Right');
+          tooltip-text: _('Right');
           icon-name: 'go-next';
           width-request: 50;
           height-request: 50;
@@ -85,14 +85,32 @@ Adw.ApplicationWindow main_window {
         homogeneous: true;
         valign: center;
         spacing: 4;
-
         // Dummy buttons for previewing in Workbench - not actually used in the app
         Button _preset1 {
           label: '1';
         }
+
         Button _preset2 {
           label: '2';
           sensitive: false;
+        }
+      }
+
+      Separator {
+        orientation: horizontal;
+        margin-start: 12;
+        margin-end: 12;
+      }
+
+      Box {
+        homogeneous: true;
+        valign: center;
+        spacing: 4;
+
+        Button _fullScreen {
+          action-name: "app.toggle_view";
+          icon-name: "view-fullscreen-symbolic";
+          tooltip-text: _("View all settings (Ctrl+T)");
         }
       }
     };
@@ -103,7 +121,9 @@ menu primary_menu {
   section {
     item (_("Save Preset..."), "app.save_preset")
   }
+
   section {
+    item (_("View all settings..."), "app.toggle_view")
     item (_("Quit"), "app.quit")
   }
 }

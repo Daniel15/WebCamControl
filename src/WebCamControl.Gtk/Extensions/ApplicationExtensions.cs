@@ -9,9 +9,9 @@ namespace WebCamControl.Gtk.Extensions;
 public static class ApplicationExtensions
 {
 	/// <summary>
-	/// Handles boilerplate for configuring a menu item.
+	/// Handles boilerplate for configuring an action (e.g. for a menu item).
 	/// </summary>
-	public static void ConfigureMenuItem(
+	public static void ConfigureAction(
 		this Adw.Application app,
 		string name,
 		SignalHandler<SimpleAction, SimpleAction.ActivateSignalArgs> handler,

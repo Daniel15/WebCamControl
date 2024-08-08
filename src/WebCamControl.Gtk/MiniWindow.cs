@@ -1,17 +1,15 @@
 using System.Globalization;
 using Gtk;
-using Microsoft.Extensions.Options;
 using WebCamControl.Core;
-using WebCamControl.Core.Configuration;
 using WebCamControl.Gtk.Extensions;
 using WebCamControl.Gtk.Widgets;
 
 namespace WebCamControl.Gtk;
 
 /// <summary>
-/// Main window for the app.
+/// Main window for the app - basic view
 /// </summary>
-public class MainWindow : Adw.Window
+public class MiniWindow : Adw.Window
 {
 	private const float _panTiltAdjustmentAmount = 2f;
 	private const int _minPresetButtonCount = 6;
@@ -27,25 +25,26 @@ public class MainWindow : Adw.Window
 	[Connect] private readonly Box _buttonsBox = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
-	public MainWindow(
+	public MiniWindow(
 		Adw.Application app,
 		ICamera camera,
 		IPresets presets
-	) : this(new Builder("MainWindow.ui"), camera, presets)
+	) : this(new Builder("MiniWindow.ui"), camera, presets)
 	{
 		Application = app;
 	}
 
-	private MainWindow(
+	private MiniWindow(
 		Builder builder,
 		ICamera camera,
 		IPresets presets
-	) : base(builder.GetPointer("main_window"), false)
+	) : base(builder.GetPointer("mini_window"), false)
 	{
 		_camera = camera;
 		_presets = presets;
 		builder.Connect(this);
 		Title = "WebCamControl: " + _camera.Name;
+		// TODO: Configure proper icon
 		
 		InitializePanAndTilt();
 		InitializePresets();
@@ -55,16 +54,16 @@ public class MainWindow : Adw.Window
 
 	private void InitializePanAndTilt()
 	{
-		DisableIfUnsupported(_left, _camera.Pan);
-		DisableIfUnsupported(_right, _camera.Pan);
+		_left.DisableCameraControlIfUnsupported(_camera.Pan);
+		_right.DisableCameraControlIfUnsupported(_camera.Pan);
 		if (_camera.Pan != null)
 		{
 			_left.OnHeld += (_, _) => _camera.Pan.Value -= _panTiltAdjustmentAmount;
 			_right.OnHeld += (_, _) => _camera.Pan.Value += _panTiltAdjustmentAmount;
 		}
 
-		DisableIfUnsupported(_down, _camera.Tilt);
-		DisableIfUnsupported(_up, _camera.Tilt);
+		_down.DisableCameraControlIfUnsupported(_camera.Tilt);
+		_up.DisableCameraControlIfUnsupported(_camera.Tilt);
 		if (_camera.Tilt != null)
 		{
 			_down.OnHeld += (_, _) => _camera.Tilt.Value -= _panTiltAdjustmentAmount;
@@ -72,19 +71,10 @@ public class MainWindow : Adw.Window
 		}
 	}
 
-	private void DisableIfUnsupported(Button button, object? control)
-	{
-		var isSupported = control != null;
-		button.Sensitive = isSupported;
-		button.TooltipText = isSupported 
-			? null 
-			: "Not supported by this camera";
-	}
-
 	private void InitializePresets()
 	{
 		_buttonsBox.RemoveChildren();
-		var presetCount = _presets.PresetConfigs.Count - 1;
+		var presetCount = _presets.PresetConfigs.Count;
 		var buttonCount = Math.Max(presetCount, _minPresetButtonCount);
 		Button? prevButton = null;
 		for (var i = 0; i < buttonCount; i++)

@@ -19,6 +19,11 @@ public interface ICamera
 	public string Name { get; }
 	
 	/// <summary>
+	/// Gets or sets if automatic white balance is enabled.
+	/// </summary>
+	public BooleanControl? AutoWhiteBalance { get; }
+	
+	/// <summary>
 	/// Gets or sets the brightness
 	/// </summary>
 	public PercentControl? Brightness { get; }
@@ -27,6 +32,11 @@ public interface ICamera
 	/// Gets or sets the pan. This is a number of degrees between -180 and 180.
 	/// </summary>
 	public AngleControl? Pan { get; }
+	
+	/// <summary>
+	/// Gets or sets the white balance temperature.
+	/// </summary>
+	public ICameraControl<int>? Temperature { get; }
 	
 	/// <summary>
 	/// Gets or sets the tilt. This is a number of degrees between -180 and 180.

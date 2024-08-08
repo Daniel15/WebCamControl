@@ -1,0 +1,70 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ApplicationWindow full_window {
+  title: _('WebCamControl');
+
+  Adw.ToolbarView {
+    content: Box {
+      orientation: vertical;
+
+      Adw.HeaderBar {
+        title-widget: Adw.ViewSwitcher {
+          stack: stack;
+          policy: wide;
+        };
+      }
+
+      Adw.ViewStack stack {
+        Adw.ViewStackPage {
+          name: "image";
+          title: _("Image");
+
+          child: ListBox {
+            styles [
+              "boxed-list"
+            ]
+
+            Adw.SwitchRow _autoWhiteBalance {
+              title: _("Automatic White Balance");
+            }
+            
+            Adw.ActionRow _temperatureRow {
+              title: _("Temperature");
+
+              [suffix]
+              Scale _temperature {
+                adjustment: Gtk.Adjustment {
+                  lower: 0;
+                  upper: 100;
+                  value: 15;
+                };
+
+                orientation: horizontal;
+                halign: fill;
+                hexpand: true;
+              }
+            }
+
+            Adw.ActionRow {
+              title: _("Brightness");
+
+              [suffix]
+              Scale _brightness {
+                adjustment: Gtk.Adjustment {
+                  lower: 0;
+                  upper: 100;
+                  value: 15;
+                };
+
+                orientation: horizontal;
+                halign: fill;
+                hexpand: true;
+              }
+            }
+          };
+        }
+      }
+    };
+  }
+}

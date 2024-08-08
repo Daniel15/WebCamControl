@@ -68,6 +68,11 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 	/// User-friendly name of the webcam (e.g. "Insta360 Link")
 	/// </summary>
 	public string Name => $"{_caps.Device} ({RawName})";
+	
+	/// <summary>
+	/// Gets or sets if automatic white balance is enabled.
+	/// </summary>
+	public BooleanControl? AutoWhiteBalance { get; private set; }
 
 	/// <summary>
 	/// Gets or sets the brightness
@@ -78,6 +83,11 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 	/// Gets or sets the pan. This is a number of degrees between -180 and 180.
 	/// </summary>
 	public AngleControl? Pan { get; private set; }
+	
+	/// <summary>
+	/// Gets or sets the white balance temperature.
+	/// </summary>
+	public ICameraControl<int>? Temperature { get; private set; }
 	
 	/// <summary>
 	/// Gets or sets the tilt. This is a number of degrees between -180 and 180.
@@ -148,8 +158,14 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 		integers.Remove(ControlID.PanAbsolute, out var pan);
 		Pan = AngleControl.CreateIfNotNull(pan);
 		
+		integers.Remove(ControlID.WhiteBalanceTemperature, out var temperature);
+		Temperature = temperature;
+		
 		integers.Remove(ControlID.TiltAbsolute, out var tilt);
 		Tilt = AngleControl.CreateIfNotNull(tilt);
+
+		booleans.Remove(ControlID.AutoWhiteBalance, out var autoWhiteBalance);
+		AutoWhiteBalance = autoWhiteBalance;
 		
 		RawControls = new LinuxCameraAdvancedControls
 		{

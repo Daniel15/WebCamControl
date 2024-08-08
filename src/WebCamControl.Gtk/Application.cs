@@ -15,16 +15,19 @@ public class Application
 {
 	private readonly IServiceProvider _provider;
 	private readonly Adw.Application _app;
-	private MainWindow? _mainWindow;
+	private readonly ILogger<Application> _logger;
+	private Window? _mainWindow;
 	private readonly ICamera _selectedCamera;
 
 	public Application(
 		Adw.Application app,
 		ICameraManager cameraManager,
+		ILogger<Application> logger,
 		IServiceProvider provider
 	)
 	{
 		_app = app;
+		_logger = logger;
 		_selectedCamera = cameraManager.GetDefaultCamera();
 		_provider = provider;
 
@@ -40,8 +43,8 @@ public class Application
 	
 	private void OnStartup(Gio.Application sender, EventArgs args)
 	{
-		_app.ConfigureMenuItem("quit", (_, _) => _app.Quit(), "<Ctrl>Q");
-		_app.ConfigureMenuItem("save_preset", (_, _) =>
+		_app.ConfigureAction("quit", (_, _) => _app.Quit(), "<Ctrl>Q");
+		_app.ConfigureAction("save_preset", (_, _) =>
 		{
 			var dialog = ActivatorUtilities.CreateInstance<SavePresetDialog>(
 				_provider,
@@ -49,11 +52,36 @@ public class Application
 			);
 			dialog.Present(_mainWindow);
 		}, "<Ctrl>S");
+		
+		_app.ConfigureAction("toggle_view", (_, _) =>
+		{
+			if (_mainWindow is MiniWindow)
+			{
+				ShowWindow<FullWindow>();	
+			}
+			else
+			{
+				ShowWindow<MiniWindow>();
+			}
+		}, "<Ctrl>T");
 	}
 
 	private void OnActivate(Gio.Application application, EventArgs eventArgs)
 	{
-		_mainWindow ??= ActivatorUtilities.CreateInstance<MainWindow>(
+		ShowWindow<MiniWindow>();
+	}
+
+	private void ShowWindow<T>() where T: Window
+	{
+		if (_mainWindow != null)
+		{
+			_mainWindow.Destroy();
+			_mainWindow.Dispose();
+			_mainWindow = null;
+		}
+		
+		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
+		_mainWindow = ActivatorUtilities.CreateInstance<T>(
 			_provider,
 			_selectedCamera
 		);
