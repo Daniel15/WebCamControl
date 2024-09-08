@@ -58,7 +58,7 @@ public struct QueryControl
 	/// <summary>
 	/// Control flags
 	/// </summary>
-	public uint Flags;
+	public ControlFlags Flags;
 
 	/// <summary>
 	/// Reserved for future extensions.
