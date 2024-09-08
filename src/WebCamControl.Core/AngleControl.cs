@@ -17,6 +17,14 @@ public class AngleControl(ICameraControl<int> control) : ICameraControl<float>
 		get => control.Value / _arcsecondsInDegree;
 		set => control.Value = (int)(value * _arcsecondsInDegree);
 	}
+	
+	public string? UserFriendlyValue => null;
+	
+	public event EventHandler? Changed
+	{
+		add => control.Changed += value;
+		remove => control.Changed -= value;
+	}
 
 	public static AngleControl? CreateIfNotNull(ICameraControl<int>? control)
 	{

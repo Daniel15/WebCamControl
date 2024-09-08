@@ -3,6 +3,7 @@ using Gtk;
 using WebCamControl.Core;
 using WebCamControl.Core.Linux;
 using WebCamControl.Gtk.Extensions;
+using WebCamControl.Gtk.Widgets;
 
 namespace WebCamControl.Gtk;
 
@@ -14,10 +15,8 @@ public class FullWindow : Adw.Window
 	private readonly ICamera _camera;
 	
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly SwitchRow _autoWhiteBalance = default!;
-	[Connect] private readonly Scale _brightness = default!;
-	[Connect] private readonly ActionRow _temperatureRow = default!;	
-	[Connect] private readonly Scale _temperature = default!;
+	[Connect] private readonly ListBox _controls = default!;
+	[Connect] private readonly ActionRow _exampleRow = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
 	public FullWindow(
@@ -38,7 +37,6 @@ public class FullWindow : Adw.Window
 		// TODO: Configure proper icon
 		
 		InitializeWidgets();
-		UpdateFromCameraControls();
 	}
 
 	/// <summary>
@@ -46,71 +44,18 @@ public class FullWindow : Adw.Window
 	/// </summary>
 	private void InitializeWidgets()
 	{
-		AttachSwitchToCameraControl(_autoWhiteBalance, _camera.AutoWhiteBalance);
-		AttachSliderToCameraControl(_temperature, _camera.Temperature);
-		AttachSliderToCameraControl(_brightness, _camera.Brightness);
-	}
-
-	/// <summary>
-	/// Sync camera settings to the widgets.
-	/// </summary>
-	private void UpdateFromCameraControls()
-	{
-		_autoWhiteBalance.Active = _camera.AutoWhiteBalance?.Value ?? false;
-		_temperature.SetValue(_camera.Temperature?.Value ?? 0);
-		_temperature.Sensitive = _camera.Temperature != null && !_autoWhiteBalance.Active;
-		if (_camera.Temperature != null)
-		{
-			_temperatureRow.Subtitle = _camera.Temperature.Value + "K";
-		}
-		_brightness.SetValue(_camera.Brightness?.Value ?? 0);
-	}
-
-	/// <summary>
-	/// Configures a <see cref="SwitchRow"/> to control a boolean camera control.
-	/// </summary>
-	private void AttachSwitchToCameraControl(SwitchRow widget, ICameraControl<bool>? control)
-	{
-		widget.DisableCameraControlIfUnsupported(control);
-		if (control == null)
-		{
-			return;
-		}
+		_controls.Remove(_exampleRow);
 		
-		NotifySignal.Connect(
-			widget,
-			(_, _) =>
-			{
-				control.Value = widget.Active;
-				UpdateFromCameraControls();
-			},
-			detail: SwitchRow.ActivePropertyDefinition.UnmanagedName
-		);
-	}
+		var potentialControls = new Widget?[]
+		{
+			CameraControlSlider.TryCreate(_camera.Brightness),
+			CameraControlSwitch.TryCreate(_camera.AutoWhiteBalance),
+			CameraControlSlider.TryCreate(_camera.Temperature),
+		};
 
-	/// <summary>
-	/// Configures a <see cref="Scale"/> to control an integer camera control.
-	/// </summary>
-	private void AttachSliderToCameraControl(Scale widget, ICameraControl<int>? control)
-	{
-		widget.DisableCameraControlIfUnsupported(control);
-		if (control == null)
+		foreach (var control in potentialControls.Where(x => x != null))
 		{
-			return;
+			_controls.Append(control!);
 		}
-		
-		widget.Adjustment = new()
-		{
-			Lower = control.Minimum,
-			Upper = control.Maximum,
-			StepIncrement = control.Step,
-			Value = control.Value,
-		};
-		widget.OnChangeValue += (_, args) =>
-		{
-			control.Value = (int)args.Value;
-			UpdateFromCameraControls();
-			return false;
-		};
 	}
 }

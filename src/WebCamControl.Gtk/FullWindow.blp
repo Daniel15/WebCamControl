@@ -20,33 +20,12 @@ Adw.ApplicationWindow full_window {
           name: "image";
           title: _("Image");
 
-          child: ListBox {
+          child: ListBox _controls {
             styles [
               "boxed-list"
             ]
 
-            Adw.SwitchRow _autoWhiteBalance {
-              title: _("Automatic White Balance");
-            }
-            
-            Adw.ActionRow _temperatureRow {
-              title: _("Temperature");
-
-              [suffix]
-              Scale _temperature {
-                adjustment: Gtk.Adjustment {
-                  lower: 0;
-                  upper: 100;
-                  value: 15;
-                };
-
-                orientation: horizontal;
-                halign: fill;
-                hexpand: true;
-              }
-            }
-
-            Adw.ActionRow {
+            Adw.ActionRow _exampleRow {
               title: _("Brightness");
 
               [suffix]

@@ -31,6 +31,16 @@ public interface ICameraControl<T>
 	/// Gets or sets the value for this control.
 	/// </summary>
 	T Value { get; set; }
+	
+	/// <summary>
+	/// Gets the value in a format suitable for displaying to the user in the UI.
+	/// </summary>
+	string? UserFriendlyValue { get; }
+	
+	/// <summary>
+	/// Fired when the value of this control is changed.
+	/// </summary>
+	public event EventHandler Changed;
 }
 
 /// <summary>

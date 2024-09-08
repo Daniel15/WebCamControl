@@ -15,4 +15,12 @@ public class BooleanControl(ICameraControl<int> control) : ICameraControl<bool>
 		get => control.Value == 1;
 		set => control.Value = value ? 1 : 0;
 	}
+
+	public string? UserFriendlyValue => null;
+
+	public event EventHandler? Changed
+	{
+		add => control.Changed += value;
+		remove => control.Changed -= value;
+	}
 }

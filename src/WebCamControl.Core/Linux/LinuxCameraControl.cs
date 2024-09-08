@@ -17,6 +17,10 @@ public class LinuxCameraControl : ICameraControl
 	private readonly ILogger<LinuxCameraControl> _logger;
 	private readonly ControlID _id;
 
+	// TODO: Subscribe to changes and fire this event when changes occur outside the app 
+	// (e.g. volatile controls)
+	public event EventHandler? Changed;
+
 	public LinuxCameraControl(
 		IntPtr fd,
 		QueryControl controlData,
@@ -58,8 +62,16 @@ public class LinuxCameraControl : ICameraControl
 			ioctl(_fd, IoctlCommand.SetControl, ref control);
 			InteropException.ThrowIfError();
 			_logger.LogInformation("SetControl({id}, {value})", _id, clampedValue);
+			Changed?.Invoke(this, EventArgs.Empty);
 		}
 	}
+	
+	public string? UserFriendlyValue => UserFriendlyValueDelegate?.Invoke(Value);
+
+	/// <summary>
+	/// Sets the deriver to use to determine the user-friendly value.
+	/// </summary>
+	internal Func<int, string>? UserFriendlyValueDelegate { private get; set; }
 
 	private int ClampValue(int value)
 	{
@@ -86,40 +98,5 @@ public class LinuxCameraControl : ICameraControl
 		}
 
 		return value;
-	}
-
-	public static LinuxCameraControl? TryCreate(
-		IntPtr fd,
-		ControlID controlId,
-		ILogger<LinuxCameraControl> logger
-	)
-	{
-		try
-		{
-			var queryControl = new QueryControl
-			{
-				ID = controlId
-			};
-			ioctl(fd, IoctlCommand.QueryControl, ref queryControl);
-
-			var err = Marshal.GetLastPInvokeError();
-			if (err == InappropriateIoctlForDevice)
-			{
-				logger.LogInformation(" => Does not support {ControlID}", controlId);
-				return null;
-			}
-			if (err != 0)
-			{
-				throw new InteropException(Marshal.GetPInvokeErrorMessage(err));
-			}
-
-			logger.LogInformation("=> Supports {ControlID}", controlId);
-			return new LinuxCameraControl(fd, queryControl, logger);
-		}
-		catch (Exception ex)
-		{
-			logger.LogWarning(" => ERROR for {ControlID}: {Error}", controlId, ex.Message);
-			return null;
-		}
 	}
 }

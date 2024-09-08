@@ -15,6 +15,8 @@ public class PercentControl(ICameraControl<int> control) : ICameraControl<int>
 		get => MapValueToPercentage(control.Value);
 		set => control.Value = MapPercentageToValue(value);
 	}
+	
+	public string? UserFriendlyValue => null;
 
 	private int MapValueToPercentage(int value)
 	{
@@ -24,6 +26,12 @@ public class PercentControl(ICameraControl<int> control) : ICameraControl<int>
 	private int MapPercentageToValue(int percentage)
 	{
 		return (int)(control.Minimum + ((control.Maximum - control.Minimum) / 100.0) * percentage);
+	}
+	
+	public event EventHandler? Changed
+	{
+		add => control.Changed += value;
+		remove => control.Changed -= value;
 	}
 	
 	public static PercentControl? CreateIfNotNull(ICameraControl<int>? control)

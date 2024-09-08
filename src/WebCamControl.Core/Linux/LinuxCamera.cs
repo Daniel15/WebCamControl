@@ -112,10 +112,11 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 		while (ioctl(_fd, IoctlCommand.QueryControl, ref controlData) == 0)
 		{
 			_logger.LogInformation(
-				"Supports control: {Name} ({ControlID}). Type = {Type}",
+				"Supports control: {Name} ({ControlID}). Type = {Type}, Flags = {Flags}",
 				controlData.Name,
 				controlData.ID,
-				controlData.Type
+				controlData.Type,
+				controlData.Flags
 			);
 
 			var control = new LinuxCameraControl(_fd, controlData, _controlLogger);
@@ -159,6 +160,10 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 		Pan = AngleControl.CreateIfNotNull(pan);
 		
 		integers.Remove(ControlID.WhiteBalanceTemperature, out var temperature);
+		if (temperature != null)
+		{
+			temperature.UserFriendlyValueDelegate = value => $"{value}K";			
+		}
 		Temperature = temperature;
 		
 		integers.Remove(ControlID.TiltAbsolute, out var tilt);
