@@ -15,6 +15,7 @@ public class LinuxCameraControl : ICameraControl
 	private readonly IntPtr _fd;
 	private readonly QueryControl _controlData;
 	private readonly ILogger<LinuxCameraControl> _logger;
+	private readonly LinuxCameraEvents _events;
 	private readonly ControlID _id;
 
 	// TODO: Subscribe to changes and fire this event when changes occur outside the app 
@@ -24,14 +25,23 @@ public class LinuxCameraControl : ICameraControl
 	public LinuxCameraControl(
 		IntPtr fd,
 		QueryControl controlData,
-		ILogger<LinuxCameraControl> logger
+		ILogger<LinuxCameraControl> logger,
+		LinuxCameraEvents events
 	)
 	{
 		_fd = fd;
 		_controlData = controlData;
 		_logger = logger;
+		_events = events;
 		_id = controlData.ID;
+
+		_events.Subscribe(this, (evt) =>
+		{
+			Changed?.Invoke(this, EventArgs.Empty);
+		});
 	}
+	
+	public ControlID ID => _controlData.ID;
 	public string Name => _controlData.Name;
 	public int Minimum => _controlData.Minimum;
 	public int Maximum => _controlData.Maximum;

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+
 // ReSharper disable InconsistentNaming
 namespace WebCamControl.Linux.Interop;
 
@@ -25,4 +28,19 @@ public enum IoctlCommand : uint
 	/// VIDIOC_QUERYCTRL
 	/// </summary>
 	QueryControl = 0xc0445624,
+	
+	/// <summary>
+	/// VIDIOC_SUBSCRIBE_EVENT
+	/// </summary>
+	SubscribeEvent = 0x4020565a,
+	
+	/// <summary>
+	/// VIDIOC_UNSUBSCRIBE_EVENT
+	/// </summary>
+	UnsubscribeEvent = 0x4020565b,
+	
+	/// <summary>
+	/// VIDIOC_DQEVENT
+	/// </summary>
+	DequeueEvent = 0x80885659,
 }

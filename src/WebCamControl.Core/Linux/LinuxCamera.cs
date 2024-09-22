@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
@@ -19,6 +22,7 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 	private readonly FileStream _deviceFile;
 	private readonly IntPtr _fd;
 	private readonly Capability _caps;
+	private readonly LinuxCameraEvents _events;
 
 	/// <summary>
 	/// Creates a new <see cref="LinuxCamera"/>.
@@ -26,10 +30,12 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 	/// <param name="rawName">e.g. "video0", "video1"</param>
 	/// <param name="logger">Logger for debug logging</param>
 	/// <param name="controlLogger">Logging for controls</param>
+	/// <param name="eventsLogger">Logging for events</param>
 	public LinuxCamera(
 		string rawName,
 		ILogger<LinuxCamera> logger,
-		ILogger<LinuxCameraControl> controlLogger
+		ILogger<LinuxCameraControl> controlLogger,
+		ILogger<LinuxCameraEvents> eventsLogger
 	)
 	{
 		_logger = logger;
@@ -39,6 +45,7 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 		_deviceFile = File.Open(devicePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		_fd = _deviceFile.SafeFileHandle.DangerousGetHandle();
 		_caps = GetCapabilities();
+		_events = new LinuxCameraEvents(eventsLogger, _fd);
 		
 		logger.LogInformation(
 			"Found camera: {name}. \nCapabilities: 0x{caps:X}\nDevice Capabilities: 0x{deviceCaps:X}\nSupported? {isSupported}", 
@@ -51,6 +58,7 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 		if (IsSupported)
 		{
 			CreateControls();
+			_events.StartAsync();
 		}
 	}
 	
@@ -119,7 +127,7 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 				controlData.Flags
 			);
 
-			var control = new LinuxCameraControl(_fd, controlData, _controlLogger);
+			var control = new LinuxCameraControl(_fd, controlData, _controlLogger, _events);
 
 			switch (controlData.Type)
 			{

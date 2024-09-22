@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
@@ -11,17 +14,20 @@ public class LinuxCameraManager : ICameraManager
 {
 	private readonly ILogger<LinuxCamera> _cameraLogger;
 	private readonly ILogger<LinuxCameraControl> _controlLogger;
+	private readonly ILogger<LinuxCameraEvents> _eventsLogger;
 
 	private const string _v4lDeviceDir = "/sys/class/video4linux";
 	private const string _preferredDeviceName = "Insta360 Link";
 
 	public LinuxCameraManager(
 		ILogger<LinuxCamera> cameraLogger,
-		ILogger<LinuxCameraControl> controlLogger
+		ILogger<LinuxCameraControl> controlLogger,
+		ILogger<LinuxCameraEvents> eventsLogger
 	)
 	{
 		_cameraLogger = cameraLogger;
 		_controlLogger = controlLogger;
+		_eventsLogger = eventsLogger;
 	}
 	
 	public IReadOnlyList<ICamera> GetCameras()
@@ -33,7 +39,12 @@ public class LinuxCameraManager : ICameraManager
 		}
 		
 		return Directory.GetDirectories(_v4lDeviceDir)
-			.Select(dir => new LinuxCamera(Path.GetFileName(dir), _cameraLogger, _controlLogger))
+			.Select(dir => new LinuxCamera(
+				Path.GetFileName(dir),
+				_cameraLogger,
+				_controlLogger,
+				_eventsLogger
+			))
 			.Where(cam => cam.IsSupported)
 			.ToImmutableArray();
 	}
