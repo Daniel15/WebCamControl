@@ -1,9 +1,12 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+
 namespace WebCamControl.Core;
 
 /// <summary>
 /// Represents a webcam.
 /// </summary>
-public interface ICamera
+public interface ICamera : IDisposable
 {
 	// Gets whether this device is supported.
 	public bool IsSupported { get; }

@@ -16,16 +16,17 @@ namespace WebCamControl.Core.Linux;
 public class LinuxCameraEvents(
 	ILogger<LinuxCameraEvents> _logger,
 	IntPtr _fd
-)
+) : IDisposable
 {
 	private readonly Dictionary<ControlID, IList<Action<EventControl>>> _subscriptions = new();
+	private readonly CancellationTokenSource _cts = new();
 	
 	/// <summary>
 	/// Starts an async job for listening to epoll events.
 	/// </summary>
-	public void StartAsync()
+	public Task StartAsync()
 	{
-		Task.Factory.StartNew(() =>
+		return Task.Factory.StartNew(() =>
 		{
 			try
 			{
@@ -39,7 +40,7 @@ public class LinuxCameraEvents(
 					ex.Message
 				);
 			}
-		});
+		}, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 	}
 
 	/// <summary>
@@ -147,6 +148,7 @@ public class LinuxCameraEvents(
 			return;
 		}
 		
+		_logger.LogInformation("Unsubscribing from {ControlID}", control.ID);
 		ioctl(_fd, IoctlCommand.UnsubscribeEvent, BuildSubscription(control));
 		InteropException.ThrowIfError();
 		_subscriptions.Remove(control.ID);
@@ -158,4 +160,11 @@ public class LinuxCameraEvents(
 			ID = (uint)control.ID,
 			Type = EventType.Control
 		};
+
+	public void Dispose()
+	{
+		_cts.Cancel();
+		_cts.Dispose();
+		GC.SuppressFinalize(this);
+	}
 }

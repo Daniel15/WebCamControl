@@ -13,7 +13,7 @@ namespace WebCamControl.Core.Linux;
 /// <summary>
 /// Represents a V4L2 webcam.
 /// </summary>
-public class LinuxCamera : ICamera, IAsyncDisposable
+public class LinuxCamera : ICamera
 {
 	private const string _generalDeviceDir = "/dev";
 	
@@ -23,6 +23,7 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 	private readonly IntPtr _fd;
 	private readonly Capability _caps;
 	private readonly LinuxCameraEvents _events;
+	private readonly List<LinuxCameraControl> _allRawControls = new();
 
 	/// <summary>
 	/// Creates a new <see cref="LinuxCamera"/>.
@@ -128,6 +129,7 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 			);
 
 			var control = new LinuxCameraControl(_fd, controlData, _controlLogger, _events);
+			_allRawControls.Add(control);
 
 			switch (controlData.Type)
 			{
@@ -195,9 +197,16 @@ public class LinuxCamera : ICamera, IAsyncDisposable
 		return cap;
 	}
 
-	public async ValueTask DisposeAsync()
+	public void Dispose()
 	{
+		foreach (var control in _allRawControls)
+		{
+			control.Dispose();
+		}
+		_logger.LogInformation("Disposing camera");
+		_events.Dispose();
+		_deviceFile.Dispose();
+		
 		GC.SuppressFinalize(this);
-		await _deviceFile.DisposeAsync();
 	}
 }

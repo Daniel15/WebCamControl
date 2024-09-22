@@ -1,4 +1,7 @@
-﻿using Adw;
+﻿// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+
+using Adw;
 using Gio;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -28,7 +31,7 @@ public class Application
 	{
 		_app = app;
 		_logger = logger;
-		_selectedCamera = cameraManager.GetDefaultCamera();
+		_selectedCamera = cameraManager.DefaultCamera;
 		_provider = provider;
 
 		_app.OnStartup += OnStartup;
@@ -90,7 +93,7 @@ public class Application
 
 	public static void Main(string[] args)
 	{
-		var services = new ServiceCollection()
+		using var services = new ServiceCollection()
 			.AddLogging(builder =>
 			{
 			    builder.ClearProviders();
@@ -105,5 +108,7 @@ public class Application
 		
 		var app = services.GetRequiredService<Application>();
 		app.Run(args);
+
+		Console.WriteLine("Exiting...");
 	}
 }

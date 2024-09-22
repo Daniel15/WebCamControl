@@ -1,16 +1,17 @@
-using System.Runtime.InteropServices;
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+
 using Microsoft.Extensions.Logging;
 using WebCamControl.Core.Exceptions;
 using WebCamControl.Linux.Interop;
 using static WebCamControl.Linux.Interop.Ioctl;
-using static WebCamControl.Linux.Interop.Constants;
 
 namespace WebCamControl.Core.Linux;
 
 /// <summary>
 /// Implementation of <see cref="ICameraControl"/> that uses V4L2.
 /// </summary>
-public class LinuxCameraControl : ICameraControl
+public class LinuxCameraControl : ICameraControl, IDisposable
 {
 	private readonly IntPtr _fd;
 	private readonly QueryControl _controlData;
@@ -108,5 +109,11 @@ public class LinuxCameraControl : ICameraControl
 		}
 
 		return value;
+	}
+
+	public void Dispose()
+	{
+		_events.Unsubscribe(this);
+		GC.SuppressFinalize(this);
 	}
 }

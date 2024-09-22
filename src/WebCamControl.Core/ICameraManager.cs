@@ -1,4 +1,5 @@
-using System.Collections.Immutable;
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
 
 namespace WebCamControl.Core;
 
@@ -11,11 +12,11 @@ public interface ICameraManager
 	/// Enumerates the cameras attached to the system.
 	/// </summary>
 	/// <returns>The cameras</returns>
-	public IReadOnlyList<ICamera> GetCameras();
+	// public IReadOnlyList<ICamera> Cameras { get; }
 	
 	/// <summary>
 	/// Determine the best camera to use
 	/// </summary>
 	/// <returns>The camera</returns>
-	public ICamera GetDefaultCamera();
+	public ICamera DefaultCamera { get; }
 }
