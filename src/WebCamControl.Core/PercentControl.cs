@@ -9,6 +9,7 @@ public class PercentControl(ICameraControl<int> control) : ICameraControl<int>
 	public int Minimum => 0;
 	public int Maximum => 100;
 	public int Step => MapValueToPercentage(control.Step);
+	public bool IsEnabled => control.IsEnabled;
 
 	public int Value
 	{

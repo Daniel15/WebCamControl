@@ -14,7 +14,7 @@ namespace WebCamControl.Core.Linux;
 public class LinuxCameraControl : ICameraControl, IDisposable
 {
 	private readonly IntPtr _fd;
-	private readonly QueryControl _controlData;
+	private QueryControl _controlData;
 	private readonly ILogger<LinuxCameraControl> _logger;
 	private readonly LinuxCameraEvents _events;
 	private readonly ControlID _id;
@@ -38,6 +38,8 @@ public class LinuxCameraControl : ICameraControl, IDisposable
 
 		_events.Subscribe(this, (evt) =>
 		{
+			var result = ioctl(_fd, IoctlCommand.QueryControl, ref _controlData);
+			InteropException.ThrowIfError(result);
 			Changed?.Invoke(this, EventArgs.Empty);
 		});
 	}
@@ -47,6 +49,12 @@ public class LinuxCameraControl : ICameraControl, IDisposable
 	public int Minimum => _controlData.Minimum;
 	public int Maximum => _controlData.Maximum;
 	public int Step => _controlData.Step;
+
+	public bool IsEnabled =>
+		!_controlData.Flags.HasFlag(ControlFlags.Disabled) &&
+		!_controlData.Flags.HasFlag(ControlFlags.Grabbed) &&
+		!_controlData.Flags.HasFlag(ControlFlags.Inactive) &&
+		!_controlData.Flags.HasFlag(ControlFlags.ReadOnly);
 
 	public int Value
 	{

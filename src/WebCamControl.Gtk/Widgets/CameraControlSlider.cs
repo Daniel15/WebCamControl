@@ -48,7 +48,7 @@ public class CameraControlSlider : ActionRow
 		{
 			Subtitle = userFriendlyValue;
 		}
-		// TODO: Disable widget if control is readonly/inactive/grabbed
+		Sensitive = _control.IsEnabled;
 	}
 
 	public static CameraControlSlider? TryCreate(ICameraControl<int>? control)

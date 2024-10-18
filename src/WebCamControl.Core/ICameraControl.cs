@@ -38,6 +38,11 @@ public interface ICameraControl<T>
 	string? UserFriendlyValue { get; }
 	
 	/// <summary>
+	/// Gets whether this control is currently disabled.
+	/// </summary>
+	bool IsEnabled { get; }
+	
+	/// <summary>
 	/// Fired when the value of this control is changed.
 	/// </summary>
 	public event EventHandler Changed;

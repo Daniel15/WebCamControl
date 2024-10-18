@@ -43,5 +43,6 @@ public class CameraControlSwitch : Box
 	private void UpdateState()
 	{
 		_switch.Active = _control.Value;
+		_switch.Sensitive = _control.IsEnabled;
 	}
 }
