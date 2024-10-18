@@ -43,6 +43,16 @@ Adw.ApplicationWindow full_window {
             }
           };
         }
+        Adw.ViewStackPage {
+          name: "presets";
+          title: _("Presets");
+          child: ListBox _presetsList {
+            styles [
+              "boxed-list",
+              "settings-page",
+            ]
+          };
+        }
       }
     };
   }

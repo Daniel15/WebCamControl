@@ -30,5 +30,10 @@ public interface IPresets
 	/// </summary>
 	/// <param name="index">Preset index to overwrite. If <c>null</c>, a new preset will be saved.</param>
 	public void SaveCurrent(ICamera camera, string name, int? index);
+
+	/// <summary>
+	/// Deletes the preset at the specified index.
+	/// </summary>
+	public void Delete(PresetConfig preset);
 }
 

@@ -67,4 +67,14 @@ public class Presets : IPresets
 		_configManager.Save();
 		OnChange?.Invoke(this, EventArgs.Empty);
 	}
+
+	/// <summary>
+	/// Deletes the preset at the specified index.
+	/// </summary>
+	public void Delete(PresetConfig preset)
+	{
+		PresetConfigs.Remove(preset);
+		_configManager.Save();
+		OnChange?.Invoke(this, EventArgs.Empty);
+	}
 }
