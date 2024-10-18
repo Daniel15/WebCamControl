@@ -1,13 +1,14 @@
 ﻿// SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
 
-using Adw;
 using Gio;
+using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Core.Extensions;
 using WebCamControl.Gtk.Extensions;
+using Window = Adw.Window;
 
 namespace WebCamControl.Gtk;
 
@@ -67,6 +68,19 @@ public class Application
 				ShowWindow<MiniWindow>();
 			}
 		}, "<Ctrl>T");
+		
+		var display = Gdk.Display.GetDefault()!;
+		var cssProvider = CssProvider.New();
+		cssProvider.LoadFromString(@"
+			.settings-page {
+				margin: 10px;
+			}"
+		);
+		StyleContext.AddProviderForDisplay(
+			display, 
+			cssProvider, 
+			global::Gtk.Constants.STYLE_PROVIDER_PRIORITY_APPLICATION
+		);
 	}
 
 	private void OnActivate(Gio.Application application, EventArgs eventArgs)
