@@ -9,9 +9,16 @@ Adw.ApplicationWindow full_window {
       orientation: vertical;
 
       Adw.HeaderBar {
-        title-widget: Adw.ViewSwitcher {
-          stack: stack;
-          policy: wide;
+        title-widget: Box {
+          Adw.ViewSwitcher {
+            stack: stack;
+            policy: wide;
+          }
+          Button {
+            action-name: "app.toggle_view";
+            icon-name: "view-restore-symbolic";
+            tooltip-text: _("Switch to mini view (Ctrl+T)");
+          }
         };
       }
 
