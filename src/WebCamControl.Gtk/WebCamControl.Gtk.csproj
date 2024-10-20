@@ -18,10 +18,11 @@
       <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+      <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.10" />
     </ItemGroup>
 
 
-    <Target Name="BlueprintBuild" BeforeTargets="PrepareForBuild;Restore">
+    <Target Name="BlueprintBuild" BeforeTargets="PrepareForBuild">
         <!-- Build Blueprints -->
         <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/obj/blueprints/ $(MSBuildProjectDirectory) $(MSBuildProjectDirectory)/*.blp"/>
     </Target>
