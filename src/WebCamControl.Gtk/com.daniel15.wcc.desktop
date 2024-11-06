@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+
+Name=WebCamControl
+Comment=Control webcam pan/tilt/zoom settings and more
+Categories=Settings;HardwareSettings;
+
+Icon=com.daniel15.wcc
+Exec=webcamcontrol
+Terminal=false

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>com.daniel15.wcc</id>
+	<name>WebCamControl</name>
+	<summary>Control webcam pan/tilt/zoom settings and more</summary>
+	<developer id="com.daniel15">
+		<name>Daniel Lo Nigro</name>
+	</developer>
+	<metadata_license>MIT</metadata_license>
+	<project_license>MIT</project_license>
+	<url type="homepage">https://d.sb/projects/wcc</url>
+	<launchable type="desktop-id">com.daniel15.wcc.desktop</launchable>
+	<description>
+		<p>
+			Simple, modern app allowing webcam settings to be modified
+		</p>
+	</description>
+	<screenshots>
+		<screenshot type="default">
+			<image>https://d.sb/projects/wcc/screenshot1.png</image>
+		</screenshot>
+		<screenshot>
+			<image>https://d.sb/projects/wcc/screenshot2.png</image>
+		</screenshot>
+	</screenshots>
+	<content_rating type="oars-1.1" />
+</component>
