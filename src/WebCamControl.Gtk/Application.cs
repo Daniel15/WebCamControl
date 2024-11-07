@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
 
 using Gio;
+using GLib;
 using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,11 +18,14 @@ namespace WebCamControl.Gtk;
 /// </summary>
 public class Application
 {
+	private const int _returnCodeExceptionThrown = 1;
+	
 	private readonly IServiceProvider _provider;
 	private readonly Adw.Application _app;
 	private readonly ILogger<Application> _logger;
 	private Window? _mainWindow;
-	private readonly ICamera _selectedCamera;
+	private readonly Lazy<ICamera> _selectedCamera;
+	private bool _wasExceptionThrown;
 
 	public Application(
 		Adw.Application app,
@@ -32,17 +36,36 @@ public class Application
 	{
 		_app = app;
 		_logger = logger;
-		_selectedCamera = cameraManager.DefaultCamera;
+		// TODO: This should be selectable in the UI
+		_selectedCamera = new Lazy<ICamera>(() => cameraManager.DefaultCamera);
 		_provider = provider;
 
 		_app.OnStartup += OnStartup;
 		_app.OnActivate += OnActivate;
 	}
 
-	private void Run(string[] args)
+	private int Run(string[] args)
 	{
-		// TODO: Show error dialog on error
-		_app.RunWithSynchronizationContext(args);
+		UnhandledException.SetHandler(OnUnhandledException);
+		var errorCode = _app.RunWithSynchronizationContext(args);
+		// `g_application_quit` (`_app.Quit()`) doesn't let us specify an exit code, so we have to
+		// handle that ourselves.
+		return _wasExceptionThrown ? _returnCodeExceptionThrown : errorCode;
+	}
+
+	private void OnUnhandledException(Exception ex)
+	{
+		_logger.LogError(ex, "Unhandled exception");
+		_wasExceptionThrown = true;
+		var dialog = new ErrorDialog(ex);
+		dialog.OnResponse += (_, __) =>
+		{
+			_app.Release();
+			_app.Quit();
+		};
+		// .Hold() ensures the app does not close until the dialog is closed
+		_app.Hold();
+		dialog.Present(_mainWindow);
 	}
 	
 	private void OnStartup(Gio.Application sender, EventArgs args)
@@ -52,7 +75,7 @@ public class Application
 		{
 			var dialog = ActivatorUtilities.CreateInstance<SavePresetDialog>(
 				_provider,
-				_selectedCamera
+				_selectedCamera.Value
 			);
 			dialog.Present(_mainWindow);
 		}, "<Ctrl>S");
@@ -100,12 +123,12 @@ public class Application
 		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
 		_mainWindow = ActivatorUtilities.CreateInstance<T>(
 			_provider,
-			_selectedCamera
+			_selectedCamera.Value
 		);
 		_mainWindow.Present();
 	}
 
-	public static void Main(string[] args)
+	public static int Main(string[] args)
 	{
 		using var services = new ServiceCollection()
 			.AddLogging(builder =>
@@ -121,8 +144,8 @@ public class Application
 			.BuildServiceProvider();
 		
 		var app = services.GetRequiredService<Application>();
-		app.Run(args);
-
+		var returnCode = app.Run(args);
 		Console.WriteLine("Exiting...");
+		return returnCode;
 	}
 }

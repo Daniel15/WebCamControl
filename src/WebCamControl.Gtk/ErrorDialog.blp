@@ -1,0 +1,36 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.AlertDialog error_dialog {
+  heading: _("An error has occurred");
+  close-response: "okay";
+  default-response: "okay";
+  width-request: 600;
+  
+  extra-child: Box {
+    orientation: vertical;
+
+    Label _summary {
+      halign: start;
+      label: "Hello world";
+    }
+    Expander {
+      label: "Details";
+      
+      child: ScrolledWindow {
+        height-request: 250;
+        width-request: 600;
+        child: TextView _details {
+          editable: false;
+          buffer: TextBuffer {
+            text: "Hello world";
+          };
+        };
+      };
+    }
+  };
+
+  responses [
+    okay: _("OK") suggested,
+  ]
+}
