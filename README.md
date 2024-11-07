@@ -8,6 +8,12 @@ WebCamControl is a Linux GUI app that can be used to control properties of your 
 
 It's primarily designed to be an alternative to the Insta360 Link Controller software for controlling Insta360 Link cameras, however it should work with any webcam supported by Video4Linux (V4L2).
 
+It has a mini view that can be used to unobtrusively pan/tilt/zoom:
+![](https://d.sb/projects/wcc/screenshot1.png)
+
+as well as a full view for full control of the camera (still WIP):
+![](https://d.sb/projects/wcc/screenshot2.png)
+
 # Features
  - **Presets**: Save and restore camera position.
  - **Non-exclusive access**: Can be used at the same time as other apps that use the webcam, such as video conferencing apps.
