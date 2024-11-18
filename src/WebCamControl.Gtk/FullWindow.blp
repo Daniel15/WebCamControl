@@ -32,6 +32,17 @@ Adw.ApplicationWindow full_window {
               "boxed-list",
               "settings-page",
             ]
+            
+            Adw.ActionRow {
+              title: "Pan and Tilt";
+              selectable: false;
+              
+              [suffix]
+              Box _panAndTiltButtons {
+                margin-bottom: 4;
+                margin-top: 4;
+              }
+            }
 
             Adw.ActionRow _exampleRow {
               title: _("Brightness");

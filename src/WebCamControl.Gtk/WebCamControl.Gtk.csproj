@@ -25,7 +25,7 @@
     <Target Name="BlueprintBuild" BeforeTargets="PrepareForBuild">
         <!-- Build Blueprints -->
 		<Message Text="Running blueprint-compiler" Importance="high" />
-        <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/obj/blueprints/ $(MSBuildProjectDirectory) $(MSBuildProjectDirectory)/*.blp"/>
+        <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/obj/blueprints/ $(MSBuildProjectDirectory) $(MSBuildProjectDirectory)/**/*.blp"/>
     </Target>
 
 
@@ -42,7 +42,7 @@
     <!-- Add the blueprints as a resource -->
     <ItemGroup>
         <None Remove="obj\blueprints\*.ui"/>
-        <EmbeddedResource Include="obj\blueprints\*.ui">
+        <EmbeddedResource Include="obj\blueprints\**\*.ui">
             <LogicalName>%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
     </ItemGroup>

@@ -102,6 +102,11 @@ public class LinuxCamera : ICamera
 	/// Gets or sets the tilt. This is a number of degrees between -180 and 180.
 	/// </summary>
 	public AngleControl? Tilt { get; private set; }
+	
+	/// <summary>
+	/// Gets or sets the zoom.
+	/// </summary>
+	public ICameraControl<int>? Zoom { get; private set; }
 
 	/// <summary>
 	/// Any controls that are not supported as one of the high-level fields above.
@@ -178,6 +183,13 @@ public class LinuxCamera : ICamera
 		
 		integers.Remove(ControlID.TiltAbsolute, out var tilt);
 		Tilt = AngleControl.CreateIfNotNull(tilt);
+
+		integers.Remove(ControlID.ZoomAbsolute, out var zoom);
+		if (zoom != null)
+		{
+			zoom.UserFriendlyValueDelegate = value => $"{value}%";
+		}
+		Zoom = zoom;
 
 		booleans.Remove(ControlID.AutoWhiteBalance, out var autoWhiteBalance);
 		AutoWhiteBalance = autoWhiteBalance;

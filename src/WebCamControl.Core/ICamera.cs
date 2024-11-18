@@ -45,4 +45,9 @@ public interface ICamera : IDisposable
 	/// Gets or sets the tilt. This is a number of degrees between -180 and 180.
 	/// </summary>
 	public AngleControl? Tilt { get; }
+	
+	/// <summary>
+	/// Gets or sets the zoom.
+	/// </summary>
+	public ICameraControl<int>? Zoom { get; }
 }

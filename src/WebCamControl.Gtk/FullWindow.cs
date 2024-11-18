@@ -17,6 +17,7 @@ public class FullWindow : Adw.Window
 	[Connect] private readonly ListBox _controls = default!;
 	[Connect] private readonly ActionRow _exampleRow = default!;
 	[Connect] private readonly ListBox _presetsList = default!;
+	[Connect] private readonly Box _panAndTiltButtons = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
 	public FullWindow(
@@ -47,10 +48,13 @@ public class FullWindow : Adw.Window
 	/// </summary>
 	private void InitializeWidgets()
 	{
+		_panAndTiltButtons.Append(new PanAndTiltButtons(_camera));
+		
 		_controls.Remove(_exampleRow);
 		
 		var potentialControls = new Widget?[]
 		{
+			CameraControlSlider.TryCreate(_camera.Zoom),
 			CameraControlSlider.TryCreate(_camera.Brightness),
 			CameraControlSwitch.TryCreate(_camera.AutoWhiteBalance),
 			CameraControlSlider.TryCreate(_camera.Temperature),

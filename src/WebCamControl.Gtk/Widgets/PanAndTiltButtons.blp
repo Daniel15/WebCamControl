@@ -1,0 +1,54 @@
+using Gtk 4.0;
+
+Grid pan_and_tilt_buttons {
+  column-spacing: 4;
+  row-spacing: 4;
+
+  Button _up {
+    tooltip-text: _('Up');
+    icon-name: 'go-up';
+    width-request: 50;
+    height-request: 50;
+
+    layout {
+      row: '0';
+      column: '1';
+    }
+  }
+
+  Button _down {
+    tooltip-text: _('Down');
+    icon-name: 'go-down';
+    width-request: 50;
+    height-request: 50;
+
+    layout {
+      row: '1';
+      column: '1';
+    }
+  }
+
+  Button _left {
+    tooltip-text: _('Left');
+    icon-name: 'go-previous';
+    width-request: 50;
+    height-request: 50;
+
+    layout {
+      row: '1';
+      column: '0';
+    }
+  }
+
+  Button _right {
+    tooltip-text: _('Right');
+    icon-name: 'go-next';
+    width-request: 50;
+    height-request: 50;
+
+    layout {
+      row: '1';
+      column: '2';
+    }
+  }
+}

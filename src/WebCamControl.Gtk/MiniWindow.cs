@@ -11,17 +11,13 @@ namespace WebCamControl.Gtk;
 /// </summary>
 public class MiniWindow : Adw.Window
 {
-	private const float _panTiltAdjustmentAmount = 2f;
 	private const int _minPresetButtonCount = 6;
 	
 	private readonly ICamera _camera;
 	private readonly IPresets _presets;
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly PressAndHoldButton _up = default!;
-	[Connect] private readonly PressAndHoldButton _down = default!;
-	[Connect] private readonly PressAndHoldButton _left = default!;
-	[Connect] private readonly PressAndHoldButton _right = default!;
+	[Connect] private readonly Box _panAndTiltButtons = default!;
 	[Connect] private readonly Box _buttonsBox = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
@@ -45,30 +41,11 @@ public class MiniWindow : Adw.Window
 		builder.Connect(this);
 		Title = "WebCamControl: " + _camera.Name;
 		// TODO: Configure proper icon
-		
-		InitializePanAndTilt();
+
+		_panAndTiltButtons.Append(new PanAndTiltButtons(_camera));
 		InitializePresets();
 
 		presets.OnChange += (_, _) => InitializePresets();
-	}
-
-	private void InitializePanAndTilt()
-	{
-		_left.DisableCameraControlIfUnsupported(_camera.Pan);
-		_right.DisableCameraControlIfUnsupported(_camera.Pan);
-		if (_camera.Pan != null)
-		{
-			_left.OnHeld += (_, _) => _camera.Pan.Value -= _panTiltAdjustmentAmount;
-			_right.OnHeld += (_, _) => _camera.Pan.Value += _panTiltAdjustmentAmount;
-		}
-
-		_down.DisableCameraControlIfUnsupported(_camera.Tilt);
-		_up.DisableCameraControlIfUnsupported(_camera.Tilt);
-		if (_camera.Tilt != null)
-		{
-			_down.OnHeld += (_, _) => _camera.Tilt.Value -= _panTiltAdjustmentAmount;
-			_up.OnHeld += (_, _) => _camera.Tilt.Value += _panTiltAdjustmentAmount;
-		}
 	}
 
 	private void InitializePresets()
