@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
 
+using System.Reflection;
 using Gio;
 using GLib;
 using Gtk;
@@ -46,6 +47,11 @@ public class Application
 
 	private int Run(string[] args)
 	{
+		var version = Assembly.GetEntryAssembly()
+			?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+			?.InformationalVersion ?? "Unknown";
+		_logger.LogInformation("==== WebCamControl v{Version} ====", version);
+		
 		UnhandledException.SetHandler(OnUnhandledException);
 		var errorCode = _app.RunWithSynchronizationContext(args);
 		// `g_application_quit` (`_app.Quit()`) doesn't let us specify an exit code, so we have to
