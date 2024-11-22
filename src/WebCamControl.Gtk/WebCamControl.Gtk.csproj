@@ -25,7 +25,7 @@
     <Target Name="BlueprintBuild" BeforeTargets="PrepareForBuild">
         <!-- Build Blueprints -->
 		<Message Text="Running blueprint-compiler" Importance="high" />
-        <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/obj/blueprints/ $(MSBuildProjectDirectory) $(MSBuildProjectDirectory)/**/*.blp"/>
+        <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/obj/blueprints/ $(MSBuildProjectDirectory) $(MSBuildProjectDirectory)/*.blp $(MSBuildProjectDirectory)/Widgets/*.blp "/>
     </Target>
 
 

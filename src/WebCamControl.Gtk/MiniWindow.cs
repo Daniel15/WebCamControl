@@ -19,6 +19,7 @@ public class MiniWindow : Adw.Window
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 	[Connect] private readonly Box _panAndTiltButtons = default!;
 	[Connect] private readonly Box _buttonsBox = default!;
+	[Connect] private readonly Scale _zoom = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
 	public MiniWindow(
@@ -44,6 +45,7 @@ public class MiniWindow : Adw.Window
 
 		_panAndTiltButtons.Append(new PanAndTiltButtons(_camera));
 		InitializePresets();
+		InitializeZoom();
 
 		presets.OnChange += (_, _) => InitializePresets();
 	}
@@ -79,5 +81,37 @@ public class MiniWindow : Adw.Window
 			button.TooltipText = "No saved preset. Use the 'Save Preset' menu option or press Ctrl+S to save one.";			
 		}
 		return button;
+	}
+
+	private void InitializeZoom()
+	{
+		_zoom.DisableCameraControlIfUnsupported(_camera.Zoom);
+		if (_camera.Zoom != null)
+		{
+			_zoom.OnChangeValue += (x, y) =>
+			{
+				_camera.Zoom.Value = (int)y.Value;
+				return true;
+			};
+			_camera.Zoom.Changed += (_, _) => UpdateZoomState();
+			_zoom.Adjustment = new Adjustment
+			{
+				Lower = _camera.Zoom.Minimum,
+				Upper = _camera.Zoom.Maximum,
+				StepIncrement = _camera.Zoom.Step,
+			};
+			UpdateZoomState();
+		}
+	}
+
+	private void UpdateZoomState()
+	{
+		if (_camera.Zoom == null)
+		{
+			return;
+		}
+		_zoom.SetValue(_camera.Zoom.Value);
+		_zoom.Sensitive = _camera.Zoom.IsEnabled;
+		_zoom.TooltipText = $"Zoom: {_camera.Zoom.Value}%";
 	}
 }

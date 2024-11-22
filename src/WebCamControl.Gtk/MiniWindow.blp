@@ -23,6 +23,19 @@ Adw.ApplicationWindow mini_window {
       margin-end: 12;
 
       Box _panAndTiltButtons {}
+      
+      Scale _zoom {
+        orientation: vertical;
+        hexpand: true;
+        inverted: true;
+        tooltip-text: _('Zoom');
+        vexpand: true;
+        adjustment: Gtk.Adjustment {
+          lower: 0;
+          upper: 100;
+          value: 0;
+        };
+      }
 
       Separator {
         orientation: horizontal;
