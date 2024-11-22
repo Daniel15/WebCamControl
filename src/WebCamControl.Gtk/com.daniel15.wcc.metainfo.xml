@@ -27,12 +27,15 @@
 	<screenshots>
 		<screenshot type="default" xml:lang="en" scale="1.5">
 			<image>https://d.sb/projects/wcc/screenshot1.png</image>
+			<caption>Mini view</caption>
 		</screenshot>
 		<screenshot xml:lang="en" scale="1.5">
 			<image>https://d.sb/projects/wcc/screenshot2.png</image>
+			<caption>Full view, camera settings</caption>
 		</screenshot>
 		<screenshot xml:lang="en" scale="1.5">
 			<image>https://d.sb/projects/wcc/screenshot3.png</image>
+			<caption>Full view, presets</caption>
 		</screenshot>
 	</screenshots>
 	<content_rating type="oars-1.1" />
@@ -40,4 +43,10 @@
 		<color type="primary" scheme_preference="light">#62a0ea</color>
 		<color type="primary" scheme_preference="dark">#08175b</color>
 	</branding>
+	<releases>
+		<release version="1.0.0" date="2024-11-22">
+			<url type="details">https://github.com/Daniel15/WebCamControl</url>
+			<description><p>Initial release</p></description>
+		</release>
+	</releases>
 </component>
