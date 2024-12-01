@@ -1,9 +1,5 @@
 # WebCamControl
 
-### **NOTE: This app is currently under construction, and not designed to be used yet.**
-
----
-
 WebCamControl is a Linux GUI app that can be used to control properties of your webcam such as pan, tilt, zoom, etc. You can run it to adjust the camera at the same time as other apps are using it.
 
 It's primarily designed to be an alternative to the Insta360 Link Controller software for controlling Insta360 Link cameras, however it should work with any webcam supported by Video4Linux (V4L2).
@@ -20,7 +16,14 @@ as well as a full view for full control of the camera (still WIP):
 
 # Installation
 
-TBD
+## Flatpak
+WebCamControl can be found on Flathub: https://flathub.org/apps/com.daniel15.wcc
+
+## Manually
+A binary of the latest release can be downloaded from https://github.com/Daniel15/WebCamControl/releases/latest. A binary of the latest nightly build can be downloaded from https://nightly.link/Daniel15/WebCamControl/workflows/dotnet/main/artifact.zip.
+
+## From source
+See "Development" section below.
 
 # Development
 
