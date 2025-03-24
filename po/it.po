@@ -2,14 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WebCamControl\n"
 "POT-Creation-Date: 2025-03-23 19:27:50-0700\n"
-"PO-Revision-Date: 2025-03-23 19:27:51-0700\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2025-03-24 05:27+0000\n"
+"Last-Translator: Daniel Lo Nigro <sites+weblate@d.sb>\n"
+"Language-Team: Italian <https://hosted.weblate.org/projects/wcc/wcc/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: GetText.NET Extractor\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.11-dev\n"
 
 #: WebCamControl.Core/Linux/LinuxCameraManager.cs:64
 msgid "No cameras were found"
@@ -28,7 +29,7 @@ msgstr ""
 #: WebCamControl.Gtk/MiniWindow.cs:116
 #, csharp-format
 msgid "Zoom: {0}%"
-msgstr ""
+msgstr "Ingrandimento: {0}%"
 
 #: WebCamControl.Gtk/SavePresetDialog.cs:55
 #, csharp-format
@@ -95,7 +96,7 @@ msgstr ""
 
 #: WebCamControl.Gtk/FullWindow.blp:48
 msgid "Brightness"
-msgstr ""
+msgstr "Luminosità"
 
 #: WebCamControl.Gtk/FullWindow.blp:67
 msgid "Presets"
@@ -111,11 +112,11 @@ msgstr ""
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:19
 msgid "Save As"
-msgstr ""
+msgstr "Salva come"
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:25
 msgid "_Cancel"
-msgstr ""
+msgstr "_Cancellare"
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:26
 msgid "_Save"
