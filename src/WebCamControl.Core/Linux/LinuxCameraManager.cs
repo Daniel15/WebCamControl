@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
+using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Core.Linux;
 
@@ -60,7 +61,7 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 			var cameras = _cameras.Value;
 			if (cameras.Count == 0)
 			{
-				throw new Exception("No cameras were found");
+				throw new Exception(_("No cameras were found"));
 			}
 		
 			// 1. Prefer Insta360 cams

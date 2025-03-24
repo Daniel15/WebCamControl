@@ -11,6 +11,7 @@ using WebCamControl.Core;
 using WebCamControl.Core.Extensions;
 using WebCamControl.Gtk.Extensions;
 using Window = Adw.Window;
+using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
 
@@ -151,7 +152,7 @@ public class Application
 		
 		var app = services.GetRequiredService<Application>();
 		var returnCode = app.Run(args);
-		Console.WriteLine("Exiting...");
+		Console.WriteLine(_("Exiting..."));
 		return returnCode;
 	}
 }

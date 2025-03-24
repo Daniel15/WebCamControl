@@ -3,6 +3,7 @@ using Gtk;
 using WebCamControl.Core;
 using WebCamControl.Gtk.Extensions;
 using WebCamControl.Gtk.Widgets;
+using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
 
@@ -40,7 +41,7 @@ public class MiniWindow : Adw.Window
 		_camera = camera;
 		_presets = presets;
 		builder.Connect(this);
-		Title = "WebCamControl: " + _camera.Name;
+		Title = $"WebCamControl: {_camera.Name}";
 		// TODO: Configure proper icon
 
 		_panAndTiltButtons.Append(new PanAndTiltButtons(_camera));
@@ -73,12 +74,12 @@ public class MiniWindow : Adw.Window
 		if (isEnabled)
 		{
 			var thisPreset = _presets.PresetConfigs[index];
-			button.TooltipText = $"Apply preset \"{thisPreset.Name}\"";
+			button.TooltipText = _($"Apply preset \"{thisPreset.Name}\"");
 			button.OnClicked += (_, _) => _presets.ApplyTo(thisPreset, _camera);
 		}
 		else
 		{
-			button.TooltipText = "No saved preset. Use the 'Save Preset' menu option or press Ctrl+S to save one.";			
+			button.TooltipText = _("No saved preset. Use the 'Save Preset' menu option or press Ctrl+S to save one.");			
 		}
 		return button;
 	}
@@ -112,6 +113,6 @@ public class MiniWindow : Adw.Window
 		}
 		_zoom.SetValue(_camera.Zoom.Value);
 		_zoom.Sensitive = _camera.Zoom.IsEnabled;
-		_zoom.TooltipText = $"Zoom: {_camera.Zoom.Value}%";
+		_zoom.TooltipText = _($"Zoom: {_camera.Zoom.Value}%");
 	}
 }

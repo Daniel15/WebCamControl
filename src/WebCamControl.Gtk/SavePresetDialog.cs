@@ -2,6 +2,7 @@ using Adw;
 using GObject;
 using Gtk;
 using WebCamControl.Core;
+using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
 
@@ -51,10 +52,10 @@ public class SavePresetDialog : Adw.AlertDialog
 	private void PopulateSaveDropdown()
 	{
 		var existingPresetOptions = _presets.PresetConfigs.Select(
-			(config, index) => new DestinationRow(index, $"Replace #{index + 1}: {config.Name}")
+			(config, index) => new DestinationRow(index, _($"Replace #{index + 1}: {config.Name}"))
 		);
 		_destination.LabelCallback = item => item.Name;
-		_destination.Items = new[] { new DestinationRow(null, "New preset") }
+		_destination.Items = new[] { new DestinationRow(null, _("New preset")) }
 			.Concat(existingPresetOptions);
 	}
 

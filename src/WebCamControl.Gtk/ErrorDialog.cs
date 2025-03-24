@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
 
 using Gtk;
+using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
 
@@ -17,7 +18,7 @@ public class ErrorDialog : Adw.AlertDialog
 		: base(builder.GetPointer("error_dialog"), false)
 	{
 		builder.Connect(this);
-		_summary.Label_ = "If this is unexpected, please report a bug. Error: " + ex.Message;
+		_summary.Label_ = _($"If this is unexpected, please report a bug. Error: {ex.Message}");
 		_details.Buffer!.Text = ex.ToString();
 	}
 }
