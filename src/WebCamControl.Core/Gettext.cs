@@ -7,6 +7,8 @@ namespace WebCamControl.Core;
 
 public static class Gettext
 {
+	public const string TextDomain = "webcamcontrol";
+	
 	// TODO: See if dependency injection can be used for this.
 	private static readonly ICatalog _catalog;
 
@@ -14,7 +16,7 @@ public static class Gettext
 	{
 		// TODO: Initialize native gettext for translations in Blueprint files
 		// TODO: Load correct .mo file
-		//var moStream = File.OpenRead("/home/daniel/src/WebCamControl/po/en_US.mo");
+		//var moStream = File.OpenRead("/home/daniel/src/WebCamControl/po/test/en/LC_MESSAGES/webcamcontrol.mo");
 		//_catalog = new Catalog(moStream, new CultureInfo("en-US"));
 		_catalog = new Catalog();
 	}

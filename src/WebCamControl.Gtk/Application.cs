@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Core.Extensions;
 using WebCamControl.Gtk.Extensions;
+using WebCamControl.Linux.Interop;
 using Window = Adw.Window;
 using static WebCamControl.Core.Gettext;
 
@@ -44,6 +45,8 @@ public class Application
 
 		_app.OnStartup += OnStartup;
 		_app.OnActivate += OnActivate;
+		
+		NativeGettext.Init();
 	}
 
 	private int Run(string[] args)

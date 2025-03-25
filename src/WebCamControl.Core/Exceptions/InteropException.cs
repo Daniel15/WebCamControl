@@ -33,4 +33,16 @@ public class InteropException(string message) : Exception(message)
 			throw new InteropException("Unknown error (returned -1)");
 		}
 	}
+	
+	/// <summary>
+	/// Throws an exception if result is NULL or the last P/Invoke call threw an error (set errno).
+	/// </summary>
+	public static void ThrowIfError(IntPtr result)
+	{
+		ThrowIfError();
+		if (result == IntPtr.Zero)
+		{
+			throw new InteropException("Unknown error (returned NULL)");
+		}
+	}
 }
