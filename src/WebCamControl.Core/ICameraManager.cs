@@ -12,11 +12,11 @@ public interface ICameraManager
 	/// Enumerates the cameras attached to the system.
 	/// </summary>
 	/// <returns>The cameras</returns>
-	// public IReadOnlyList<ICamera> Cameras { get; }
+	public IReadOnlyList<ICamera> Cameras { get; }
 	
 	/// <summary>
 	/// Determine the best camera to use
 	/// </summary>
 	/// <returns>The camera</returns>
-	public ICamera DefaultCamera { get; }
+	public ICamera SelectedCamera { get; set; }
 }

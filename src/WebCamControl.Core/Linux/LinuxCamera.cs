@@ -76,8 +76,22 @@ public class LinuxCamera : ICamera
 	/// <summary>
 	/// User-friendly name of the webcam (e.g. "Insta360 Link")
 	/// </summary>
-	public string Name => $"{_caps.Device} ({RawName})";
-	
+	public string Name
+	{
+		get
+		{
+			// Some cameras repeat the name twice for some reason
+			// (e.g. "Insta360 Link: Insta360 Link"). In that case, only show the name once.
+			var pieces = _caps.Device.Split(":", StringSplitOptions.TrimEntries);
+			if (pieces.Length == 2 && pieces[0] == pieces[1])
+			{
+				return pieces[0];
+			}
+
+			return _caps.Device;
+		}
+	}
+
 	/// <summary>
 	/// Gets or sets if automatic white balance is enabled.
 	/// </summary>

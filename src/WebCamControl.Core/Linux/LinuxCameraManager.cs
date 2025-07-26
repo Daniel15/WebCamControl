@@ -4,6 +4,8 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using WebCamControl.Core.Configuration;
 using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Core.Linux;
@@ -13,6 +15,8 @@ namespace WebCamControl.Core.Linux;
 /// </summary>
 public class LinuxCameraManager : ICameraManager, IDisposable
 {
+	private readonly IOptionsMonitor<Config> _config;
+	private readonly IConfigManager _configManager;
 	private readonly ILogger<LinuxCamera> _cameraLogger;
 	private readonly ILogger<LinuxCameraControl> _controlLogger;
 	private readonly ILogger<LinuxCameraEvents> _eventsLogger;
@@ -22,25 +26,29 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 	private const string _preferredDeviceName = "Insta360 Link";
 
 	public LinuxCameraManager(
+		IOptionsMonitor<Config> config,
+		IConfigManager configManager,
 		ILogger<LinuxCamera> cameraLogger,
 		ILogger<LinuxCameraControl> controlLogger,
 		ILogger<LinuxCameraEvents> eventsLogger
 	)
 	{
+		_config = config;
+		_configManager = configManager;
 		_cameraLogger = cameraLogger;
 		_controlLogger = controlLogger;
 		_eventsLogger = eventsLogger;
 		_cameras = new Lazy<IReadOnlyList<ICamera>>(GetCameras);
 	}
 	
-	private IReadOnlyList<ICamera> GetCameras()
+	private IReadOnlyList<LinuxCamera> GetCameras()
 	{
 		// TODO: We need to handle the case when a device is plugged in after startup
 		
 		if (!Directory.Exists(_v4lDeviceDir))
 		{
 			// If the directory is missing, no V4L devices are present.
-			return ReadOnlyCollection<ICamera>.Empty;
+			return ReadOnlyCollection<LinuxCamera>.Empty;
 		}
 		
 		return Directory.GetDirectories(_v4lDeviceDir)
@@ -54,7 +62,7 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 			.ToImmutableArray();
 	}
 
-	public ICamera DefaultCamera
+	public ICamera SelectedCamera
 	{
 		get
 		{
@@ -63,23 +71,46 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 			{
 				throw new Exception(_("No cameras were found"));
 			}
+			
+			// 1. See if the user has explicitly selected a camera, and that camera is available.
+			var selectedCameraName = _config.CurrentValue.SelectedCamera;
+			if (!string.IsNullOrEmpty(selectedCameraName))
+			{
+				var selectedCamera = cameras.FirstOrDefault(x => x.Name == selectedCameraName);
+				if (selectedCamera != null)
+				{
+					return selectedCamera;
+				}
+				_cameraLogger.LogError(
+					"Selected camera '{CameraName}' not found! Reverting to default.",
+					selectedCameraName
+				);
+			}
 		
-			// 1. Prefer Insta360 cams
+			// 2. Prefer Insta360 cams
 			var preferredCam = cameras.FirstOrDefault(x => x.Name == _preferredDeviceName);
 			if (preferredCam != null)
 			{
 				return preferredCam;
 			}
 		
-			// 2. TODO: maybe pick camera with most controls, or highest resolution?
+			// 3. TODO: maybe pick camera with most controls, or highest resolution?
 		
-			// 3. Pick the first one
+			// 4. Pick the first one
 			return cameras[0];	
 		}
+		set
+		{
+			_config.CurrentValue.SelectedCamera = value.Name;
+			_configManager.Save();
+		}
 	}
+	
+	public IReadOnlyList<ICamera> Cameras => _cameras.Value;
 
 	public void Dispose()
 	{
+		GC.SuppressFinalize(this);
 		if (_cameras.IsValueCreated)
 		{
 			foreach (var camera in _cameras.Value)

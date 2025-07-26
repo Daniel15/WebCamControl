@@ -27,7 +27,6 @@ public class Application
 	private readonly Adw.Application _app;
 	private readonly ILogger<Application> _logger;
 	private Window? _mainWindow;
-	private readonly Lazy<ICamera> _selectedCamera;
 	private bool _wasExceptionThrown;
 
 	public Application(
@@ -39,8 +38,6 @@ public class Application
 	{
 		_app = app;
 		_logger = logger;
-		// TODO: This should be selectable in the UI
-		_selectedCamera = new Lazy<ICamera>(() => cameraManager.DefaultCamera);
 		_provider = provider;
 
 		_app.OnStartup += OnStartup;
@@ -84,8 +81,7 @@ public class Application
 		_app.ConfigureAction("save_preset", (_, _) =>
 		{
 			var dialog = ActivatorUtilities.CreateInstance<SavePresetDialog>(
-				_provider,
-				_selectedCamera.Value
+				_provider
 			);
 			dialog.Present(_mainWindow);
 		}, "<Ctrl>S");
@@ -132,8 +128,7 @@ public class Application
 		
 		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
 		_mainWindow = ActivatorUtilities.CreateInstance<T>(
-			_provider,
-			_selectedCamera.Value
+			_provider
 		);
 		_mainWindow.Present();
 	}

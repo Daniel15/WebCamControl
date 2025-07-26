@@ -24,6 +24,26 @@ Adw.ApplicationWindow full_window {
 
       Adw.ViewStack stack {
         Adw.ViewStackPage {
+          name: "camera";
+          title: _("Camera");
+
+          child: ListBox {
+            styles [
+              "boxed-list",
+              "settings-page",
+            ]
+
+            Adw.ComboRow _cameraCombo {
+              title: _("Camera");
+              model: Gtk.StringList {
+                // Dummy data for testing
+                strings["My Cool Camera 1", "Some Other Camera"]
+              };
+            }
+          };
+        }
+        
+        Adw.ViewStackPage {
           name: "image";
           title: _("Image");
 
@@ -33,7 +53,7 @@ Adw.ApplicationWindow full_window {
               "settings-page",
             ]
             
-            Adw.ActionRow {
+            Adw.ActionRow _panAndTiltRow {
               title: _("Pan and Tilt");
               selectable: false;
               
@@ -62,6 +82,7 @@ Adw.ApplicationWindow full_window {
             }
           };
         }
+        
         Adw.ViewStackPage {
           name: "presets";
           title: _("Presets");

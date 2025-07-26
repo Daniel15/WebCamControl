@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
 
@@ -9,6 +12,7 @@ namespace WebCamControl.Gtk;
 /// <typeparam name="T">Type of item</typeparam>
 public class CustomComboRow<T> : ComboRow
 {
+	private T[] _items = [];
 	private Dictionary<string, T> _labelToItem = new();
 
 	public CustomComboRow(IntPtr ptr, bool ownedRef) : base(ptr, ownedRef) { }
@@ -26,14 +30,14 @@ public class CustomComboRow<T> : ComboRow
 	{
 		set
 		{
-			var items = value.ToArray();
-			var itemCount = items.Length;
+			_items = value.ToArray();
+			var itemCount = _items.Length;
 			var labelToItem = new Dictionary<string, T>(itemCount);
 			var labels = new string[itemCount];
 
 			for (var i = 0; i < itemCount; i++)
 			{
-				var item = items[i];
+				var item = _items[i];
 				var label = LabelCallback(item);
 				labels[i] = label;
 				if (!labelToItem.TryAdd(label, item))
@@ -58,6 +62,11 @@ public class CustomComboRow<T> : ComboRow
 		{
 			var label = (StringObject?)base.SelectedItem;
 			return label?.String == null ? default : _labelToItem[label.String];
+		}
+		set
+		{
+			var index = (uint)Array.FindIndex(_items, item => Equals(item, value));
+			SetSelected(index);
 		}
 	}
 }

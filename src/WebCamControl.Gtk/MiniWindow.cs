@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
+
 using System.Globalization;
 using Gtk;
 using WebCamControl.Core;
@@ -25,20 +28,20 @@ public class MiniWindow : Adw.Window
 
 	public MiniWindow(
 		Adw.Application app,
-		ICamera camera,
+		ICameraManager cameraManager,
 		IPresets presets
-	) : this(new Builder("MiniWindow.ui"), camera, presets)
+	) : this(new Builder("MiniWindow.ui"), cameraManager, presets)
 	{
 		Application = app;
 	}
 
 	private MiniWindow(
 		Builder builder,
-		ICamera camera,
+		ICameraManager cameraManager,
 		IPresets presets
 	) : base(builder.GetPointer("mini_window"), false)
 	{
-		_camera = camera;
+		_camera = cameraManager.SelectedCamera;
 		_presets = presets;
 		builder.Connect(this);
 		Title = $"WebCamControl: {_camera.Name}";
