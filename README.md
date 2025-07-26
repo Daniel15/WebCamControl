@@ -25,6 +25,12 @@ A binary of the latest release can be downloaded from https://github.com/Daniel1
 ## From source
 See "Development" section below.
 
+# Translations
+
+Translations are managed using [Weblate](https://hosted.weblate.org/engage/wcc/)
+
+[![](https://hosted.weblate.org/widget/wcc/multi-auto.svg)](https://hosted.weblate.org/engage/wcc/)
+
 # Development
 
 1. Install [.NET 8.0](https://learn.microsoft.com/en-us/dotnet/core/install/linux)
