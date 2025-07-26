@@ -21,7 +21,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Install dependencies
-      run: sudo apt-get install -y blueprint-compiler gir1.2-gtk-4.0 gir1.2-adw-1
+      run: sudo apt-get update && sudo apt-get install -y blueprint-compiler gir1.2-gtk-4.0 gir1.2-adw-1
         
     - name: Restore dependencies
       run: dotnet restore
