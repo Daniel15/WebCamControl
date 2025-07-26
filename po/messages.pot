@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WebCamControl\n"
-"POT-Creation-Date: 2025-03-23 19:27:50-0700\n"
-"PO-Revision-Date: 2025-03-23 19:27:51-0700\n"
+"POT-Creation-Date: 2025-07-26 15:20:25-0700\n"
+"PO-Revision-Date: 2025-07-26 15:20:25-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -10,21 +10,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: GetText.NET Extractor\n"
 
-#: WebCamControl.Core/Linux/LinuxCameraManager.cs:64
+#: WebCamControl.Core/Linux/LinuxCameraManager.cs:72
 msgid "No cameras were found"
 msgstr ""
 
-#: WebCamControl.Gtk/MiniWindow.cs:82
+#: WebCamControl.Gtk/MiniWindow.cs:85
 msgid ""
 "No saved preset. Use the 'Save Preset' menu option or press Ctrl+S to save "
 "one."
 msgstr ""
 
-#: WebCamControl.Gtk/Application.cs:155
+#: WebCamControl.Gtk/Application.cs:153
 msgid "Exiting..."
 msgstr ""
 
-#: WebCamControl.Gtk/MiniWindow.cs:116
+#: WebCamControl.Gtk/MiniWindow.cs:119
 #, csharp-format
 msgid "Zoom: {0}%"
 msgstr ""
@@ -43,7 +43,7 @@ msgstr ""
 msgid "If this is unexpected, please report a bug. Error: {0}"
 msgstr ""
 
-#: WebCamControl.Gtk/MiniWindow.cs:77
+#: WebCamControl.Gtk/MiniWindow.cs:80
 #, csharp-format
 msgid "Apply preset \"{0}\""
 msgstr ""
@@ -85,18 +85,23 @@ msgid "Switch to mini view (Ctrl+T)"
 msgstr ""
 
 #: WebCamControl.Gtk/FullWindow.blp:28
-msgid "Image"
-msgstr ""
-
 #: WebCamControl.Gtk/FullWindow.blp:37
-msgid "Pan and Tilt"
+msgid "Camera"
 msgstr ""
 
 #: WebCamControl.Gtk/FullWindow.blp:48
+msgid "Image"
+msgstr ""
+
+#: WebCamControl.Gtk/FullWindow.blp:57
+msgid "Pan and Tilt"
+msgstr ""
+
+#: WebCamControl.Gtk/FullWindow.blp:68
 msgid "Brightness"
 msgstr ""
 
-#: WebCamControl.Gtk/FullWindow.blp:67
+#: WebCamControl.Gtk/FullWindow.blp:88
 msgid "Presets"
 msgstr ""
 
