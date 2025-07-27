@@ -77,6 +77,8 @@ public class Application
 	
 	private void OnStartup(Gio.Application sender, EventArgs args)
 	{
+		LoadResources();
+		
 		_app.ConfigureAction("quit", (_, _) => _app.Quit(), "<Ctrl>Q");
 		_app.ConfigureAction("save_preset", (_, _) =>
 		{
@@ -97,6 +99,8 @@ public class Application
 				ShowWindow<MiniWindow>();
 			}
 		}, "<Ctrl>T");
+		
+		_app.ConfigureAction("about", (_, _) => AboutWindow.Show(_mainWindow));
 		
 		var display = Gdk.Display.GetDefault()!;
 		var cssProvider = CssProvider.New();
@@ -131,6 +135,28 @@ public class Application
 			_provider
 		);
 		_mainWindow.Present();
+	}
+	
+	/// <summary>
+	/// Loads GLib resources. One of the reasons this is required is for the app icon.
+	/// </summary>
+	private void LoadResources()
+	{
+		using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("WebCamControl.Gtk.webcamcontrol.gresource");
+		if (stream == null)
+		{
+			throw new Exception("Could not load resources");
+		}
+		var data = new byte[stream.Length];
+		stream.Read(data, 0, data.Length);
+
+		var resource = Resource.NewFromData(Bytes.New(data));
+		resource.Register();
+		
+		// Add the resource path to icon theme
+		var theme = IconTheme.GetForDisplay(Gdk.Display.GetDefault()!);
+		theme.AddResourcePath("/com/daniel15/webcamcontrol/icons");
+		
 	}
 
 	public static int Main(string[] args)

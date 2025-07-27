@@ -10,7 +10,7 @@
 		<!-- Workaround for Rider bug https://youtrack.jetbrains.com/issue/RIDER-56918/Cannot-start-debugging-net5-project-on-Linux-when-using-PublishSingleFile-in-.proj-file -->
 		<PublishSingleFile  Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
 		<AssemblyName>webcamcontrol</AssemblyName>
-		<Version>1.0.0</Version>
+		<Version>1.1.0</Version>
 		<IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
@@ -29,6 +29,11 @@
 		<Message Text="Running blueprint-compiler" Importance="high" />
         <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/obj/blueprints/ $(MSBuildProjectDirectory) $(MSBuildProjectDirectory)/*.blp $(MSBuildProjectDirectory)/Widgets/*.blp "/>
     </Target>
+	
+	<Target Name="CompileGLibResources" BeforeTargets="BeforeCompile">
+		<!-- Compile resources into gresource file. Required for icon in about dialog -->
+		<Exec Command="glib-compile-resources $(MSBuildProjectDirectory)/resources.xml --target=$(MSBuildProjectDirectory)/webcamcontrol.gresource --sourcedir=." />
+	</Target>
 
 
     <Target Name="ExtraCleanup" AfterTargets="Clean">
@@ -50,6 +55,10 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\WebCamControl.Core\WebCamControl.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="webcamcontrol.gresource" />
+      <EmbeddedResource Include="webcamcontrol.gresource" />
     </ItemGroup>
 
 </Project>

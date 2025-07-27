@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+	<gresource prefix="/com/daniel15/webcamcontrol/icons">
+		<file>icon-512x512.png</file>
+	</gresource>
+</gresources>
