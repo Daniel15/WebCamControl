@@ -36,9 +36,13 @@ Translations are managed using [Weblate](https://hosted.weblate.org/engage/wcc/)
 1. Install [.NET 8.0](https://learn.microsoft.com/en-us/dotnet/core/install/linux)
 2. Install required packages.
    ```sh
-   # on Debian/Ubuntu
+   # Debian 12 or lower, Ubuntu 24.10 or lower
+   sudo apt install blueprint-compiler gir1.2-gtk-4.0 gir1.2-adw-1 gettext libglib2.0-dev-bin
+   
+   # Debian 13 or newer, Ubuntu 25.04 or newer
    sudo apt install blueprint-compiler gir1.2-gtk-4.0 gir1.2-adw-1 gettext libgio-2.0-dev-bin
-   # on Fedora
+   
+   # Fedora
    sudo dnf install blueprint-compiler gobject-introspection gettext glib2-devel
    ```
 3. Clone the repo
