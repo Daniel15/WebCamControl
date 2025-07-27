@@ -34,8 +34,15 @@ Translations are managed using [Weblate](https://hosted.weblate.org/engage/wcc/)
 # Development
 
 1. Install [.NET 8.0](https://learn.microsoft.com/en-us/dotnet/core/install/linux)
-2. Clone the repo
-3. Run it using `dotnet run`:
+2. Install required packages.
+   ```sh
+   # on Debian/Ubuntu
+   sudo apt install blueprint-compiler gir1.2-gtk-4.0 gir1.2-adw-1 gettext libgio-2.0-dev-bin
+   # on Fedora
+   sudo dnf install blueprint-compiler gobject-introspection gettext glib2-devel
+   ```
+3. Clone the repo
+4. Run it using `dotnet run`:
 ```shell
 dotnet run --project ./src/WebCamControl.Gtk
 ```
