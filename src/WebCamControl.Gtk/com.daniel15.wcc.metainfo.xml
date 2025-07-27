@@ -44,8 +44,20 @@
 		<color type="primary" scheme_preference="dark">#08175b</color>
 	</branding>
 	<releases>
+		<release version="1.1.0" date="2025-07-27">
+			<url type="details">https://github.com/Daniel15/WebCamControl/releases/tag/v1.1.0</url>
+			<description>
+				<ul>
+					<li>Allow different camera to be selected, for users with multiple cameras.</li>
+					<li>Default to the camera with the highest resolution</li>
+					<li>Allow multiple instances to be opened at the same time (e.g. to control multiple cameras)</li>
+					<li>Added initial support for translations</li>
+					<li>Added 'About' modal, and 'Report Bug' button to error messages</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.0.0" date="2024-11-22">
-			<url type="details">https://github.com/Daniel15/WebCamControl</url>
+			<url type="details">https://github.com/Daniel15/WebCamControl/releases/tag/v1.0.0</url>
 			<description><p>Initial release</p></description>
 		</release>
 	</releases>
