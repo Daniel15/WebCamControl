@@ -36,3 +36,5 @@ bld/
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+
+/src/WebCamControl.Core/Locales

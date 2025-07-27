@@ -17,4 +17,15 @@
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     </ItemGroup>
 
+	<Target Name="GettextBuild" BeforeTargets="BeforeCompile">
+		<!-- Build gettext .mo files -->
+		<Exec Command="$(MSBuildProjectDirectory)\..\..\po\compile.sh" />
+	</Target>
+
+    <ItemGroup>
+      <Content Include="Locales\**\LC_MESSAGES\webcamcontrol.mo">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
