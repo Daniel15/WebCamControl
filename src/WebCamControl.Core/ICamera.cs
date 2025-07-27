@@ -22,6 +22,11 @@ public interface ICamera : IDisposable
 	public string Name { get; }
 	
 	/// <summary>
+	/// Gets the video modes supported by the webcam.
+	/// </summary>
+	public IReadOnlyList<VideoMode> VideoModes { get; }
+	
+	/// <summary>
 	/// Gets or sets if automatic white balance is enabled.
 	/// </summary>
 	public BooleanControl? AutoWhiteBalance { get; }

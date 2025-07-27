@@ -48,4 +48,34 @@ internal static class Ioctl
 		IoctlCommand command, 
 		ref Event argp
 	);
+	
+	/// <summary>
+	/// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/vidioc-enum-fmt.html
+	/// </summary>
+	[DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+	public static extern int ioctl(
+		IntPtr fd,
+		IoctlCommand command, 
+		ref FormatDescription argp
+	);
+	
+	/// <summary>
+	/// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/vidioc-enum-framesizes.html
+	/// </summary>
+	[DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+	public static extern int ioctl(
+		IntPtr fd,
+		IoctlCommand command, 
+		ref FrameSize argp
+	);
+	
+	/// <summary>
+	/// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/vidioc-enum-frameintervals.html
+	/// </summary>
+	[DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+	public static extern int ioctl(
+		IntPtr fd,
+		IoctlCommand command, 
+		ref FrameInterval argp
+	);
 }

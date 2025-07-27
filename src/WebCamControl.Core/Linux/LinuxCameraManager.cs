@@ -86,18 +86,19 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 					selectedCameraName
 				);
 			}
-		
+			
 			// 2. Prefer Insta360 cams
 			var preferredCam = cameras.FirstOrDefault(x => x.Name == _preferredDeviceName);
 			if (preferredCam != null)
 			{
 				return preferredCam;
 			}
-		
-			// 3. TODO: maybe pick camera with most controls, or highest resolution?
-		
-			// 4. Pick the first one
-			return cameras[0];	
+			
+			// 3. Pick the camera with the highest resolution. (if multiple cameras have the same 
+			//    max resolution, it'll be arbitrary).
+			return cameras
+				.OrderByDescending(x => x.VideoModes.Max(y => y.Width * y.Height))
+				.First();
 		}
 		set
 		{

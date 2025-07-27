@@ -23,7 +23,7 @@ public class LinuxCamera : ICamera
 	private readonly IntPtr _fd;
 	private readonly Capability _caps;
 	private readonly LinuxCameraEvents _events;
-	private readonly List<LinuxCameraControl> _allRawControls = new();
+	private readonly List<LinuxCameraControl> _allRawControls = [];
 
 	/// <summary>
 	/// Creates a new <see cref="LinuxCamera"/>.
@@ -47,6 +47,7 @@ public class LinuxCamera : ICamera
 		_fd = _deviceFile.SafeFileHandle.DangerousGetHandle();
 		_caps = GetCapabilities();
 		_events = new LinuxCameraEvents(eventsLogger, _fd);
+		VideoModes = ComputeVideoModes();
 		
 		logger.LogInformation(
 			"Found camera: {name}. \nCapabilities: 0x{caps:X}\nDevice Capabilities: 0x{deviceCaps:X}\nSupported? {isSupported}", 
@@ -91,6 +92,11 @@ public class LinuxCamera : ICamera
 			return _caps.Device;
 		}
 	}
+
+	/// <summary>
+	/// Gets the video modes supported by the webcam.
+	/// </summary>
+	public IReadOnlyList<VideoMode> VideoModes { get; private init; }
 
 	/// <summary>
 	/// Gets or sets if automatic white balance is enabled.
@@ -213,6 +219,84 @@ public class LinuxCamera : ICamera
 			Booleans = booleans.ToImmutableDictionary(),
 			Integers = integers.ToImmutableDictionary(),
 		};
+	}
+
+	private IReadOnlyList<VideoMode> ComputeVideoModes()
+	{
+		var videoModes = new List<VideoMode>();
+		var fmtDesc = new FormatDescription
+		{
+			Index = 0,
+			Type = BufferType.VideoCapture, 
+		};
+		while (ioctl(_fd, IoctlCommand.EnumerateFormats, ref fmtDesc) == 0)
+		{
+			++fmtDesc.Index;
+			var frameSize = new FrameSize
+			{
+				Index = 0,
+				PixelFormat = fmtDesc.PixelFormat,
+			};
+			while (ioctl(_fd, IoctlCommand.EnumerateFrameSizes, ref frameSize) == 0)
+			{
+				++frameSize.Index;
+				// Only supports discrete frame sizes for now
+				if (frameSize.Type != FrameSizeType.Discrete)
+				{
+					continue;
+				}
+
+				var frameInterval = new FrameInterval
+				{
+					Height = frameSize.Size.Discrete.Height,
+					Index = 0,
+					PixelFormat = fmtDesc.PixelFormat,
+					Width = frameSize.Size.Discrete.Width,
+				};
+				while (ioctl(_fd, IoctlCommand.EnumerateFrameIntervals, ref frameInterval) == 0)
+				{
+					++frameInterval.Index;
+					// Only supports discrete frame intervals for now
+					if (frameInterval.Type != FrameIntervalType.Discrete)
+					{
+						continue;
+					}
+
+					var videoMode = new VideoMode
+					{
+						FrameRate = frameInterval.Interval.Discrete.Denominator /
+						            frameInterval.Interval.Discrete.Numerator,
+						Height = frameSize.Size.Discrete.Height,
+						PixelFormatName = fmtDesc.Description,
+						PixelFormatId = fmtDesc.PixelFormat,
+						Width = frameSize.Size.Discrete.Width,
+					};
+					videoModes.Add(videoMode);
+					_logger.LogInformation(
+						"{Name}: Supports {FormatName} {Width}x{Height} {FrameRate} fps",
+						Name,
+						videoMode.PixelFormatName,
+						videoMode.Width,
+						videoMode.Height,
+						videoMode.FrameRate
+					);
+				}
+			}
+		}
+
+		return videoModes
+			// Sort better modes to the top
+			.OrderByDescending(x => x.Width)
+			.ThenByDescending(x => x.Height)
+			.ThenByDescending(x => x.FrameRate)
+			.ThenBy(mode => mode.PixelFormatName switch
+			{
+				"H.264" => 1,
+				"YUYV 4:2:2" => 2,
+				"Motion-JPEG" => 4,
+				_ => 3
+			})
+			.ToImmutableList();
 	}
 	
 	private Capability GetCapabilities()

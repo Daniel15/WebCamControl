@@ -43,4 +43,19 @@ public enum IoctlCommand : uint
 	/// VIDIOC_DQEVENT
 	/// </summary>
 	DequeueEvent = 0x80885659,
+	
+	/// <summary>
+	/// VIDIOC_ENUM_FMT
+	/// </summary>
+	EnumerateFormats = 0xC0405602,
+	
+	/// <summary>
+	/// VIDIOC_ENUM_FRAMESIZES
+	/// </summary>
+	EnumerateFrameSizes = 0xC02C564A,
+	
+	/// <summary>
+	/// VIDIOC_ENUM_FRAMEINTERVALS
+	/// </summary>
+	EnumerateFrameIntervals = 0xC034564B,
 }
