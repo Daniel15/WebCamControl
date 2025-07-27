@@ -19,7 +19,7 @@ public static class AboutWindow
 			ApplicationName = "WebCamControl",
 			Copyright = "© 2024-2025 Daniel Lo Nigro (Daniel15)",
 			DeveloperName = "Daniel Lo Nigro",
-			Developers = ["Daniel Lo Nigro <d@d.sb>"],
+			Developers = ["Daniel Lo Nigro <apps+wcc@d.sb>"],
 			IssueUrl = BugReport.BuildBugReportUri(null).ToString(),
 			LicenseType = License.MitX11,
 			SupportUrl = "https://github.com/Daniel15/WebCamControl/issues",
