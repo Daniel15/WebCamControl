@@ -64,15 +64,7 @@ public class Application
 	{
 		_logger.LogError(ex, "Unhandled exception");
 		_wasExceptionThrown = true;
-		var dialog = new ErrorDialog(ex);
-		dialog.OnResponse += (_, __) =>
-		{
-			_app.Release();
-			_app.Quit();
-		};
-		// .Hold() ensures the app does not close until the dialog is closed
-		_app.Hold();
-		dialog.Present(_mainWindow);
+		ErrorDialog.ShowError(ex, _app, _mainWindow);
 	}
 	
 	private void OnStartup(Gio.Application sender, EventArgs args)
@@ -131,10 +123,17 @@ public class Application
 		}
 		
 		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
-		_mainWindow = ActivatorUtilities.CreateInstance<T>(
-			_provider
-		);
-		_mainWindow.Present();
+		try
+		{
+			_mainWindow = ActivatorUtilities.CreateInstance<T>(
+				_provider
+			);
+			_mainWindow.Present();
+		}
+		catch (Exception ex)
+		{
+			OnUnhandledException(ex);
+		}
 	}
 	
 	/// <summary>
