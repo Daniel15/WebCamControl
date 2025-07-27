@@ -50,32 +50,9 @@ public class ErrorDialog : Adw.AlertDialog
 
 	private static void ReportBug(Exception ex)
 	{
-		var version = Assembly.GetEntryAssembly()
-			?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-			?.InformationalVersion ?? "Unknown";
-		
-		var query = HttpUtility.ParseQueryString(string.Empty);
-		query["title"] = $"Bug: {ex.Message}";
-		query["body"] = $"""
-		                 [Explain your bug report here]
-
-		                 Version: `{version}`
-		                 System: `{RuntimeInformation.OSDescription}`
-		                 Exception:
-		                 ```
-		                 {ex}
-		                 ```
-
-		                 """;
-		
-		var urlBuilder = new UriBuilder("https://github.com/Daniel15/WebCamControl/issues/new")
-		{
-			Query = query.ToString()
-		};
-
 		Process.Start(new ProcessStartInfo
 		{
-			FileName = urlBuilder.ToString(),
+			FileName = BugReport.BuildBugReportUri(ex).ToString(),
 			UseShellExecute = true,
 		});
 		// HACK! The Process.Start doesn't seem to work if the app immediately exits afterwards. 

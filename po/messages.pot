@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WebCamControl\n"
-"POT-Creation-Date: 2025-07-26 15:20:25-0700\n"
-"PO-Revision-Date: 2025-07-26 15:20:25-0700\n"
+"POT-Creation-Date: 2025-07-27 16:01:43-0700\n"
+"PO-Revision-Date: 2025-07-27 16:01:43-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -20,13 +20,25 @@ msgid ""
 "one."
 msgstr ""
 
-#: WebCamControl.Gtk/Application.cs:153
+#: WebCamControl.Gtk/Application.cs:178
 msgid "Exiting..."
+msgstr ""
+
+#: WebCamControl.Gtk/AboutWindow.cs:26
+msgid "translator-credits"
 msgstr ""
 
 #: WebCamControl.Gtk/MiniWindow.cs:119
 #, csharp-format
 msgid "Zoom: {0}%"
+msgstr ""
+
+#: WebCamControl.Gtk/ErrorDialog.cs:25
+#, csharp-format
+msgid ""
+"Error: {0}\n"
+"\n"
+"If this is unexpected, please report a bug."
 msgstr ""
 
 #: WebCamControl.Gtk/SavePresetDialog.cs:55
@@ -36,11 +48,6 @@ msgstr ""
 
 #: WebCamControl.Gtk/SavePresetDialog.cs:58
 msgid "New preset"
-msgstr ""
-
-#: WebCamControl.Gtk/ErrorDialog.cs:21
-#, csharp-format
-msgid "If this is unexpected, please report a bug. Error: {0}"
 msgstr ""
 
 #: WebCamControl.Gtk/MiniWindow.cs:80
@@ -65,6 +72,10 @@ msgid "View all settings..."
 msgstr ""
 
 #: WebCamControl.Gtk/MiniWindow.blp:89
+msgid "About..."
+msgstr ""
+
+#: WebCamControl.Gtk/MiniWindow.blp:90
 msgid "Quit"
 msgstr ""
 
@@ -78,6 +89,10 @@ msgstr ""
 
 #: WebCamControl.Gtk/ErrorDialog.blp:34
 msgid "OK"
+msgstr ""
+
+#: WebCamControl.Gtk/ErrorDialog.blp:35
+msgid "Report a Bug"
 msgstr ""
 
 #: WebCamControl.Gtk/FullWindow.blp:20

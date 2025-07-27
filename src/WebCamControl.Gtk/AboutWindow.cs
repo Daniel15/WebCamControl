@@ -20,7 +20,7 @@ public static class AboutWindow
 			Copyright = "© 2024-2025 Daniel Lo Nigro (Daniel15)",
 			DeveloperName = "Daniel Lo Nigro",
 			Developers = ["Daniel Lo Nigro <d@d.sb>"],
-			IssueUrl = "https://github.com/Daniel15/WebCamControl/issues",
+			IssueUrl = BugReport.BuildBugReportUri(null).ToString(),
 			LicenseType = License.MitX11,
 			SupportUrl = "https://github.com/Daniel15/WebCamControl/issues",
 			TranslatorCredits = _("translator-credits"),
