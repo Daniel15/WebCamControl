@@ -170,7 +170,7 @@ public class Application
 			.AddWebCamControl()
 			.AddSingleton<Application>()
 			.AddSingleton<Adw.Application>(
-				_ => Adw.Application.New("com.daniel15.wcc", ApplicationFlags.DefaultFlags)
+				_ => Adw.Application.New("com.daniel15.wcc", ApplicationFlags.NonUnique)
 			)
 			.BuildServiceProvider();
 		
