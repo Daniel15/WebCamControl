@@ -113,7 +113,10 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 			// 3. Pick the camera with the highest resolution. (if multiple cameras have the same 
 			//    max resolution, it'll be arbitrary).
 			return cameras
-				.OrderByDescending(x => x.VideoModes.Max(y => y.Width * y.Height))
+				.OrderByDescending(
+					x => x.VideoModes.Count == 0 
+						? 0 
+						: x.VideoModes.Max(y => y.Width * y.Height))
 				.First();
 		}
 		set
