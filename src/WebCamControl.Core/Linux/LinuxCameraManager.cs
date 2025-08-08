@@ -17,6 +17,7 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 {
 	private readonly IOptionsMonitor<Config> _config;
 	private readonly IConfigManager _configManager;
+	private readonly ILogger<LinuxCameraManager> _logger;
 	private readonly ILogger<LinuxCamera> _cameraLogger;
 	private readonly ILogger<LinuxCameraControl> _controlLogger;
 	private readonly ILogger<LinuxCameraEvents> _eventsLogger;
@@ -28,6 +29,7 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 	public LinuxCameraManager(
 		IOptionsMonitor<Config> config,
 		IConfigManager configManager,
+		ILogger<LinuxCameraManager> logger,
 		ILogger<LinuxCamera> cameraLogger,
 		ILogger<LinuxCameraControl> controlLogger,
 		ILogger<LinuxCameraEvents> eventsLogger
@@ -35,6 +37,7 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 	{
 		_config = config;
 		_configManager = configManager;
+		_logger = logger;
 		_cameraLogger = cameraLogger;
 		_controlLogger = controlLogger;
 		_eventsLogger = eventsLogger;
@@ -52,12 +55,25 @@ public class LinuxCameraManager : ICameraManager, IDisposable
 		}
 		
 		return Directory.GetDirectories(_v4lDeviceDir)
-			.Select(dir => new LinuxCamera(
-				Path.GetFileName(dir),
-				_cameraLogger,
-				_controlLogger,
-				_eventsLogger
-			))
+			.Select(dir =>
+			{
+				try
+				{
+					return new LinuxCamera(
+						Path.GetFileName(dir),
+						_cameraLogger,
+						_controlLogger,
+						_eventsLogger
+					);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Could not initialize {Device}", Path.GetFileName(dir));
+					return null;
+				}
+			})
+			// Filter out nulls
+			.OfType<LinuxCamera>()
 			.Where(cam => cam.IsSupported)
 			.ToImmutableArray();
 	}
