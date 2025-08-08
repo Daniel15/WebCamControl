@@ -43,7 +43,12 @@ public class Presets : IPresets
 		{
 			camera.Tilt.Value = preset.Tilt.Value;	
 		}
-	}
+
+		if (camera.Zoom != null && preset.Zoom != null)
+		{
+			camera.Zoom.Value = preset.Zoom.Value;
+		}
+ 	}
 
 	/// <summary>
 	/// Saves the camera's current settings as a preset.
@@ -53,7 +58,8 @@ public class Presets : IPresets
 		var newPreset = new PresetConfig(
 			Name: name,
 			Pan: camera.Pan?.Value,
-			Tilt: camera.Tilt?.Value
+			Tilt: camera.Tilt?.Value,
+			Zoom: camera.Zoom?.Value
 		);
 		if (index == null)
 		{

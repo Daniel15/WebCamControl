@@ -6,5 +6,6 @@ namespace WebCamControl.Core.Configuration;
 public record PresetConfig(
 	string Name,
 	float? Pan,
-	float? Tilt
+	float? Tilt,
+	int? Zoom
 );
