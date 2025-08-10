@@ -10,7 +10,7 @@
 		<!-- Workaround for Rider bug https://youtrack.jetbrains.com/issue/RIDER-56918/Cannot-start-debugging-net5-project-on-Linux-when-using-PublishSingleFile-in-.proj-file -->
 		<PublishSingleFile  Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
 		<AssemblyName>webcamcontrol</AssemblyName>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
