@@ -2,38 +2,40 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WebCamControl\n"
 "POT-Creation-Date: 2025-07-27 16:01:43-0700\n"
-"PO-Revision-Date: 2025-07-27 16:01:43-0700\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2025-11-15 11:51+0000\n"
+"Last-Translator: Hi My Name Is <13@37co.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/wcc/wcc/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: GetText.NET Extractor\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #: WebCamControl.Core/Linux/LinuxCameraManager.cs:72
 msgid "No cameras were found"
-msgstr ""
+msgstr "Es wurden keine Kameras gefunden"
 
 #: WebCamControl.Gtk/MiniWindow.cs:85
 msgid ""
 "No saved preset. Use the 'Save Preset' menu option or press Ctrl+S to save "
 "one."
 msgstr ""
+"Keine Voreinstellung gespeichert. Verwenden Sie die Menüoption „"
+"Voreinstellung speichern“ oder drücken Sie Strg+S, um eine zu speichern."
 
 #: WebCamControl.Gtk/Application.cs:178
 msgid "Exiting..."
-msgstr ""
+msgstr "Beenden..."
 
 #: WebCamControl.Gtk/AboutWindow.cs:26
 msgid "translator-credits"
-msgstr ""
+msgstr "Übersetzer-Credits"
 
 #: WebCamControl.Gtk/MiniWindow.cs:119
 #, csharp-format
 msgid "Zoom: {0}%"
-msgstr ""
+msgstr "Zoom: {0}%"
 
 #: WebCamControl.Gtk/ErrorDialog.cs:25
 #, csharp-format
@@ -42,102 +44,105 @@ msgid ""
 "\n"
 "If this is unexpected, please report a bug."
 msgstr ""
+"Fehler: {0}\n"
+"\n"
+"Wenn dies unerwartet ist, melden Sie bitte einen Fehler."
 
 #: WebCamControl.Gtk/SavePresetDialog.cs:55
 #, csharp-format
 msgid "Replace #{0}: {1}"
-msgstr ""
+msgstr "Ersetzen Sie #{0}: {1}"
 
 #: WebCamControl.Gtk/SavePresetDialog.cs:58
 msgid "New preset"
-msgstr ""
+msgstr "Neue Voreinstellung"
 
 #: WebCamControl.Gtk/MiniWindow.cs:80
 #, csharp-format
 msgid "Apply preset \"{0}\""
-msgstr ""
+msgstr "Voreinstellung „{0}“ anwenden"
 
 #: WebCamControl.Gtk/MiniWindow.blp:13
 msgid "Main Menu"
-msgstr ""
+msgstr "Hauptmenü"
 
 #: WebCamControl.Gtk/MiniWindow.blp:75
 msgid "View all settings (Ctrl+T)"
-msgstr ""
+msgstr "Alle Einstellungen anzeigen (Strg+T)"
 
 #: WebCamControl.Gtk/MiniWindow.blp:84
 msgid "Save Preset..."
-msgstr ""
+msgstr "Voreinstellung speichern..."
 
 #: WebCamControl.Gtk/MiniWindow.blp:88
 msgid "View all settings..."
-msgstr ""
+msgstr "Alle Einstellungen anzeigen..."
 
 #: WebCamControl.Gtk/MiniWindow.blp:89
 msgid "About..."
-msgstr ""
+msgstr "Über..."
 
 #: WebCamControl.Gtk/MiniWindow.blp:90
 msgid "Quit"
-msgstr ""
+msgstr "Beenden"
 
 #: WebCamControl.Gtk/ErrorDialog.blp:5
 msgid "An error has occurred"
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten"
 
 #: WebCamControl.Gtk/ErrorDialog.blp:18
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
 #: WebCamControl.Gtk/ErrorDialog.blp:34
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: WebCamControl.Gtk/ErrorDialog.blp:35
 msgid "Report a Bug"
-msgstr ""
+msgstr "Fehler melden"
 
 #: WebCamControl.Gtk/FullWindow.blp:20
 msgid "Switch to mini view (Ctrl+T)"
-msgstr ""
+msgstr "Zur Mini-Ansicht wechseln (Strg+T)"
 
 #: WebCamControl.Gtk/FullWindow.blp:28
 #: WebCamControl.Gtk/FullWindow.blp:37
 msgid "Camera"
-msgstr ""
+msgstr "Kamera"
 
 #: WebCamControl.Gtk/FullWindow.blp:48
 msgid "Image"
-msgstr ""
+msgstr "Bild"
 
 #: WebCamControl.Gtk/FullWindow.blp:57
 msgid "Pan and Tilt"
-msgstr ""
+msgstr "Schwenken und Neigen"
 
 #: WebCamControl.Gtk/FullWindow.blp:68
 msgid "Brightness"
-msgstr ""
+msgstr "Helligkeit"
 
 #: WebCamControl.Gtk/FullWindow.blp:88
 msgid "Presets"
-msgstr ""
+msgstr "Voreinstellungen"
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:5
 msgid "Save Preset"
-msgstr ""
+msgstr "Voreinstellung speichern"
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:16
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:19
 msgid "Save As"
-msgstr ""
+msgstr "Speichern unter"
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:25
 msgid "_Cancel"
-msgstr ""
+msgstr "_Abbrechen"
 
 #: WebCamControl.Gtk/SavePresetDialog.blp:26
 msgid "_Save"
-msgstr ""
+msgstr "_Speichern"
