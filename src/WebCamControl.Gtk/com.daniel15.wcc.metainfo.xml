@@ -71,4 +71,11 @@
 			<description><p>Initial release</p></description>
 		</release>
 	</releases>
+	<keywords>
+		<keyword>pan</keyword>
+		<keyword>tilt</keyword>
+		<keyword>zoom</keyword>
+		<keyword>webcamcontrol</keyword>
+		<keyword>videocamsettings</keyword>
+	</keywords>
 </component>
