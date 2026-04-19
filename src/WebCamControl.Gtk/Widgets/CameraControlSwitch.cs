@@ -13,7 +13,7 @@ public class CameraControlSwitch : Box
 	private readonly SwitchRow _switch;
 
 	private CameraControlSwitch(ICameraControl<bool> control)
-		: base(global::Gtk.Internal.Box.New(Orientation.Horizontal, 0), false)
+		: base(new global::Gtk.Internal.BoxHandle(global::Gtk.Internal.Box.New(Orientation.Horizontal, 0), false))
 	{
 		_control = control;
 		// SwitchRow is `final`, so we can't inherit from it. Instead, append the switch

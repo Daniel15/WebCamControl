@@ -23,10 +23,13 @@ public class PanAndTiltButtons : Box
 	[Connect] private readonly PressAndHoldButton _left = default!;
 	[Connect] private readonly PressAndHoldButton _right = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
-	
+
 	public PanAndTiltButtons(ICamera camera)
 	{
 		_camera = camera;
+		// Ensure PressAndHoldButton's GObject type is registered before the Builder
+		// tries to instantiate it from the UI definition.
+		PressAndHoldButton.GetGType();
 		_builder = new Builder("PanAndTiltButtons.ui");
 		var rootWidget = (Grid)_builder.GetObject("pan_and_tilt_buttons")!;
 		Append(rootWidget);
@@ -44,7 +47,7 @@ public class PanAndTiltButtons : Box
 			_left.OnHeld += (_, _) => _camera.Pan.Value -= _panTiltAdjustmentAmount;
 			_right.OnHeld += (_, _) => _camera.Pan.Value += _panTiltAdjustmentAmount;
 		}
-	
+
 		_down.DisableCameraControlIfUnsupported(_camera.Tilt);
 		_up.DisableCameraControlIfUnsupported(_camera.Tilt);
 		if (_camera.Tilt != null)

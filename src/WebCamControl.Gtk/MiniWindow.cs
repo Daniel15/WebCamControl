@@ -39,7 +39,7 @@ public class MiniWindow : Adw.Window
 		Builder builder,
 		ICameraManager cameraManager,
 		IPresets presets
-	) : base(builder.GetPointer("mini_window"), false)
+	) : base(new Adw.Internal.WindowHandle(builder.GetPointer("mini_window"), false))
 	{
 		_camera = cameraManager.SelectedCamera;
 		_presets = presets;

@@ -10,12 +10,26 @@ namespace WebCamControl.Gtk;
 /// Wrapper around <see cref="ComboRow"/> that allows C# types to be used as items.
 /// </summary>
 /// <typeparam name="T">Type of item</typeparam>
-public class CustomComboRow<T> : ComboRow
+public class CustomComboRow<T>
 {
+	private readonly ComboRow _comboRow;
 	private T[] _items = [];
 	private Dictionary<string, T> _labelToItem = new();
 
-	public CustomComboRow(IntPtr ptr, bool ownedRef) : base(ptr, ownedRef) { }
+	public CustomComboRow(ComboRow comboRow)
+	{
+		_comboRow = comboRow;
+		GObject.Object.NotifySignal.Connect(
+			_comboRow,
+			(_, _) => OnSelectedItemChanged?.Invoke(this, EventArgs.Empty),
+			detail: ComboRow.SelectedPropertyDefinition.UnmanagedName
+		);
+	}
+
+	/// <summary>
+	/// Raised when the selected item changes.
+	/// </summary>
+	public event EventHandler? OnSelectedItemChanged;
 
 	/// <summary>
 	/// Gets or sets a callback to get the label for the specified item.
@@ -23,7 +37,7 @@ public class CustomComboRow<T> : ComboRow
 	public Func<T, string> LabelCallback { get; set; } = item => item.ToString();
 
 	/// <summary>
-	/// Gets or sets the list of items to show 
+	/// Gets or sets the list of items to show
 	/// </summary>
 	/// <exception cref="ArgumentException">Thrown if multiple items have the same label</exception>
 	public IEnumerable<T> Items
@@ -48,7 +62,7 @@ public class CustomComboRow<T> : ComboRow
 				}
 			}
 
-			Model = StringList.New(labels);
+			_comboRow.Model = StringList.New(labels);
 			_labelToItem = labelToItem;
 		}
 	}
@@ -56,17 +70,17 @@ public class CustomComboRow<T> : ComboRow
 	/// <summary>
 	/// Gets the currently selected item.
 	/// </summary>
-	public new T? SelectedItem
+	public T? SelectedItem
 	{
 		get
 		{
-			var label = (StringObject?)base.SelectedItem;
+			var label = (StringObject?)_comboRow.SelectedItem;
 			return label?.String == null ? default : _labelToItem[label.String];
 		}
 		set
 		{
 			var index = (uint)Array.FindIndex(_items, item => Equals(item, value));
-			SetSelected(index);
+			_comboRow.SetSelected(index);
 		}
 	}
 }

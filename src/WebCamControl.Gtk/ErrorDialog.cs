@@ -19,7 +19,7 @@ public class ErrorDialog : Adw.AlertDialog
 		: this(ex, new Builder("ErrorDialog.ui")) { }
 
 	private ErrorDialog(Exception ex, Builder builder)
-		: base(builder.GetPointer("error_dialog"), false)
+		: base(new Adw.Internal.AlertDialogHandle(builder.GetPointer("error_dialog"), false))
 	{
 		builder.Connect(this);
 		_summary.Label_ = _($"Error: {ex.Message}\n\nIf this is unexpected, please report a bug.");

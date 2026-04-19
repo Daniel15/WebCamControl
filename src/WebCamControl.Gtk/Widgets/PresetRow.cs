@@ -16,10 +16,10 @@ public class PresetRow : ExpanderRow
 	public PresetRow(PresetConfig preset)
 		: this(Adw.Internal.ExpanderRow.New(), false, preset)
 	{
-		
+
 	}
 	private PresetRow(IntPtr ptr, bool ownedRef, PresetConfig preset)
-		: base(ptr, ownedRef)
+		: base(new Adw.Internal.ExpanderRowHandle(ptr, ownedRef))
 	{
 		_preset = preset;
 		Title = preset.Name;

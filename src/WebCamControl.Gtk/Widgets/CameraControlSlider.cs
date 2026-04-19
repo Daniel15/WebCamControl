@@ -13,7 +13,7 @@ public class CameraControlSlider : ActionRow
 	private readonly Scale _scale;
 
 	private CameraControlSlider(ICameraControl<int> control)
-		: base(Adw.Internal.ActionRow.New(), false)
+		: base(new Adw.Internal.ActionRowHandle(Adw.Internal.ActionRow.New(), false))
 	{
 		_control = control;
 		Title = control.Name;

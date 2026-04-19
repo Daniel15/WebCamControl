@@ -15,8 +15,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="GirCore.Adw-1" Version="0.5.0" />
-      <PackageReference Include="GirCore.Gdk-4.0" Version="0.5.0" />
+      <PackageReference Include="GirCore.Adw-1" Version="0.7.0" />
+      <PackageReference Include="GirCore.Gdk-4.0" Version="0.7.0" />
+      <PackageReference Include="GirCore.GObject-2.0.Integration" Version="0.7.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.6" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.6" />

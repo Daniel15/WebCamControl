@@ -17,20 +17,23 @@ public class SavePresetDialog : Adw.AlertDialog
 	
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 	[Connect] private readonly EntryRow _name = default!;
-	[Connect] private readonly CustomComboRow<DestinationRow> _destination = default!;
+	[Connect] private readonly ComboRow _destinationRow = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
-	
+
+	private readonly CustomComboRow<DestinationRow> _destination;
+
 	public SavePresetDialog(ICameraManager cameraManager, IPresets presets)
 		: this(new Builder("SavePresetDialog.ui"), cameraManager, presets)
 	{
 	}
 
 	private SavePresetDialog(Builder builder, ICameraManager cameraManager, IPresets presets)
-		: base(builder.GetPointer("save_preset_dialog"), false)
+		: base(new Adw.Internal.AlertDialogHandle(builder.GetPointer("save_preset_dialog"), false))
 	{
 		_camera = cameraManager.SelectedCamera;
 		_presets = presets;
 		builder.Connect(this);
+		_destination = new CustomComboRow<DestinationRow>(_destinationRow);
 		Validate();
 		PopulateSaveDropdown();
 		AttachEvents();

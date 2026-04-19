@@ -17,13 +17,15 @@ public class FullWindow : Adw.Window
 	private readonly ILogger<FullWindow> _logger;
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly CustomComboRow<ICamera> _cameraCombo = default!; 
+	[Connect] private readonly ComboRow _cameraComboRow = default!;
 	[Connect] private readonly ListBox _controls = default!;
 	[Connect] private readonly ActionRow _exampleRow = default!;
 	[Connect] private readonly ListBox _presetsList = default!;
 	[Connect] private readonly ActionRow _panAndTiltRow = default!;
 	[Connect] private readonly Box _panAndTiltButtons = default!;
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+
+	private readonly CustomComboRow<ICamera> _cameraCombo;
 
 	public FullWindow(
 		Adw.Application app,
@@ -40,14 +42,15 @@ public class FullWindow : Adw.Window
 		ICameraManager cameraManager,
 		IPresets presets,
 		ILogger<FullWindow> logger
-	) : base(builder.GetPointer("full_window"), false)
+	) : base(new Adw.Internal.WindowHandle(builder.GetPointer("full_window"), false))
 	{
 		_cameraManager = cameraManager;
 		_presets = presets;
 		_logger = logger;
 		builder.Connect(this);
+		_cameraCombo = new CustomComboRow<ICamera>(_cameraComboRow);
 		// TODO: Configure proper icon
-		
+
 		InitializeWidgets();
 	}
 
@@ -70,22 +73,18 @@ public class FullWindow : Adw.Window
 		_cameraCombo.LabelCallback = camera => $"{camera.Name} ({camera.RawName})";
 		_cameraCombo.Items = _cameraManager.Cameras;
 		_cameraCombo.SelectedItem = _cameraManager.SelectedCamera;
-		NotifySignal.Connect(
-			_cameraCombo,
-			(_, _) =>
+		_cameraCombo.OnSelectedItemChanged += (_, _) =>
+		{
+			var newCamera = _cameraCombo.SelectedItem;
+			if (newCamera == null)
 			{
-				var newCamera = _cameraCombo.SelectedItem;
-				if (newCamera == null)
-				{
-					return;
-				}
-				
-				_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
-				_cameraManager.SelectedCamera = newCamera;
-				InitializeCamera();
-			},
-			detail: ComboRow.SelectedPropertyDefinition.UnmanagedName
-		);
+				return;
+			}
+
+			_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
+			_cameraManager.SelectedCamera = newCamera;
+			InitializeCamera();
+		};
 	}
 
 	/// <summary>
