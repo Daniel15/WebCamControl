@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <SelfContained>true</SelfContained>
@@ -17,10 +17,10 @@
     <ItemGroup>
       <PackageReference Include="GirCore.Adw-1" Version="0.5.0" />
       <PackageReference Include="GirCore.Gdk-4.0" Version="0.5.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
-      <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.11" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.6" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.6" />
+      <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="10.0.6" />
     </ItemGroup>
 
 
