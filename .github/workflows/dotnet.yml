@@ -39,6 +39,6 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4.3.4
       with:
-        path: src/WebCamControl.Gtk/bin/Release/net8.0/linux-x64/publish/*
+        path: src/WebCamControl.Gtk/bin/Release/net10.0/linux-x64/publish/*
         if-no-files-found: error
 
