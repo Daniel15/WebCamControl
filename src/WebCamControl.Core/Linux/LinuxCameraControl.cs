@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
 
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using WebCamControl.Core.Exceptions;
 using WebCamControl.Linux.Interop;
@@ -72,14 +73,25 @@ public class LinuxCameraControl : ICameraControl, IDisposable
 
 		set
 		{
-			var clampedValue = ClampValue(value);
+			var oldValue = Value;
+			var clampedValue = ClampValue(value, oldValue);
 			var control = new Control
 			{
 				ID = _id,
 				Value = clampedValue,
 			};
 			ioctl(_fd, IoctlCommand.SetControl, ref control);
-			InteropException.ThrowIfError();
+			var errno = Marshal.GetLastPInvokeError();
+			if (errno != 0)
+			{
+				var errMessage = Marshal.GetPInvokeErrorMessage(errno);
+				throw new Exception($"""
+					Could not set `{_id}`: {errMessage} ({errno}). 
+				    Min = {Minimum}, Max = {Maximum}, Step = {Step}
+				    Current = {Value}, New = {value}, ClampedNew = {clampedValue}.
+				    This could be caused by a bug in your camera's driver or firmware. Make sure the firmware is up-to-date."
+				""" );
+			}
 			_logger.LogInformation("SetControl({id}, {value})", _id, clampedValue);
 			Changed?.Invoke(this, EventArgs.Empty);
 		}
@@ -92,31 +104,50 @@ public class LinuxCameraControl : ICameraControl, IDisposable
 	/// </summary>
 	internal Func<int, string>? UserFriendlyValueDelegate { private get; set; }
 
-	private int ClampValue(int value)
+	private int ClampValue(int newValue, int oldValue)
 	{
-		if (value > Maximum)
+		if (newValue > Maximum)
 		{
 			_logger.LogWarning(
 				"SetControl({id}): {value} is above the maximum of {maximum}!",
 				_id,
-				value,
+				newValue,
 				Maximum
 			);
 			return Maximum;
 		}
 			
-		if (value < Minimum)
+		if (newValue < Minimum)
 		{
 			_logger.LogWarning(
 				"SetControl({id}): {value} is below the minimum of {minimum}!",
 				_id,
-				value,
+				newValue,
 				Minimum
 			);
 			return Minimum;
 		}
 
-		return value;
+		if (newValue % Step != 0)
+		{
+			// If we get here, it means the value isn't a multiple of `Step`. This shouldn't happen.
+			// If value is going up, round up.
+			// If value is going down, round down.
+			var rounding = newValue > oldValue
+				? MidpointRounding.ToPositiveInfinity
+				: MidpointRounding.ToNegativeInfinity;
+			var fixedNewValue = (int)(Math.Round(newValue / (double)Step, rounding) * Step);
+			_logger.LogWarning(
+				"SetControl({id}): {value} was not a multiple of {step}. Rounded to {fixedValue}",
+				_id,
+				newValue,
+				Step,
+				fixedNewValue
+			);
+			return fixedNewValue;
+		}
+
+		return newValue;
 	}
 
 	public void Dispose()
