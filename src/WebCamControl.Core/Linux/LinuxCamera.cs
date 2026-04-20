@@ -24,6 +24,7 @@ public class LinuxCamera : ICamera
 	private readonly Capability _caps;
 	private readonly LinuxCameraEvents _events;
 	private readonly List<LinuxCameraControl> _allRawControls = [];
+	private readonly Dictionary<uint, string> _formatNames;
 
 	/// <summary>
 	/// Creates a new <see cref="LinuxCamera"/>.
@@ -48,6 +49,9 @@ public class LinuxCamera : ICamera
 		_caps = GetCapabilities();
 		_events = new LinuxCameraEvents(eventsLogger, _fd);
 		VideoModes = ComputeVideoModes();
+		_formatNames = VideoModes
+			.DistinctBy(mode => mode.PixelFormatId)
+			.ToDictionary(mode => mode.PixelFormatId, mode => mode.PixelFormatName);
 		
 		logger.LogInformation(
 			"Found camera: {name}. \nCapabilities: 0x{caps:X}\nDevice Capabilities: 0x{deviceCaps:X}\nSupported? {isSupported}", 
@@ -97,6 +101,44 @@ public class LinuxCamera : ICamera
 	/// Gets the video modes supported by the webcam.
 	/// </summary>
 	public IReadOnlyList<VideoMode> VideoModes { get; private init; }
+
+	/// <summary>
+	/// Gets or sets the current video mode.
+	/// </summary>
+	public VideoMode VideoMode {
+		get
+		{
+			var format = new Format
+			{
+				Type = BufferType.VideoCapture
+			};
+			InteropException.ThrowIfError(ioctl(_fd, IoctlCommand.GetFormat, ref format));
+
+			var streamParams = new StreamParam
+			{
+				Type = BufferType.VideoCapture
+			};
+			InteropException.ThrowIfError(
+				ioctl(_fd, IoctlCommand.GetStreamParams, ref streamParams)
+			);
+
+			var pixelFormat = format.Data.PixelFormat;
+			var captureParams = streamParams.Data.Capture;
+			return new VideoMode
+			{
+				FrameRate = captureParams.TimePerFrame.Denominator / 
+				            captureParams.TimePerFrame.Numerator,
+				Height = pixelFormat.Height,
+				PixelFormatId = pixelFormat.PixelFormatField,
+				PixelFormatName = _formatNames[pixelFormat.PixelFormatField],
+				Width = pixelFormat.Width,
+			};
+		}
+		set
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 	/// <summary>
 	/// Gets or sets if automatic white balance is enabled.

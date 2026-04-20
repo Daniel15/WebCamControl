@@ -27,6 +27,11 @@ public interface ICamera : IDisposable
 	public IReadOnlyList<VideoMode> VideoModes { get; }
 	
 	/// <summary>
+	/// Gets or sets the current video mode.
+	/// </summary>
+	public VideoMode VideoMode { get; set; }
+	
+	/// <summary>
 	/// Gets or sets if automatic white balance is enabled.
 	/// </summary>
 	public BooleanControl? AutoWhiteBalance { get; }

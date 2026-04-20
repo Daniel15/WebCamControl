@@ -58,4 +58,15 @@ public enum IoctlCommand : uint
 	/// VIDIOC_ENUM_FRAMEINTERVALS
 	/// </summary>
 	EnumerateFrameIntervals = 0xC034564B,
+	
+	/// <summary>
+	/// VIDIOC_G_FMT
+	/// </summary>
+	GetFormat = 0xc0d05604,
+
+	/// <summary>
+	/// VIDIOC_G_PARM
+	/// </summary>
+	GetStreamParams = 0xc0cc5615,
+
 }

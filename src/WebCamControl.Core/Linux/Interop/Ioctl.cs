@@ -78,4 +78,24 @@ internal static class Ioctl
 		IoctlCommand command, 
 		ref FrameInterval argp
 	);
+	
+	/// <summary>
+	/// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/vidioc-g-fmt.html
+	/// </summary>
+	[DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+	public static extern int ioctl(
+		IntPtr fd,
+		IoctlCommand command, 
+		ref Format argp
+	);
+	
+	/// <summary>
+	/// https://www.kernel.org/doc/html/v6.9/userspace-api/media/v4l/vidioc-g-parm.html
+	/// </summary>
+	[DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+	public static extern int ioctl(
+		IntPtr fd,
+		IoctlCommand command, 
+		ref StreamParam argp
+	);
 }
