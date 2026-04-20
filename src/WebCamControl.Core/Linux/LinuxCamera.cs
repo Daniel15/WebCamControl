@@ -136,7 +136,39 @@ public class LinuxCamera : ICamera
 		}
 		set
 		{
-			throw new NotImplementedException();
+			var format = new Format
+			{
+				Type = BufferType.VideoCapture,
+				Data = new Format.FormatUnion
+				{
+					PixelFormat = new PixelFormat
+					{
+						PixelFormatField = value.PixelFormatId,
+						Height = value.Height,
+						Width = value.Width,
+					}
+				}
+			};
+			InteropException.ThrowIfError(ioctl(_fd, IoctlCommand.SetFormat, ref format));
+			
+			var streamParams = new StreamParam
+			{
+				Type = BufferType.VideoCapture,
+				Data = new StreamParam.StreamParamUnion
+				{
+					Capture = new CaptureParam
+					{
+						TimePerFrame = new Fraction
+						{
+							Numerator = 1,
+							Denominator = value.FrameRate
+						}
+					}
+				}
+			};
+			InteropException.ThrowIfError(
+				ioctl(_fd, IoctlCommand.SetStreamParams, ref streamParams)
+			);
 		}
 	}
 

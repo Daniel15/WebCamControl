@@ -69,4 +69,14 @@ public enum IoctlCommand : uint
 	/// </summary>
 	GetStreamParams = 0xc0cc5615,
 
+	/// <summary>
+	/// VIDIOC_S_FMT
+	/// </summary>
+	SetFormat = 0xc0d05605,
+
+	/// <summary>
+	/// VIDIOC_S_PARM
+	/// </summary>
+	SetStreamParams = 0xc0cc5616,
+
 }
