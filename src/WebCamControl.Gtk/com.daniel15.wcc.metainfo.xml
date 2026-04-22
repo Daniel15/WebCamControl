@@ -44,11 +44,21 @@
 		<color type="primary" scheme_preference="dark">#08175b</color>
 	</branding>
 	<releases>
+		<release version="1.2.1" date="2026-04-21">
+			<url type="details">https://github.com/Daniel15/WebCamControl/releases/tag/v1.2.1</url>
+			<description>
+				<ul>
+					<li>Ensure new control values are a multiple of `step`, to avoid errors about setting an invalid value.</li>
+					<li>Throw a more detailed error when setting a control fails.</li>
+					<li>Fix #39: Sporadic "Cannot get resource file" error.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.2.0" date="2026-04-19">
 			<url type="details">https://github.com/Daniel15/WebCamControl/releases/tag/v1.2.0</url>
 			<description>
 				<ul>
-					<li>Upgraded from .NET 8 to .NET 10</li>
+					<li>Upgraded from .NET 8 to .NET 10.</li>
 				</ul>
 			</description>
 		</release>
