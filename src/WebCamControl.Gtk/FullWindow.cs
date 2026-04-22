@@ -12,6 +12,7 @@ namespace WebCamControl.Gtk;
 /// </summary>
 public class FullWindow : Adw.Window
 {
+	private readonly Builder _builder;
 	private readonly ICameraManager _cameraManager;
 	private readonly IPresets _presets;
 	private readonly ILogger<FullWindow> _logger;
@@ -30,7 +31,7 @@ public class FullWindow : Adw.Window
 		ICameraManager cameraManager,
 		IPresets presets,
 		ILogger<FullWindow> logger
-	) : this(new Builder("FullWindow.ui"), cameraManager, presets, logger)
+	) : this(BuilderUtils.CreateFromAssembly("FullWindow.ui"), cameraManager, presets, logger)
 	{
 		Application = app;
 	}
@@ -42,6 +43,7 @@ public class FullWindow : Adw.Window
 		ILogger<FullWindow> logger
 	) : base(builder.GetPointer("full_window"), false)
 	{
+		_builder = builder;
 		_cameraManager = cameraManager;
 		_presets = presets;
 		_logger = logger;
@@ -134,5 +136,11 @@ public class FullWindow : Adw.Window
 			row.OnDelete += (_, _) => _presets.Delete(preset);
 			_presetsList.Append(row);
 		}
+	}
+	
+	public override void Dispose()
+	{
+		base.Dispose();
+		_builder.Dispose();
 	}
 }

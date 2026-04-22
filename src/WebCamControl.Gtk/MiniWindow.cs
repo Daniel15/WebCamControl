@@ -18,6 +18,7 @@ public class MiniWindow : Adw.Window
 	private const int _minPresetButtonCount = 6;
 	
 	private readonly ICamera _camera;
+	private readonly Builder _builder;
 	private readonly IPresets _presets;
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
@@ -30,7 +31,7 @@ public class MiniWindow : Adw.Window
 		Adw.Application app,
 		ICameraManager cameraManager,
 		IPresets presets
-	) : this(new Builder("MiniWindow.ui"), cameraManager, presets)
+	) : this(BuilderUtils.CreateFromAssembly("MiniWindow.ui"), cameraManager, presets)
 	{
 		Application = app;
 	}
@@ -42,6 +43,7 @@ public class MiniWindow : Adw.Window
 	) : base(builder.GetPointer("mini_window"), false)
 	{
 		_camera = cameraManager.SelectedCamera;
+		_builder = builder;
 		_presets = presets;
 		builder.Connect(this);
 		Title = $"WebCamControl: {_camera.Name}";
@@ -117,5 +119,11 @@ public class MiniWindow : Adw.Window
 		_zoom.SetValue(_camera.Zoom.Value);
 		_zoom.Sensitive = _camera.Zoom.IsEnabled;
 		_zoom.TooltipText = _($"Zoom: {_camera.Zoom.Value}%");
+	}
+
+	public override void Dispose()
+	{
+		base.Dispose();
+		_builder.Dispose();
 	}
 }
