@@ -206,6 +206,11 @@ public class LinuxCamera : ICamera
 	/// Any controls that are not supported as one of the high-level fields above.
 	/// </summary>
 	public LinuxCameraAdvancedControls RawControls { get; private set; } = new();
+
+	/// <summary>
+	/// All raw integer controls, from RawControls plus the first-class controls.
+	/// </summary>
+	internal IReadOnlyDictionary<ControlID, LinuxCameraControl> RawIntegerControls { get; private set; }
 	
 	private void CreateControls()
 	{
@@ -261,6 +266,8 @@ public class LinuxCamera : ICamera
 			"Finished enumerating controls. Errno = {Errno}", 
 			Marshal.GetLastPInvokeError()
 		);
+
+		RawIntegerControls = integers.ToImmutableDictionary();
 
 		integers.Remove(ControlID.Brightness, out var brightness);
 		Brightness = PercentControl.CreateIfNotNull(brightness);

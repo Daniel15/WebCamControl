@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using WebCamControl.Core.Exceptions;
 using WebCamControl.Linux.Interop;
+using static WebCamControl.Core.Gettext;
 using static WebCamControl.Linux.Interop.Ioctl;
 
 namespace WebCamControl.Core.Linux;
@@ -50,6 +51,7 @@ public class LinuxCameraControl : ICameraControl, IDisposable
 	public int Minimum => _controlData.Minimum;
 	public int Maximum => _controlData.Maximum;
 	public int Step => _controlData.Step;
+	public int Default => _controlData.DefaultValue;
 
 	public bool IsEnabled =>
 		!_controlData.Flags.HasFlag(ControlFlags.Disabled) &&
@@ -66,7 +68,15 @@ public class LinuxCameraControl : ICameraControl, IDisposable
 				ID = _id,
 			};
 			ioctl(_fd, IoctlCommand.GetControl, ref control);
-			InteropException.ThrowIfError();
+			try
+			{
+				InteropException.ThrowIfError();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogWarning(ex, "GetControl({id}) = ERROR: {Error}", _id, ex.Message);
+			}
+
 			_logger.LogInformation("GetControl({id}) = {value}", _id, control.Value);
 			return control.Value;
 		}
@@ -85,12 +95,17 @@ public class LinuxCameraControl : ICameraControl, IDisposable
 			if (errno != 0)
 			{
 				var errMessage = Marshal.GetPInvokeErrorMessage(errno);
-				throw new Exception($"""
-					Could not set `{_id}`: {errMessage} ({errno}). 
-				    Min = {Minimum}, Max = {Maximum}, Step = {Step}
-				    Current = {Value}, New = {value}, ClampedNew = {clampedValue}.
-				    This could be caused by a bug in your camera's driver or firmware. Make sure the firmware is up-to-date."
-				""" );
+				// Only wrap translatable parts in `_`.
+				throw new Exception(
+					_($"Could not set {_id}: {errMessage} ({errno}).") + 
+					$"""
+					 
+					 Min = {Minimum}, Max = {Maximum}, Step = {Step}
+					 Current = {Value}, New = {value}, ClampedNew = {clampedValue}.
+
+					 """ +
+					_($"This could be caused by a bug in your camera's driver or firmware. Make sure the firmware is up-to-date.")
+				);
 			}
 			_logger.LogInformation("SetControl({id}, {value})", _id, clampedValue);
 			Changed?.Invoke(this, EventArgs.Empty);

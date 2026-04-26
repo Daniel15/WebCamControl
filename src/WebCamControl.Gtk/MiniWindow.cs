@@ -22,6 +22,7 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 	
 	private ICamera _camera = null!;
 	private IPresets _presets = null!;
+	private IServiceProvider _provider = null!;
 	private EventHandler? _presetsChangedHandler;
 	private EventHandler? _zoomChangedHandler;
 
@@ -35,13 +36,19 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		var cameraManager = provider.GetRequiredService<ICameraManager>();
 		var presets = provider.GetRequiredService<IPresets>();
 		var window = NewWithProperties([]);
-		window.Configure(app, cameraManager, presets);
+		window.Configure(app, provider, cameraManager, presets);
 		return window;
 	}
 
-	private void Configure(Adw.Application app, ICameraManager cameraManager, IPresets presets)
+	private void Configure(
+		Adw.Application app,
+		IServiceProvider provider,
+		ICameraManager cameraManager,
+		IPresets presets
+	)
 	{
 		_camera = cameraManager.SelectedCamera;
+		_provider = provider;
 		_presets = presets;
 		Application = app;
 		Title = $"WebCamControl: {_camera.Name}";
@@ -53,6 +60,8 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 
 		_presetsChangedHandler = (_, _) => InitializePresets();
 		presets.OnChange += _presetsChangedHandler;
+		
+		CheckOutOfRangeControls();
 	}
 
 	private void InitializePresets()
@@ -121,6 +130,16 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		_zoom.SetValue(_camera.Zoom.Value);
 		_zoom.Sensitive = _camera.Zoom.IsEnabled;
 		_zoom.TooltipText = _($"Zoom: {_camera.Zoom.Value}%");
+	}
+	
+	private void CheckOutOfRangeControls()
+	{
+		var detector = ActivatorUtilities.CreateInstance<OutOfRangeDetector>(_provider, _camera);
+		var outOfRange = detector.Detect().ToArray();
+		if (outOfRange.Length != 0)
+		{
+			OutOfRangeDialog.Show(outOfRange, this);
+		}
 	}
 
 	public override void Dispose()
