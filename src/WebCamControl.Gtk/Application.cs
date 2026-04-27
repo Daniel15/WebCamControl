@@ -10,8 +10,9 @@ using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Core.Extensions;
 using WebCamControl.Gtk.Extensions;
+using WebCamControl.GtkViews;
 using WebCamControl.Linux.Interop;
-using Window = Adw.Window;
+using Window = Gtk.Window;
 using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
@@ -74,9 +75,7 @@ public class Application
 		_app.ConfigureAction("quit", (_, _) => _app.Quit(), "<Ctrl>Q");
 		_app.ConfigureAction("save_preset", (_, _) =>
 		{
-			var dialog = ActivatorUtilities.CreateInstance<SavePresetDialog>(
-				_provider
-			);
+			var dialog = SavePresetDialog.Create(_provider);
 			dialog.Present(_mainWindow);
 		}, "<Ctrl>S");
 		
@@ -84,11 +83,11 @@ public class Application
 		{
 			if (_mainWindow is MiniWindow)
 			{
-				ShowWindow<FullWindow>();	
+				ShowWindow(typeof(FullWindow), () => FullWindow.Create(_provider));	
 			}
 			else
 			{
-				ShowWindow<MiniWindow>();
+				ShowWindow(typeof(MiniWindow), () => MiniWindow.Create(_provider));
 			}
 		}, "<Ctrl>T");
 		
@@ -110,25 +109,18 @@ public class Application
 
 	private void OnActivate(Gio.Application application, EventArgs eventArgs)
 	{
-		ShowWindow<MiniWindow>();
+		ShowWindow(typeof(MiniWindow), () => MiniWindow.Create(_provider));
 	}
 
-	private void ShowWindow<T>() where T: Window
+	private void ShowWindow(Type windowType, Func<Window> createWindow)
 	{
-		if (_mainWindow != null)
-		{
-			_mainWindow.Destroy();
-			_mainWindow.Dispose();
-			_mainWindow = null;
-		}
-		
-		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
+		_logger.LogInformation("Creating new {WindowType}", windowType.Name);
+		var previousWindow = _mainWindow;
 		try
 		{
-			_mainWindow = ActivatorUtilities.CreateInstance<T>(
-				_provider
-			);
+			_mainWindow = createWindow();
 			_mainWindow.Present();
+			previousWindow?.Dispose();
 		}
 		catch (Exception ex)
 		{
@@ -147,7 +139,7 @@ public class Application
 			throw new Exception("Could not load resources");
 		}
 		var data = new byte[stream.Length];
-		stream.Read(data, 0, data.Length);
+		stream.ReadExactly(data);
 
 		var resource = Resource.NewFromData(Bytes.New(data));
 		resource.Register();

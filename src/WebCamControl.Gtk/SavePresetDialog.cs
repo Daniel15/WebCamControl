@@ -1,36 +1,41 @@
 using Adw;
 using GObject;
 using Gtk;
+using Microsoft.Extensions.DependencyInjection;
 using WebCamControl.Core;
+using WebCamControl.Gtk;
 using static WebCamControl.Core.Gettext;
 
-namespace WebCamControl.Gtk;
+namespace WebCamControl.GtkViews;
 
-public class SavePresetDialog : Adw.AlertDialog
+[GObject.Subclass<Adw.AlertDialog>(qualifiedName: nameof(SavePresetDialog))]
+[global::Gtk.Template<global::Gtk.AssemblyResource>("SavePresetDialog.ui")]
+public partial class SavePresetDialog
 {
 	private const string _changedSignalName = "changed";
 	private static readonly Signal<EntryRow> _changedSignal =
 		new(_changedSignalName, _changedSignalName);
 
-	private readonly ICamera _camera;
-	private readonly IPresets _presets;
+	private ICamera _camera = null!;
+	private IPresets _presets = null!;
+	private CustomComboRow<DestinationRow> _destinationCombo = null!;
 	
-#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly EntryRow _name = default!;
-	[Connect] private readonly CustomComboRow<DestinationRow> _destination = default!;
-#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+	[global::Gtk.Connect] private EntryRow _name;
+	[global::Gtk.Connect] private ComboRow _destination;
 	
-	public SavePresetDialog(ICameraManager cameraManager, IPresets presets)
-		: this(new Builder("SavePresetDialog.ui"), cameraManager, presets)
+	public static SavePresetDialog Create(IServiceProvider provider)
 	{
+		var cameraManager = provider.GetRequiredService<ICameraManager>();
+		var presets = provider.GetRequiredService<IPresets>();
+		var dialog = NewWithProperties([]);
+		dialog.Configure(cameraManager, presets);
+		return dialog;
 	}
 
-	private SavePresetDialog(Builder builder, ICameraManager cameraManager, IPresets presets)
-		: base(builder.GetPointer("save_preset_dialog"), false)
+	private void Configure(ICameraManager cameraManager, IPresets presets)
 	{
 		_camera = cameraManager.SelectedCamera;
 		_presets = presets;
-		builder.Connect(this);
 		Validate();
 		PopulateSaveDropdown();
 		AttachEvents();
@@ -54,9 +59,12 @@ public class SavePresetDialog : Adw.AlertDialog
 		var existingPresetOptions = _presets.PresetConfigs.Select(
 			(config, index) => new DestinationRow(index, _($"Replace #{index + 1}: {config.Name}"))
 		);
-		_destination.LabelCallback = item => item.Name;
-		_destination.Items = new[] { new DestinationRow(null, _("New preset")) }
-			.Concat(existingPresetOptions);
+		_destinationCombo = new CustomComboRow<DestinationRow>(_destination)
+		{
+			LabelCallback = destination => destination.Name,
+			Items = new[] { new DestinationRow(null, _("New preset")) }
+				.Concat(existingPresetOptions),
+		};
 	}
 
 	private void Validate()
@@ -67,10 +75,11 @@ public class SavePresetDialog : Adw.AlertDialog
 
 	private void Save()
 	{
+		var destination = _destinationCombo.SelectedItem;
 		_presets.SaveCurrent(
 			_camera, 
-			_name.Text_, 
-			index: _destination.SelectedItem?.Index
+			_name.Text_ ?? string.Empty, 
+			index: destination?.Index
 		);
 		Close();
 	}

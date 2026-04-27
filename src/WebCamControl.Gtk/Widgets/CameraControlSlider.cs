@@ -7,23 +7,34 @@ namespace WebCamControl.Gtk.Widgets;
 /// <summary>
 /// A slider to modify a camera control.
 /// </summary>
-public class CameraControlSlider : ActionRow
+[GObject.Subclass<ActionRow>(qualifiedName: nameof(CameraControlSlider))]
+public partial class CameraControlSlider
 {
-	private readonly ICameraControl<int> _control;
-	private readonly Scale _scale;
+	private ICameraControl<int> _control = null!;
+	private Scale _scale = null!;
+	private EventHandler? _controlChangedHandler;
 
-	private CameraControlSlider(ICameraControl<int> control)
-		: base(Adw.Internal.ActionRow.New(), false)
+	private static CameraControlSlider Create(ICameraControl<int> control)
+	{
+		var slider = NewWithProperties([]);
+		slider.Configure(control);
+		return slider;
+	}
+
+	private void Configure(ICameraControl<int> control)
 	{
 		_control = control;
 		Title = control.Name;
 		
-		_scale = Scale.New(Orientation.Horizontal, new Adjustment
-		{
-			Lower = control.Minimum,
-			Upper = control.Maximum,
-			StepIncrement = control.Step
-		});
+		var adjustment = Adjustment.New(
+			value: control.Value,
+			lower: control.Minimum,
+			upper: control.Maximum,
+			stepIncrement: control.Step,
+			pageIncrement: control.Step,
+			pageSize: 0
+		);
+		_scale = Scale.New(Orientation.Horizontal, adjustment);
 		_scale.Halign = Align.Fill;
 		_scale.Hexpand = true;
 		_scale.OnChangeValue += (_, args) =>
@@ -33,8 +44,20 @@ public class CameraControlSlider : ActionRow
 		};
 		AddSuffix(_scale);
 
-		control.Changed += (_, _) => UpdateState();
+		_controlChangedHandler = (_, _) => UpdateState();
+		control.Changed += _controlChangedHandler;
 		UpdateState();
+	}
+
+	public override void Dispose()
+	{
+		if (_controlChangedHandler != null)
+		{
+			_control.Changed -= _controlChangedHandler;
+			_controlChangedHandler = null;
+		}
+
+		base.Dispose();
 	}
 
 	/// <summary>
@@ -53,6 +76,6 @@ public class CameraControlSlider : ActionRow
 
 	public static CameraControlSlider? TryCreate(ICameraControl<int>? control)
 	{
-		return control == null ? null : new CameraControlSlider(control);
+		return control == null ? null : Create(control);
 	}
 }

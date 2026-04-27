@@ -5,33 +5,35 @@ using Gtk;
 using WebCamControl.Core;
 using WebCamControl.Gtk.Extensions;
 
-namespace WebCamControl.Gtk.Widgets;
+namespace WebCamControl.GtkWidgets;
 
 /// <summary>
 /// Renders up, down, left, and right buttons to adjust the pan and tilt.
 /// </summary>
-public class PanAndTiltButtons : Box
+[GObject.Subclass<Grid>(qualifiedName: nameof(PanAndTiltButtons))]
+[global::Gtk.Template<global::Gtk.AssemblyResource>("PanAndTiltButtons.ui")]
+public partial class PanAndTiltButtons
 {
 	private const float _panTiltAdjustmentAmount = 2f;
 
-	private readonly ICamera _camera;
-	private readonly Builder _builder;
+	private ICamera _camera = null!;
 
-#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly PressAndHoldButton _up = default!;
-	[Connect] private readonly PressAndHoldButton _down = default!;
-	[Connect] private readonly PressAndHoldButton _left = default!;
-	[Connect] private readonly PressAndHoldButton _right = default!;
-#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+	[Connect] private PressAndHoldButton _up;
+	[Connect] private PressAndHoldButton _down;
+	[Connect] private PressAndHoldButton _left;
+	[Connect] private PressAndHoldButton _right;
 	
-	public PanAndTiltButtons(ICamera camera)
+	public static PanAndTiltButtons Create(ICamera camera)
+	{
+		_ = PressAndHoldButton.GetGType();
+		var buttons = NewWithProperties([]);
+		buttons.Configure(camera);
+		return buttons;
+	}
+
+	private void Configure(ICamera camera)
 	{
 		_camera = camera;
-		_builder = new Builder("PanAndTiltButtons.ui");
-		var rootWidget = (Grid)_builder.GetObject("pan_and_tilt_buttons")!;
-		Append(rootWidget);
-		_builder.Connect(this);
-
 		AttachEvents();
 	}
 
@@ -54,10 +56,4 @@ public class PanAndTiltButtons : Box
 		}
 	}
 
-	public override void Dispose()
-	{
-		GC.SuppressFinalize(this);
-		base.Dispose();
-		_builder.Dispose();
-	}
 }

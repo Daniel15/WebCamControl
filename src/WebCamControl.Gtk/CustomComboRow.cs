@@ -1,72 +1,66 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
 
-using Adw;
 using Gtk;
 
 namespace WebCamControl.Gtk;
 
-/// <summary>
-/// Wrapper around <see cref="ComboRow"/> that allows C# types to be used as items.
-/// </summary>
-/// <typeparam name="T">Type of item</typeparam>
-public class CustomComboRow<T> : ComboRow
+internal abstract class CustomComboRow
 {
-	private T[] _items = [];
-	private Dictionary<string, T> _labelToItem = new();
+	protected sealed class ComboRowItem(string label, object value)
+	{
+		public string Label { get; } = label;
 
-	public CustomComboRow(IntPtr ptr, bool ownedRef) : base(ptr, ownedRef) { }
+		public object Value { get; } = value;
+	}
+}
 
-	/// <summary>
-	/// Gets or sets a callback to get the label for the specified item.
-	/// </summary>
-	public Func<T, string> LabelCallback { get; set; } = item => item.ToString();
+internal sealed class CustomComboRow<T> : CustomComboRow where T : notnull
+{
+	private readonly Adw.ComboRow _comboRow;
+	private ComboRowItem[] _items = [];
 
-	/// <summary>
-	/// Gets or sets the list of items to show 
-	/// </summary>
-	/// <exception cref="ArgumentException">Thrown if multiple items have the same label</exception>
+	public CustomComboRow(Adw.ComboRow comboRow)
+	{
+		_comboRow = comboRow;
+		_comboRow.OnNotify += (_, _) => OnSelectionChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	public event EventHandler? OnSelectionChanged;
+
+	public Func<T, string> LabelCallback { get; init; } = item => item?.ToString() ?? string.Empty;
+
 	public IEnumerable<T> Items
 	{
 		set
 		{
-			_items = value.ToArray();
-			var itemCount = _items.Length;
-			var labelToItem = new Dictionary<string, T>(itemCount);
-			var labels = new string[itemCount];
-
-			for (var i = 0; i < itemCount; i++)
+			_items = value
+				.Select(item => new ComboRowItem(LabelCallback(item), item))
+				.ToArray();
+			var store = StringList.New(null);
+			foreach (var item in _items)
 			{
-				var item = _items[i];
-				var label = LabelCallback(item);
-				labels[i] = label;
-				if (!labelToItem.TryAdd(label, item))
-				{
-					throw new ArgumentException(
-						$"Two items have the same label '{label}'. All items must have a unique label"
-					);
-				}
+				store.Append(item.Label);
 			}
 
-			Model = StringList.New(labels);
-			_labelToItem = labelToItem;
+			_comboRow.Model = store;
 		}
 	}
 
-	/// <summary>
-	/// Gets the currently selected item.
-	/// </summary>
-	public new T? SelectedItem
+	public T? SelectedItem
 	{
 		get
 		{
-			var label = (StringObject?)base.SelectedItem;
-			return label?.String == null ? default : _labelToItem[label.String];
+			var selected = _comboRow.Selected;
+			return selected < _items.Length && _items[selected].Value is T value ? value : default;
 		}
 		set
 		{
-			var index = (uint)Array.FindIndex(_items, item => Equals(item, value));
-			SetSelected(index);
+			var index = Array.FindIndex(_items, item => EqualityComparer<T>.Default.Equals((T)item.Value, value));
+			if (index >= 0)
+			{
+				_comboRow.SetSelected((uint)index);
+			}
 		}
 	}
 }

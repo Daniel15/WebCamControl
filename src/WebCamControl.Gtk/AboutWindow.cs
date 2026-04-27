@@ -13,20 +13,18 @@ public static class AboutWindow
 {
 	public static void Show(Widget? parent)
 	{
-		var dialog = new AboutDialog
-		{
-			ApplicationIcon = "icon-512x512",
-			ApplicationName = "WebCamControl",
-			Copyright = "© 2024-2025 Daniel Lo Nigro (Daniel15)",
-			DeveloperName = "Daniel Lo Nigro",
-			Developers = ["Daniel Lo Nigro <apps+wcc@d.sb>"],
-			IssueUrl = BugReport.BuildBugReportUri(null).ToString(),
-			LicenseType = License.MitX11,
-			SupportUrl = "https://github.com/Daniel15/WebCamControl/issues",
-			TranslatorCredits = _("translator-credits"),
-			Version = Assembly.GetEntryAssembly() ?.GetName().Version?.ToString() ?? "Unknown",
-			Website = "https://d.sb/wcc",
-		};
+		var dialog = AboutDialog.NewWithProperties([]);
+		dialog.ApplicationIcon = "icon-512x512";
+		dialog.ApplicationName = "WebCamControl";
+		dialog.Copyright = "© 2024-2025 Daniel Lo Nigro (Daniel15)";
+		dialog.DeveloperName = "Daniel Lo Nigro";
+		dialog.Developers = ["Daniel Lo Nigro <apps+wcc@d.sb>"];
+		dialog.IssueUrl = BugReport.BuildBugReportUri(null).ToString();
+		dialog.LicenseType = License.MitX11;
+		dialog.SupportUrl = "https://github.com/Daniel15/WebCamControl/issues";
+		dialog.TranslatorCredits = _("translator-credits");
+		dialog.Version = Assembly.GetEntryAssembly() ?.GetName().Version?.ToString() ?? "Unknown";
+		dialog.Website = "https://d.sb/wcc";
 		dialog.Present(parent);
 	}
 }

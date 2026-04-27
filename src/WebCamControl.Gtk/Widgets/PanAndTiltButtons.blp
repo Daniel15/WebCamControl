@@ -1,10 +1,10 @@
 using Gtk 4.0;
 
-Grid pan_and_tilt_buttons {
+template $PanAndTiltButtons : Grid {
   column-spacing: 4;
   row-spacing: 4;
 
-  Button _up {
+  $PressAndHoldButton _up {
     tooltip-text: _('Up');
     icon-name: 'go-up';
     width-request: 50;
@@ -16,7 +16,7 @@ Grid pan_and_tilt_buttons {
     }
   }
 
-  Button _down {
+  $PressAndHoldButton _down {
     tooltip-text: _('Down');
     icon-name: 'go-down';
     width-request: 50;
@@ -28,7 +28,7 @@ Grid pan_and_tilt_buttons {
     }
   }
 
-  Button _left {
+  $PressAndHoldButton _left {
     tooltip-text: _('Left');
     icon-name: 'go-previous';
     width-request: 50;
@@ -40,7 +40,7 @@ Grid pan_and_tilt_buttons {
     }
   }
 
-  Button _right {
+  $PressAndHoldButton _right {
     tooltip-text: _('Right');
     icon-name: 'go-next';
     width-request: 50;
