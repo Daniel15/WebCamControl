@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WebCamControl\n"
-"POT-Creation-Date: 2026-04-26 14:38:38-0700\n"
-"PO-Revision-Date: 2026-04-26 14:38:39-0700\n"
+"POT-Creation-Date: 2026-05-02 16:45:41-0700\n"
+"PO-Revision-Date: 2026-05-02 16:45:41-0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -10,11 +10,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: GetText.NET Extractor\n"
 
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:90
+msgid ""
+"Some controls could not be reset. This is a bug with your webcam, NOT with "
+"WebCamControl."
+msgstr ""
+
 #: WebCamControl.Core/Linux/LinuxCameraManager.cs:88
 msgid "No cameras were found"
 msgstr ""
 
-#: WebCamControl.Gtk/MiniWindow.cs:99
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:94
+msgid "An error has occurred"
+msgstr ""
+
+#: WebCamControl.Gtk/MiniWindow.cs:95
 msgid ""
 "No saved preset. Use the 'Save Preset' menu option or press Ctrl+S to save "
 "one."
@@ -24,7 +34,7 @@ msgstr ""
 msgid "Reset"
 msgstr ""
 
-#: WebCamControl.Gtk/Application.cs:178
+#: WebCamControl.Gtk/Application.cs:170
 msgid "Exiting..."
 msgstr ""
 
@@ -38,11 +48,11 @@ msgid ""
 "the firmware is up-to-date."
 msgstr ""
 
-#: WebCamControl.Gtk/OutOfRangeDialog.cs:93
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:98
 msgid "OK"
 msgstr ""
 
-#: WebCamControl.Gtk/AboutWindow.cs:26
+#: WebCamControl.Gtk/AboutWindow.cs:24
 msgid "translator-credits"
 msgstr ""
 
@@ -53,9 +63,13 @@ msgid ""
 "to reset these controls to their default values."
 msgstr ""
 
-#: WebCamControl.Gtk/MiniWindow.cs:133
+#: WebCamControl.Gtk/MiniWindow.cs:132
 #, csharp-format
 msgid "Zoom: {0}%"
+msgstr ""
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:45
+msgid "Out of range values"
 msgstr ""
 
 #: WebCamControl.Core/Linux/LinuxCameraControl.cs:100
@@ -63,7 +77,7 @@ msgstr ""
 msgid "Could not set {0}: {1} ({2})."
 msgstr ""
 
-#: WebCamControl.Gtk/ErrorDialog.cs:22
+#: WebCamControl.Gtk/ErrorDialog.cs:19
 #, csharp-format
 msgid ""
 "Error: {0}\n"
@@ -71,22 +85,23 @@ msgid ""
 "If this is unexpected, please report a bug."
 msgstr ""
 
-#: WebCamControl.Gtk/SavePresetDialog.cs:55
+#: WebCamControl.Gtk/SavePresetDialog.cs:63
 #, csharp-format
 msgid "Replace #{0}: {1}"
 msgstr ""
 
-#: WebCamControl.Gtk/SavePresetDialog.cs:58
+#: WebCamControl.Gtk/SavePresetDialog.cs:68
 msgid "New preset"
 msgstr ""
 
-#: WebCamControl.Gtk/MiniWindow.cs:94
+#: WebCamControl.Gtk/MiniWindow.cs:90
 #, csharp-format
 msgid "Apply preset \"{0}\""
 msgstr ""
 
-#: WebCamControl.Gtk/OutOfRangeDialog.cs:90
-msgid "Some controls could not be reset:"
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:35
+#, csharp-format
+msgid "• {0}: Set to {1} but should be between {2} and {3}."
 msgstr ""
 
 #: WebCamControl.Gtk/MiniWindow.blp:13
@@ -113,10 +128,6 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: WebCamControl.Gtk/ErrorDialog.blp:5
-msgid "An error has occurred"
-msgstr ""
-
 #: WebCamControl.Gtk/ErrorDialog.blp:18
 msgid "Details"
 msgstr ""
@@ -134,19 +145,19 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: WebCamControl.Gtk/FullWindow.blp:48
+#: WebCamControl.Gtk/FullWindow.blp:44
 msgid "Image"
 msgstr ""
 
-#: WebCamControl.Gtk/FullWindow.blp:57
+#: WebCamControl.Gtk/FullWindow.blp:53
 msgid "Pan and Tilt"
 msgstr ""
 
-#: WebCamControl.Gtk/FullWindow.blp:68
+#: WebCamControl.Gtk/FullWindow.blp:64
 msgid "Brightness"
 msgstr ""
 
-#: WebCamControl.Gtk/FullWindow.blp:88
+#: WebCamControl.Gtk/FullWindow.blp:84
 msgid "Presets"
 msgstr ""
 
