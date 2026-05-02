@@ -4,7 +4,7 @@
 using Adw;
 using Gtk;
 
-namespace WebCamControl.Gtk.Widgets;
+namespace WebCamControl.Gtk;
 
 /// <summary>
 /// Wrapper around <see cref="ComboRow"/> that allows C# types to be used as items.
