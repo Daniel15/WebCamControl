@@ -32,7 +32,7 @@ public static class OutOfRangeDialog
 		foreach (var (name, control) in outOfRangeControls)
 		{
 			body.AppendLine(_(
-				$"{name}: Set to {control.Value} but should be between {control.Minimum} and {control.Maximum}."
+				$"• {name}: Set to {control.Value} but should be between {control.Minimum} and {control.Maximum}."
 			));
 		}
 		
@@ -86,8 +86,10 @@ public static class OutOfRangeDialog
 			return;
 		}
 
-		var body = 
-			_("Some controls could not be reset:") + "\n\n" + string.Join("\n\n", errors);
+		var body = _(
+			"Some controls could not be reset. This is a bug with your webcam, NOT with "+
+			"WebCamControl."
+		) + "\n\n" + string.Join("\n\n", errors);
 		var dialog = Adw.AlertDialog.NewWithLeftAlignedText(
 			_("An error has occurred"),
 			body
