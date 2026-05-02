@@ -19,11 +19,14 @@ public class CustomComboRow<T> where T : notnull
 	public CustomComboRow(ComboRow comboRow)
 	{
 		_comboRow = comboRow;
-		_comboRow.OnNotify += (_, args) => OnSelectionChanged?.Invoke(this, EventArgs.Empty);
+		_comboRow.OnNotify += (_, _) => OnSelectionChanged?.Invoke(this, EventArgs.Empty);
 	}
 	
 	public event EventHandler? OnSelectionChanged;
 	
+	/// <summary>
+	/// Gets or sets a callback to get the label for the specified item.
+	/// </summary>
 	public Func<T, string> LabelCallback { get; set; } = item => item.ToString() ?? string.Empty;
 
 	/// <summary>

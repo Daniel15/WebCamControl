@@ -107,7 +107,7 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 
 		// Remove any existing controls so we don't end up with duplicate ones when changing camera.
 		_panAndTiltButtons.RemoveChildren();
-		//_controls.Remove(_exampleRow);
+		_controls.Remove(_exampleRow);
 		CleanupCameraControls();
 		
 		// Create controls for the selected camera
