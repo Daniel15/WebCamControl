@@ -10,6 +10,7 @@ public class BooleanControl(ICameraControl<int> control) : ICameraControl<bool>
 	public bool Maximum => true;
 	public bool Step => true;
 	public bool IsEnabled => control.IsEnabled;
+	public bool Default => control.Default == 1;
 
 	public bool Value
 	{

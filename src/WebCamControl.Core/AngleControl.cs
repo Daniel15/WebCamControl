@@ -12,6 +12,7 @@ public class AngleControl(ICameraControl<int> control) : ICameraControl<float>
 	public float Maximum => control.Maximum / _arcsecondsInDegree;
 	public float Step => control.Step / _arcsecondsInDegree;
 	public bool IsEnabled => control.IsEnabled;
+	public float Default => control.Default / _arcsecondsInDegree;
 
 	public float Value
 	{

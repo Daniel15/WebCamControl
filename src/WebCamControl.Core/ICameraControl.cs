@@ -28,6 +28,11 @@ public interface ICameraControl<T>
 	T Step { get; }
 	
 	/// <summary>
+	/// Gets the default value for this control.
+	/// </summary>
+	T Default { get; }
+	
+	/// <summary>
 	/// Gets or sets the value for this control.
 	/// </summary>
 	T Value { get; set; }
@@ -46,6 +51,14 @@ public interface ICameraControl<T>
 	/// Fired when the value of this control is changed.
 	/// </summary>
 	public event EventHandler Changed;
+
+	/// <summary>
+	/// Reset this control to its default value.
+	/// </summary>
+	public void Reset()
+	{
+		Value = Default;
+	}
 }
 
 /// <summary>

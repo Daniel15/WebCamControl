@@ -30,7 +30,6 @@ public partial class ErrorDialog
 		dialog.Configure(ex);
 		dialog.OnResponse += (_, args) =>
 		{
-			Console.WriteLine(args.Response);
 			if (args.Response == "report_bug")
 			{
 				ReportBug(ex);
