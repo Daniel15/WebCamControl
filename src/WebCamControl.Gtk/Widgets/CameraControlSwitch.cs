@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
 using WebCamControl.Core;
@@ -14,7 +17,7 @@ public partial class CameraControlSwitch
 	private SwitchRow _switch = null!;
 	private EventHandler? _controlChangedHandler;
 
-	private static CameraControlSwitch Create(ICameraControl<bool> control)
+	private static CameraControlSwitch New(ICameraControl<bool> control)
 	{
 		var controlSwitch = NewWithProperties([]);
 		controlSwitch.Configure(control);
@@ -24,8 +27,6 @@ public partial class CameraControlSwitch
 	private void Configure(ICameraControl<bool> control)
 	{
 		_control = control;
-		// SwitchRow is `final`, so we can't inherit from it. Instead, append the switch
-		// as a child.
 		_switch = SwitchRow.New();
 		_switch.Title = control.Name;
 		_switch.Hexpand = true;
@@ -57,7 +58,7 @@ public partial class CameraControlSwitch
 	
 	public static CameraControlSwitch? TryCreate(ICameraControl<bool>? control)
 	{
-		return control == null ? null : Create(control);
+		return control == null ? null : New(control);
 	}
 
 	private void UpdateState()

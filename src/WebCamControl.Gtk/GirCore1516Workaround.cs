@@ -1,3 +1,6 @@
+// Temporary hacks until https://github.com/gircore/gir.core/pull/1516 lands.
+// Wrapers around Gtk library to avoid namespace issues.
+
 namespace WebCamControl.Gtk.Internal;
 
 internal class WidgetClassUnownedHandle(nint handle) : global::Gtk.Internal.WidgetClassUnownedHandle(handle);

@@ -1,26 +1,27 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
-using WebCamControl.Gtk;
 using WebCamControl.Gtk.Extensions;
 using WebCamControl.Gtk.Widgets;
-using WebCamControl.GtkWidgets;
 
-namespace WebCamControl.GtkViews;
+namespace WebCamControl.Gtk;
 
 /// <summary>
 /// Main window for the app - expanded view
 /// </summary>
 [GObject.Subclass<Adw.ApplicationWindow>(qualifiedName: nameof(FullWindow))]
-[global::Gtk.Template<global::Gtk.AssemblyResource>("FullWindow.ui")]
-public partial class FullWindow
+[Template<EntryAssemblyResource>("FullWindow.ui")]
+public partial class FullWindow : IWindow<FullWindow>
 {
 	private ICameraManager _cameraManager = null!;
 	private IPresets _presets = null!;
 	private ILogger<FullWindow> _logger = null!;
-	private CustomComboRow<ICamera> _cameraComboComponent = null!;
+	private CustomComboRow<ICamera> _cameraComboCustom = null!;
 	private EventHandler? _presetsChangedHandler;
 
 	[Connect] private ComboRow _cameraCombo; 
@@ -30,7 +31,7 @@ public partial class FullWindow
 	[Connect] private ActionRow _panAndTiltRow;
 	[Connect] private Box _panAndTiltButtons;
 
-	public static FullWindow Create(IServiceProvider provider)
+	public static FullWindow New(IServiceProvider provider)
 	{
 		var app = provider.GetRequiredService<Adw.Application>();
 		var cameraManager = provider.GetRequiredService<ICameraManager>();
@@ -75,15 +76,15 @@ public partial class FullWindow
 	private void InitializeCameras()
 	{
 		var cameras = _cameraManager.Cameras.ToArray();
-		_cameraComboComponent = new CustomComboRow<ICamera>(_cameraCombo)
+		_cameraComboCustom = new CustomComboRow<ICamera>(_cameraCombo)
 		{
 			LabelCallback = camera => $"{camera.Name} ({camera.RawName})",
 			Items = cameras,
 			SelectedItem = _cameraManager.SelectedCamera,
 		};
-		_cameraComboComponent.OnSelectionChanged += (_, _) =>
+		_cameraComboCustom.OnSelectionChanged += (_, _) =>
 		{
-			var newCamera = _cameraComboComponent.SelectedItem;
+			var newCamera = _cameraComboCustom.SelectedItem;
 			if (newCamera == null)
 			{
 				return;
@@ -110,7 +111,7 @@ public partial class FullWindow
 		CleanupCameraControls();
 		
 		// Create controls for the selected camera
-		_panAndTiltButtons.Append(PanAndTiltButtons.Create(camera));
+		_panAndTiltButtons.Append(PanAndTiltButtons.New(camera));
 		
 		var potentialControls = new Widget?[]
 		{
@@ -131,7 +132,7 @@ public partial class FullWindow
 		_presetsList.RemoveAll();
 		foreach (var preset in _presets.PresetConfigs)
 		{
-			var row = PresetRow.Create(preset);
+			var row = PresetRow.New(preset);
 			row.OnDelete += (_, _) => _presets.Delete(preset);
 			_presetsList.Append(row);
 		}

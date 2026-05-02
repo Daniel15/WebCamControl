@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
 
 using System.Reflection;
-using Adw;
 using Gtk;
 using AboutDialog = Adw.AboutDialog;
 using static WebCamControl.Core.Gettext;

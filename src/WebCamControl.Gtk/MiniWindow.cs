@@ -2,22 +2,21 @@
 // SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
 
 using System.Globalization;
-using Adw;
 using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 using WebCamControl.Core;
 using WebCamControl.Gtk.Extensions;
-using WebCamControl.GtkWidgets;
+using WebCamControl.Gtk.Widgets;
 using static WebCamControl.Core.Gettext;
 
-namespace WebCamControl.GtkViews;
+namespace WebCamControl.Gtk;
 
 /// <summary>
 /// Main window for the app - basic view
 /// </summary>
 [GObject.Subclass<Adw.ApplicationWindow>(qualifiedName: nameof(MiniWindow))]
-[global::Gtk.Template<global::Gtk.AssemblyResource>("MiniWindow.ui")]
-public partial class MiniWindow
+[Template<EntryAssemblyResource>("MiniWindow.ui")]
+public partial class MiniWindow : IWindow<MiniWindow>
 {
 	private const int _minPresetButtonCount = 6;
 	
@@ -30,7 +29,7 @@ public partial class MiniWindow
 	[Connect] private Box _buttonsBox;
 	[Connect] private Scale _zoom;
 
-	public static MiniWindow Create(IServiceProvider provider)
+	public static MiniWindow New(IServiceProvider provider)
 	{
 		var app = provider.GetRequiredService<Adw.Application>();
 		var cameraManager = provider.GetRequiredService<ICameraManager>();
@@ -48,7 +47,7 @@ public partial class MiniWindow
 		Title = $"WebCamControl: {_camera.Name}";
 		// TODO: Configure proper icon
 
-		_panAndTiltButtons.Append(PanAndTiltButtons.Create(_camera));
+		_panAndTiltButtons.Append(PanAndTiltButtons.New(_camera));
 		InitializePresets();
 		InitializeZoom();
 

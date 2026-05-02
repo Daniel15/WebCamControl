@@ -1,7 +1,7 @@
 using Gtk;
 using Timer = System.Timers.Timer;
 
-namespace WebCamControl.GtkWidgets;
+namespace WebCamControl.Gtk.Widgets;
 
 /// <summary>
 /// A button that emits events while it is being held in.

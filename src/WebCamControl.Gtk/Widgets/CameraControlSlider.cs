@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
 using WebCamControl.Core;
@@ -14,7 +17,7 @@ public partial class CameraControlSlider
 	private Scale _scale = null!;
 	private EventHandler? _controlChangedHandler;
 
-	private static CameraControlSlider Create(ICameraControl<int> control)
+	private static CameraControlSlider New(ICameraControl<int> control)
 	{
 		var slider = NewWithProperties([]);
 		slider.Configure(control);
@@ -76,6 +79,6 @@ public partial class CameraControlSlider
 
 	public static CameraControlSlider? TryCreate(ICameraControl<int>? control)
 	{
-		return control == null ? null : Create(control);
+		return control == null ? null : New(control);
 	}
 }

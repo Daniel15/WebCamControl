@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
 
 using Gtk;
 using WebCamControl.Core;
 using WebCamControl.Gtk.Extensions;
 
-namespace WebCamControl.GtkWidgets;
+namespace WebCamControl.Gtk.Widgets;
 
 /// <summary>
 /// Renders up, down, left, and right buttons to adjust the pan and tilt.
 /// </summary>
 [GObject.Subclass<Grid>(qualifiedName: nameof(PanAndTiltButtons))]
-[global::Gtk.Template<global::Gtk.AssemblyResource>("PanAndTiltButtons.ui")]
+[Template<EntryAssemblyResource>("PanAndTiltButtons.ui")]
 public partial class PanAndTiltButtons
 {
 	private const float _panTiltAdjustmentAmount = 2f;
@@ -23,9 +23,13 @@ public partial class PanAndTiltButtons
 	[Connect] private PressAndHoldButton _left;
 	[Connect] private PressAndHoldButton _right;
 	
-	public static PanAndTiltButtons Create(ICamera camera)
+	public static PanAndTiltButtons New(ICamera camera)
 	{
-		_ = PressAndHoldButton.GetGType();
+		// Ensure the PressAndHoldButton GType is registered before creating the PanAndTiltButtons.
+		// Otherwise, an error will be thrown on creation.
+		// https://github.com/gircore/gir.core/issues/1517
+		PressAndHoldButton.GetGType();
+		
 		var buttons = NewWithProperties([]);
 		buttons.Configure(camera);
 		return buttons;

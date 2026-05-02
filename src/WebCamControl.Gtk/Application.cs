@@ -10,9 +10,7 @@ using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Core.Extensions;
 using WebCamControl.Gtk.Extensions;
-using WebCamControl.GtkViews;
 using WebCamControl.Linux.Interop;
-using Window = Gtk.Window;
 using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
@@ -83,11 +81,11 @@ public class Application
 		{
 			if (_mainWindow is MiniWindow)
 			{
-				ShowWindow(typeof(FullWindow), () => FullWindow.Create(_provider));	
+				ShowWindow<FullWindow>();
 			}
 			else
 			{
-				ShowWindow(typeof(MiniWindow), () => MiniWindow.Create(_provider));
+				ShowWindow<MiniWindow>();
 			}
 		}, "<Ctrl>T");
 		
@@ -109,16 +107,16 @@ public class Application
 
 	private void OnActivate(Gio.Application application, EventArgs eventArgs)
 	{
-		ShowWindow(typeof(MiniWindow), () => MiniWindow.Create(_provider));
+		ShowWindow<MiniWindow>();
 	}
 
-	private void ShowWindow(Type windowType, Func<Window> createWindow)
+	private void ShowWindow<T>() where T : Window, IWindow<T>
 	{
-		_logger.LogInformation("Creating new {WindowType}", windowType.Name);
+		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
 		var previousWindow = _mainWindow;
 		try
 		{
-			_mainWindow = createWindow();
+			_mainWindow = T.New(_provider);
 			_mainWindow.Present();
 			previousWindow?.Dispose();
 		}

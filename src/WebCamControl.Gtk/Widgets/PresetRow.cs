@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
 using WebCamControl.Core.Configuration;
@@ -14,7 +17,7 @@ public partial class PresetRow
 	private PresetConfig _preset = null!;
 	public event EventHandler? OnDelete; 
 		
-	public static PresetRow Create(PresetConfig preset)
+	public static PresetRow New(PresetConfig preset)
 	{
 		var row = NewWithProperties([]);
 		row.Configure(preset);

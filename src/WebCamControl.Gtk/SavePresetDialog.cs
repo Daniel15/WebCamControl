@@ -1,15 +1,18 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
-using GObject;
 using Gtk;
+using GObject;
 using Microsoft.Extensions.DependencyInjection;
 using WebCamControl.Core;
-using WebCamControl.Gtk;
+using WebCamControl.Gtk.Widgets;
 using static WebCamControl.Core.Gettext;
 
-namespace WebCamControl.GtkViews;
+namespace WebCamControl.Gtk;
 
-[GObject.Subclass<Adw.AlertDialog>(qualifiedName: nameof(SavePresetDialog))]
-[global::Gtk.Template<global::Gtk.AssemblyResource>("SavePresetDialog.ui")]
+[Subclass<Adw.AlertDialog>(qualifiedName: nameof(SavePresetDialog))]
+[Template<EntryAssemblyResource>("SavePresetDialog.ui")]
 public partial class SavePresetDialog
 {
 	private const string _changedSignalName = "changed";
@@ -20,8 +23,8 @@ public partial class SavePresetDialog
 	private IPresets _presets = null!;
 	private CustomComboRow<DestinationRow> _destinationCombo = null!;
 	
-	[global::Gtk.Connect] private EntryRow _name;
-	[global::Gtk.Connect] private ComboRow _destination;
+	[Connect] private EntryRow _name;
+	[Connect] private ComboRow _destination;
 	
 	public static SavePresetDialog Create(IServiceProvider provider)
 	{
@@ -75,11 +78,10 @@ public partial class SavePresetDialog
 
 	private void Save()
 	{
-		var destination = _destinationCombo.SelectedItem;
 		_presets.SaveCurrent(
 			_camera, 
 			_name.Text_ ?? string.Empty, 
-			index: destination?.Index
+			index: _destinationCombo.SelectedItem?.Index
 		);
 		Close();
 	}

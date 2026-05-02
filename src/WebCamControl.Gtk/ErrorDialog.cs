@@ -1,29 +1,18 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
 
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Web;
 using Gtk;
-using WebCamControl.Gtk;
 using static WebCamControl.Core.Gettext;
 
-namespace WebCamControl.GtkViews;
+namespace WebCamControl.Gtk;
 
 [GObject.Subclass<Adw.AlertDialog>(qualifiedName: nameof(ErrorDialog))]
-[global::Gtk.Template<global::Gtk.AssemblyResource>("ErrorDialog.ui")]
+[Template<EntryAssemblyResource>("ErrorDialog.ui")]
 public partial class ErrorDialog
 {
 	[Connect] private TextView _details;
 	[Connect] private Label _summary;
-	
-	public static ErrorDialog Create(Exception ex)
-	{
-		var dialog = NewWithProperties([]);
-		dialog.Configure(ex);
-		return dialog;
-	}
 
 	private void Configure(Exception ex)
 	{
@@ -37,7 +26,8 @@ public partial class ErrorDialog
 		Widget? parent
 	)
 	{
-		var dialog = Create(ex);
+		var dialog = NewWithProperties([]);
+		dialog.Configure(ex);
 		dialog.OnResponse += (_, args) =>
 		{
 			Console.WriteLine(args.Response);
