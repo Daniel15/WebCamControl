@@ -1,5 +1,5 @@
 // Temporary hacks until https://github.com/gircore/gir.core/pull/1516 lands.
-// Wrapers around Gtk library to avoid namespace issues.
+// Wrappers around Gtk library to avoid namespace issues.
 
 namespace WebCamControl.Gtk.Internal;
 
