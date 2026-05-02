@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
 using WebCamControl.Core.Configuration;
@@ -8,18 +11,20 @@ namespace WebCamControl.Gtk.Widgets;
 /// <summary>
 /// A row representing a saved preset.
 /// </summary>
-public class PresetRow : ExpanderRow
+[GObject.Subclass<ExpanderRow>(qualifiedName: nameof(PresetRow))]
+public partial class PresetRow
 {
-	private readonly PresetConfig _preset;
+	private PresetConfig _preset = null!;
 	public event EventHandler? OnDelete; 
 		
-	public PresetRow(PresetConfig preset)
-		: this(Adw.Internal.ExpanderRow.New(), false, preset)
+	public static PresetRow New(PresetConfig preset)
 	{
-		
+		var row = NewWithProperties([]);
+		row.Configure(preset);
+		return row;
 	}
-	private PresetRow(IntPtr ptr, bool ownedRef, PresetConfig preset)
-		: base(ptr, ownedRef)
+
+	private void Configure(PresetConfig preset)
 	{
 		_preset = preset;
 		Title = preset.Name;
@@ -50,7 +55,7 @@ public class PresetRow : ExpanderRow
 		const string deleteButtonId = "delete";
 		const string cancelButtonId = "cancel";
 		
-		var dialog = new MessageDialog();
+		var dialog = MessageDialog.NewWithProperties([]);
 		dialog.SetParent(this);
 		dialog.Body = $"Are you sure you want to delete preset '{_preset.Name}'?";
 		dialog.AddResponse(cancelButtonId, "Cancel");

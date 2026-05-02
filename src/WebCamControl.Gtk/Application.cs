@@ -10,8 +10,8 @@ using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Core.Extensions;
 using WebCamControl.Gtk.Extensions;
+using WebCamControl.Gtk.Widgets;
 using WebCamControl.Linux.Interop;
-using Window = Adw.Window;
 using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
@@ -74,9 +74,7 @@ public class Application
 		_app.ConfigureAction("quit", (_, _) => _app.Quit(), "<Ctrl>Q");
 		_app.ConfigureAction("save_preset", (_, _) =>
 		{
-			var dialog = ActivatorUtilities.CreateInstance<SavePresetDialog>(
-				_provider
-			);
+			var dialog = SavePresetDialog.New(_provider);
 			dialog.Present(_mainWindow);
 		}, "<Ctrl>S");
 		
@@ -84,7 +82,7 @@ public class Application
 		{
 			if (_mainWindow is MiniWindow)
 			{
-				ShowWindow<FullWindow>();	
+				ShowWindow<FullWindow>();
 			}
 			else
 			{
@@ -113,22 +111,16 @@ public class Application
 		ShowWindow<MiniWindow>();
 	}
 
-	private void ShowWindow<T>() where T: Window
+	private void ShowWindow<T>() where T : Window, IWidgetWithServiceLocator<T>
 	{
-		if (_mainWindow != null)
-		{
-			_mainWindow.Destroy();
-			_mainWindow.Dispose();
-			_mainWindow = null;
-		}
-		
 		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
+		var previousWindow = _mainWindow;
 		try
 		{
-			_mainWindow = ActivatorUtilities.CreateInstance<T>(
-				_provider
-			);
+			_mainWindow = T.New(_provider);
 			_mainWindow.Present();
+			previousWindow?.Close();
+			previousWindow?.Dispose();
 		}
 		catch (Exception ex)
 		{
@@ -147,7 +139,7 @@ public class Application
 			throw new Exception("Could not load resources");
 		}
 		var data = new byte[stream.Length];
-		stream.Read(data, 0, data.Length);
+		stream.ReadExactly(data);
 
 		var resource = Resource.NewFromData(Bytes.New(data));
 		resource.Register();

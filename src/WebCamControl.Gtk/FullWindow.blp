@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Adw.ApplicationWindow full_window {
+template $FullWindow : Adw.ApplicationWindow {
   title: _('WebCamControl');
 
   Adw.ToolbarView {
@@ -35,10 +35,6 @@ Adw.ApplicationWindow full_window {
 
             Adw.ComboRow _cameraCombo {
               title: _("Camera");
-              model: Gtk.StringList {
-                // Dummy data for testing
-                strings["My Cool Camera 1", "Some Other Camera"]
-              };
             }
           };
         }

@@ -5,6 +5,8 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <!-- https://github.com/gircore/gir.core/releases/tag/0.8.0-preview.1 -->
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <SelfContained>true</SelfContained>
         <PublishTrimmed>false</PublishTrimmed>
 		<!-- Workaround for Rider bug https://youtrack.jetbrains.com/issue/RIDER-56918/Cannot-start-debugging-net5-project-on-Linux-when-using-PublishSingleFile-in-.proj-file -->
@@ -15,8 +17,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="GirCore.Adw-1" Version="0.5.0" />
-      <PackageReference Include="GirCore.Gdk-4.0" Version="0.5.0" />
+      <PackageReference Include="GirCore.Adw-1" Version="0.8.0-preview.1" />
+      <PackageReference Include="GirCore.Gdk-4.0" Version="0.8.0-preview.1" />
+      <PackageReference Include="GirCore.GObject-2.0.Integration" Version="0.8.0-preview.1" />
+      <PackageReference Include="GirCore.Gtk-4.0.Integration" Version="0.8.0-preview.1" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.6" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.6" />

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
 
 using Gtk;
 using WebCamControl.Core;
@@ -10,28 +10,34 @@ namespace WebCamControl.Gtk.Widgets;
 /// <summary>
 /// Renders up, down, left, and right buttons to adjust the pan and tilt.
 /// </summary>
-public class PanAndTiltButtons : Box
+[GObject.Subclass<Grid>(qualifiedName: nameof(PanAndTiltButtons))]
+[Template<EntryAssemblyResource>("PanAndTiltButtons.ui")]
+public partial class PanAndTiltButtons
 {
 	private const float _panTiltAdjustmentAmount = 2f;
 
-	private readonly ICamera _camera;
-	private readonly Builder _builder;
+	private ICamera _camera = null!;
 
-#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly PressAndHoldButton _up = default!;
-	[Connect] private readonly PressAndHoldButton _down = default!;
-	[Connect] private readonly PressAndHoldButton _left = default!;
-	[Connect] private readonly PressAndHoldButton _right = default!;
-#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+	[Connect] private PressAndHoldButton _up;
+	[Connect] private PressAndHoldButton _down;
+	[Connect] private PressAndHoldButton _left;
+	[Connect] private PressAndHoldButton _right;
 	
-	public PanAndTiltButtons(ICamera camera)
+	public static PanAndTiltButtons New(ICamera camera)
+	{
+		// Ensure the PressAndHoldButton GType is registered before creating the PanAndTiltButtons.
+		// Otherwise, an error will be thrown on creation.
+		// https://github.com/gircore/gir.core/issues/1517
+		PressAndHoldButton.GetGType();
+		
+		var buttons = NewWithProperties([]);
+		buttons.Configure(camera);
+		return buttons;
+	}
+
+	private void Configure(ICamera camera)
 	{
 		_camera = camera;
-		_builder = new Builder("PanAndTiltButtons.ui");
-		var rootWidget = (Grid)_builder.GetObject("pan_and_tilt_buttons")!;
-		Append(rootWidget);
-		_builder.Connect(this);
-
 		AttachEvents();
 	}
 
@@ -54,10 +60,4 @@ public class PanAndTiltButtons : Box
 		}
 	}
 
-	public override void Dispose()
-	{
-		GC.SuppressFinalize(this);
-		base.Dispose();
-		_builder.Dispose();
-	}
 }

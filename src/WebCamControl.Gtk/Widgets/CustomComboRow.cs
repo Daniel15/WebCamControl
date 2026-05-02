@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
 
 using Adw;
 using Gtk;
@@ -10,17 +10,24 @@ namespace WebCamControl.Gtk;
 /// Wrapper around <see cref="ComboRow"/> that allows C# types to be used as items.
 /// </summary>
 /// <typeparam name="T">Type of item</typeparam>
-public class CustomComboRow<T> : ComboRow
+public class CustomComboRow<T> where T : notnull
 {
+	private readonly ComboRow _comboRow;
 	private T[] _items = [];
 	private Dictionary<string, T> _labelToItem = new();
 
-	public CustomComboRow(IntPtr ptr, bool ownedRef) : base(ptr, ownedRef) { }
-
+	public CustomComboRow(ComboRow comboRow)
+	{
+		_comboRow = comboRow;
+		_comboRow.OnNotify += (_, _) => OnSelectionChanged?.Invoke(this, EventArgs.Empty);
+	}
+	
+	public event EventHandler? OnSelectionChanged;
+	
 	/// <summary>
 	/// Gets or sets a callback to get the label for the specified item.
 	/// </summary>
-	public Func<T, string> LabelCallback { get; set; } = item => item.ToString();
+	public Func<T, string> LabelCallback { get; set; } = item => item.ToString() ?? string.Empty;
 
 	/// <summary>
 	/// Gets or sets the list of items to show 
@@ -48,7 +55,7 @@ public class CustomComboRow<T> : ComboRow
 				}
 			}
 
-			Model = StringList.New(labels);
+			_comboRow.Model = StringList.New(labels);
 			_labelToItem = labelToItem;
 		}
 	}
@@ -56,17 +63,17 @@ public class CustomComboRow<T> : ComboRow
 	/// <summary>
 	/// Gets the currently selected item.
 	/// </summary>
-	public new T? SelectedItem
+	public T? SelectedItem
 	{
 		get
 		{
-			var label = (StringObject?)base.SelectedItem;
+			var label = (StringObject?)_comboRow.SelectedItem;
 			return label?.String == null ? default : _labelToItem[label.String];
 		}
 		set
 		{
 			var index = (uint)Array.FindIndex(_items, item => Equals(item, value));
-			SetSelected(index);
+			_comboRow.SetSelected(index);
 		}
 	}
 }

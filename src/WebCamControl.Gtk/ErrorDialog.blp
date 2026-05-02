@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Adw.AlertDialog error_dialog {
+template $ErrorDialog : Adw.AlertDialog {
   heading: _("An error has occurred");
   close-response: "okay";
   default-response: "okay";

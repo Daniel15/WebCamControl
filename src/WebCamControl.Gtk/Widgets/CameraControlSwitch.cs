@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
 using WebCamControl.Core;
@@ -7,17 +10,23 @@ namespace WebCamControl.Gtk.Widgets;
 /// <summary>
 /// A switch to modify a boolean camera control.
 /// </summary>
-public class CameraControlSwitch : Box
+[GObject.Subclass<Box>(qualifiedName: nameof(CameraControlSwitch))]
+public partial class CameraControlSwitch
 {
-	private readonly ICameraControl<bool> _control;
-	private readonly SwitchRow _switch;
+	private ICameraControl<bool> _control = null!;
+	private SwitchRow _switch = null!;
+	private EventHandler? _controlChangedHandler;
 
-	private CameraControlSwitch(ICameraControl<bool> control)
-		: base(global::Gtk.Internal.Box.New(Orientation.Horizontal, 0), false)
+	private static CameraControlSwitch New(ICameraControl<bool> control)
+	{
+		var controlSwitch = NewWithProperties([]);
+		controlSwitch.Configure(control);
+		return controlSwitch;
+	}
+
+	private void Configure(ICameraControl<bool> control)
 	{
 		_control = control;
-		// SwitchRow is `final`, so we can't inherit from it. Instead, append the switch
-		// as a child.
 		_switch = SwitchRow.New();
 		_switch.Title = control.Name;
 		_switch.Hexpand = true;
@@ -31,13 +40,25 @@ public class CameraControlSwitch : Box
 		);
 		InsertChildAfter(_switch, null);
 
-		control.Changed += (_, _) => UpdateState();
+		_controlChangedHandler = (_, _) => UpdateState();
+		control.Changed += _controlChangedHandler;
 		UpdateState();
+	}
+
+	public override void Dispose()
+	{
+		if (_controlChangedHandler != null)
+		{
+			_control.Changed -= _controlChangedHandler;
+			_controlChangedHandler = null;
+		}
+
+		base.Dispose();
 	}
 	
 	public static CameraControlSwitch? TryCreate(ICameraControl<bool>? control)
 	{
-		return control == null ? null : new CameraControlSwitch(control);
+		return control == null ? null : New(control);
 	}
 
 	private void UpdateState()

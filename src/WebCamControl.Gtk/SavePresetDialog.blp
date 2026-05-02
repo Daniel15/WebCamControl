@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Adw.AlertDialog save_preset_dialog {
+template $SavePresetDialog : Adw.AlertDialog {
   heading: _("Save Preset");
   close-response: "cancel";
   default-response: "save";

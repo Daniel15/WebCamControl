@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using Gtk;
+using Microsoft.Extensions.DependencyInjection;
 using WebCamControl.Core;
 using WebCamControl.Gtk.Extensions;
 using WebCamControl.Gtk.Widgets;
@@ -13,47 +14,45 @@ namespace WebCamControl.Gtk;
 /// <summary>
 /// Main window for the app - basic view
 /// </summary>
-public class MiniWindow : Adw.Window
+[GObject.Subclass<Adw.ApplicationWindow>(qualifiedName: nameof(MiniWindow))]
+[Template<EntryAssemblyResource>("MiniWindow.ui")]
+public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 {
 	private const int _minPresetButtonCount = 6;
 	
-	private readonly ICamera _camera;
-	private readonly Builder _builder;
-	private readonly IPresets _presets;
+	private ICamera _camera = null!;
+	private IPresets _presets = null!;
+	private EventHandler? _presetsChangedHandler;
+	private EventHandler? _zoomChangedHandler;
 
-#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly Box _panAndTiltButtons = default!;
-	[Connect] private readonly Box _buttonsBox = default!;
-	[Connect] private readonly Scale _zoom = default!;
-#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+	[Connect] private Box _panAndTiltButtons;
+	[Connect] private Box _buttonsBox;
+	[Connect] private Scale _zoom;
 
-	public MiniWindow(
-		Adw.Application app,
-		ICameraManager cameraManager,
-		IPresets presets
-	) : this(BuilderUtils.CreateFromAssembly("MiniWindow.ui"), cameraManager, presets)
+	public static MiniWindow New(IServiceProvider provider)
 	{
-		Application = app;
+		var app = provider.GetRequiredService<Adw.Application>();
+		var cameraManager = provider.GetRequiredService<ICameraManager>();
+		var presets = provider.GetRequiredService<IPresets>();
+		var window = NewWithProperties([]);
+		window.Configure(app, cameraManager, presets);
+		return window;
 	}
 
-	private MiniWindow(
-		Builder builder,
-		ICameraManager cameraManager,
-		IPresets presets
-	) : base(builder.GetPointer("mini_window"), false)
+	private void Configure(Adw.Application app, ICameraManager cameraManager, IPresets presets)
 	{
 		_camera = cameraManager.SelectedCamera;
-		_builder = builder;
 		_presets = presets;
-		builder.Connect(this);
+		Application = app;
 		Title = $"WebCamControl: {_camera.Name}";
 		// TODO: Configure proper icon
 
-		_panAndTiltButtons.Append(new PanAndTiltButtons(_camera));
+		_panAndTiltButtons.Append(PanAndTiltButtons.New(_camera));
 		InitializePresets();
 		InitializeZoom();
 
-		presets.OnChange += (_, _) => InitializePresets();
+		_presetsChangedHandler = (_, _) => InitializePresets();
+		presets.OnChange += _presetsChangedHandler;
 	}
 
 	private void InitializePresets()
@@ -99,13 +98,16 @@ public class MiniWindow : Adw.Window
 				_camera.Zoom.Value = (int)y.Value;
 				return true;
 			};
-			_camera.Zoom.Changed += (_, _) => UpdateZoomState();
-			_zoom.Adjustment = new Adjustment
-			{
-				Lower = _camera.Zoom.Minimum,
-				Upper = _camera.Zoom.Maximum,
-				StepIncrement = _camera.Zoom.Step,
-			};
+			_zoomChangedHandler = (_, _) => UpdateZoomState();
+			_camera.Zoom.Changed += _zoomChangedHandler;
+			_zoom.Adjustment = Adjustment.New(
+				value: _camera.Zoom.Value,
+				lower: _camera.Zoom.Minimum,
+				upper: _camera.Zoom.Maximum,
+				stepIncrement: _camera.Zoom.Step,
+				pageIncrement: _camera.Zoom.Step,
+				pageSize: 0
+			);
 			UpdateZoomState();
 		}
 	}
@@ -123,7 +125,18 @@ public class MiniWindow : Adw.Window
 
 	public override void Dispose()
 	{
+		if (_presetsChangedHandler != null)
+		{
+			_presets.OnChange -= _presetsChangedHandler;
+			_presetsChangedHandler = null;
+		}
+
+		if (_zoomChangedHandler != null && _camera.Zoom != null)
+		{
+			_camera.Zoom.Changed -= _zoomChangedHandler;
+			_zoomChangedHandler = null;
+		}
+
 		base.Dispose();
-		_builder.Dispose();
 	}
 }

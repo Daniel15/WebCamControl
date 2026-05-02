@@ -1,5 +1,9 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+
 using Adw;
 using Gtk;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Gtk.Extensions;
@@ -10,44 +14,45 @@ namespace WebCamControl.Gtk;
 /// <summary>
 /// Main window for the app - expanded view
 /// </summary>
-public class FullWindow : Adw.Window
+[GObject.Subclass<Adw.ApplicationWindow>(qualifiedName: nameof(FullWindow))]
+[Template<EntryAssemblyResource>("FullWindow.ui")]
+public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 {
-	private readonly Builder _builder;
-	private readonly ICameraManager _cameraManager;
-	private readonly IPresets _presets;
-	private readonly ILogger<FullWindow> _logger;
+	private ICameraManager _cameraManager = null!;
+	private IPresets _presets = null!;
+	private ILogger<FullWindow> _logger = null!;
+	private CustomComboRow<ICamera> _cameraComboCustom = null!;
+	private EventHandler? _presetsChangedHandler;
 
-#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
-	[Connect] private readonly CustomComboRow<ICamera> _cameraCombo = default!; 
-	[Connect] private readonly ListBox _controls = default!;
-	[Connect] private readonly ActionRow _exampleRow = default!;
-	[Connect] private readonly ListBox _presetsList = default!;
-	[Connect] private readonly ActionRow _panAndTiltRow = default!;
-	[Connect] private readonly Box _panAndTiltButtons = default!;
-#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+	[Connect] private ComboRow _cameraCombo; 
+	[Connect] private ListBox _controls;
+	[Connect] private ActionRow _exampleRow;
+	[Connect] private ListBox _presetsList;
+	[Connect] private ActionRow _panAndTiltRow;
+	[Connect] private Box _panAndTiltButtons;
 
-	public FullWindow(
+	public static FullWindow New(IServiceProvider provider)
+	{
+		var app = provider.GetRequiredService<Adw.Application>();
+		var cameraManager = provider.GetRequiredService<ICameraManager>();
+		var presets = provider.GetRequiredService<IPresets>();
+		var logger = provider.GetRequiredService<ILogger<FullWindow>>();
+		var window = NewWithProperties([]);
+		window.Configure(app, cameraManager, presets, logger);
+		return window;
+	}
+
+	private void Configure(
 		Adw.Application app,
 		ICameraManager cameraManager,
 		IPresets presets,
 		ILogger<FullWindow> logger
-	) : this(BuilderUtils.CreateFromAssembly("FullWindow.ui"), cameraManager, presets, logger)
+	)
 	{
-		Application = app;
-	}
-
-	private FullWindow(
-		Builder builder,
-		ICameraManager cameraManager,
-		IPresets presets,
-		ILogger<FullWindow> logger
-	) : base(builder.GetPointer("full_window"), false)
-	{
-		_builder = builder;
 		_cameraManager = cameraManager;
 		_presets = presets;
 		_logger = logger;
-		builder.Connect(this);
+		Application = app;
 		// TODO: Configure proper icon
 		
 		InitializeWidgets();
@@ -61,7 +66,8 @@ public class FullWindow : Adw.Window
 		InitializeCameras();
 		InitializeCamera();
 		InitializePresets();
-		_presets.OnChange += (_, _) => InitializePresets();
+		_presetsChangedHandler = (_, _) => InitializePresets();
+		_presets.OnChange += _presetsChangedHandler;
 	}
 	
 	/// <summary>
@@ -69,25 +75,25 @@ public class FullWindow : Adw.Window
 	/// </summary>
 	private void InitializeCameras()
 	{
-		_cameraCombo.LabelCallback = camera => $"{camera.Name} ({camera.RawName})";
-		_cameraCombo.Items = _cameraManager.Cameras;
-		_cameraCombo.SelectedItem = _cameraManager.SelectedCamera;
-		NotifySignal.Connect(
-			_cameraCombo,
-			(_, _) =>
+		var cameras = _cameraManager.Cameras.ToArray();
+		_cameraComboCustom = new CustomComboRow<ICamera>(_cameraCombo)
+		{
+			LabelCallback = camera => $"{camera.Name} ({camera.RawName})",
+			Items = cameras,
+			SelectedItem = _cameraManager.SelectedCamera,
+		};
+		_cameraComboCustom.OnSelectionChanged += (_, _) =>
+		{
+			var newCamera = _cameraComboCustom.SelectedItem;
+			if (newCamera == null)
 			{
-				var newCamera = _cameraCombo.SelectedItem;
-				if (newCamera == null)
-				{
-					return;
-				}
-				
-				_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
-				_cameraManager.SelectedCamera = newCamera;
-				InitializeCamera();
-			},
-			detail: ComboRow.SelectedPropertyDefinition.UnmanagedName
-		);
+				return;
+			}
+			
+			_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
+			_cameraManager.SelectedCamera = newCamera;
+			InitializeCamera();
+		};
 	}
 
 	/// <summary>
@@ -101,17 +107,11 @@ public class FullWindow : Adw.Window
 
 		// Remove any existing controls so we don't end up with duplicate ones when changing camera.
 		_panAndTiltButtons.RemoveChildren();
-		//_controls.Remove(_exampleRow);
-		foreach (var child in _controls.GetChildren())
-		{
-			if (child != _panAndTiltRow)
-			{
-				_controls.Remove(child);
-			}
-		}
+		_controls.Remove(_exampleRow);
+		CleanupCameraControls();
 		
 		// Create controls for the selected camera
-		_panAndTiltButtons.Append(new PanAndTiltButtons(camera));
+		_panAndTiltButtons.Append(PanAndTiltButtons.New(camera));
 		
 		var potentialControls = new Widget?[]
 		{
@@ -132,15 +132,36 @@ public class FullWindow : Adw.Window
 		_presetsList.RemoveAll();
 		foreach (var preset in _presets.PresetConfigs)
 		{
-			var row = new PresetRow(preset);
+			var row = PresetRow.New(preset);
 			row.OnDelete += (_, _) => _presets.Delete(preset);
 			_presetsList.Append(row);
 		}
 	}
 	
+	private void CleanupCameraControls()
+	{
+		foreach (var child in _controls.GetChildren())
+		{
+			if (child == _panAndTiltRow)
+			{
+				continue;
+			}
+
+			_controls.Remove(child);
+			child.Dispose();
+		}
+	}
+	
 	public override void Dispose()
 	{
+		CleanupCameraControls();
+
+		if (_presetsChangedHandler != null)
+		{
+			_presets.OnChange -= _presetsChangedHandler;
+			_presetsChangedHandler = null;
+		}
+
 		base.Dispose();
-		_builder.Dispose();
 	}
 }

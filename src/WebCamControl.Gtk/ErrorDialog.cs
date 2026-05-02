@@ -1,27 +1,21 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2024 Daniel Lo Nigro <d@d.sb>
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
 
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Web;
 using Gtk;
 using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk;
 
-public class ErrorDialog : Adw.AlertDialog
+[GObject.Subclass<Adw.AlertDialog>(qualifiedName: nameof(ErrorDialog))]
+[Template<EntryAssemblyResource>("ErrorDialog.ui")]
+public partial class ErrorDialog
 {
-	[Connect] private readonly TextView _details = default!;
-	[Connect] private readonly Label _summary = default!;
-	
-	public ErrorDialog(Exception ex)
-		: this(ex, new Builder("ErrorDialog.ui")) { }
+	[Connect] private TextView _details;
+	[Connect] private Label _summary;
 
-	private ErrorDialog(Exception ex, Builder builder)
-		: base(builder.GetPointer("error_dialog"), false)
+	private void Configure(Exception ex)
 	{
-		builder.Connect(this);
 		_summary.Label_ = _($"Error: {ex.Message}\n\nIf this is unexpected, please report a bug.");
 		_details.Buffer!.Text = ex.ToString();
 	}
@@ -32,7 +26,8 @@ public class ErrorDialog : Adw.AlertDialog
 		Widget? parent
 	)
 	{
-		var dialog = new ErrorDialog(ex);
+		var dialog = NewWithProperties([]);
+		dialog.Configure(ex);
 		dialog.OnResponse += (_, args) =>
 		{
 			Console.WriteLine(args.Response);
