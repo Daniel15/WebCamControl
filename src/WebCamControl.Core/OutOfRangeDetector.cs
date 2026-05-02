@@ -31,7 +31,7 @@ public class OutOfRangeDetector(
 			{
 				value = control.Value;
 			}
-			catch (Exception _)
+			catch (Exception)
 			{
 				// Ignore exceptions when reading values
 				continue;
