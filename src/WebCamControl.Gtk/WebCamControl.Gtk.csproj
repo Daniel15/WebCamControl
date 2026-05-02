@@ -17,10 +17,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="GirCore.Adw-1" Version="0.8.0-preview.1" />
-      <PackageReference Include="GirCore.Gdk-4.0" Version="0.8.0-preview.1" />
-      <PackageReference Include="GirCore.GObject-2.0.Integration" Version="0.8.0-preview.1" />
-      <PackageReference Include="GirCore.Gtk-4.0.Integration" Version="0.8.0-preview.1" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.6" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.6" />
@@ -58,6 +54,14 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\..\..\gir.core\src\Integrations\GObject-2.0.Integration\GObject-2.0.Integration.csproj" 
+						OutputItemType="Analyzer"
+                        ReferenceOutputAssembly="false" />
+      <ProjectReference Include="..\..\..\gir.core\src\Integrations\Gtk-4.0.Integration\Gtk-4.0.Integration.csproj"
+						OutputItemType="Analyzer"
+                        ReferenceOutputAssembly="false" />
+      <ProjectReference Include="..\..\..\gir.core\src\Libs\Adw-1\Adw-1.csproj" />
+      <ProjectReference Include="..\..\..\gir.core\src\Libs\Gtk-4.0\Gtk-4.0.csproj" />
       <ProjectReference Include="..\WebCamControl.Core\WebCamControl.Core.csproj" />
     </ItemGroup>
     <ItemGroup>

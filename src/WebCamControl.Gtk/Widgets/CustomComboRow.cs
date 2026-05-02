@@ -13,13 +13,18 @@ namespace WebCamControl.Gtk.Widgets;
 public class CustomComboRow<T> where T : notnull
 {
 	private readonly ComboRow _comboRow;
+	private StringList? _model;
 	private T[] _items = [];
 	private Dictionary<string, T> _labelToItem = new();
 
 	public CustomComboRow(ComboRow comboRow)
 	{
+		//OnSelectionChanged?.Invoke(this, EventArgs.Empty)
 		_comboRow = comboRow;
-		_comboRow.OnNotify += (_, _) => OnSelectionChanged?.Invoke(this, EventArgs.Empty);
+		// _comboRow.OnNotify += (sender, args) =>
+		// {
+		// 	Console.WriteLine(args.GetType());
+		// };
 	}
 	
 	public event EventHandler? OnSelectionChanged;
@@ -55,7 +60,8 @@ public class CustomComboRow<T> where T : notnull
 				}
 			}
 
-			_comboRow.Model = StringList.New(labels);
+			_model = StringList.New(labels);
+			_comboRow.Model = _model;
 			_labelToItem = labelToItem;
 		}
 	}

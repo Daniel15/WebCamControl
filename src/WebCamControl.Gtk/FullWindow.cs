@@ -80,20 +80,20 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 		{
 			LabelCallback = camera => $"{camera.Name} ({camera.RawName})",
 			Items = cameras,
-			SelectedItem = _cameraManager.SelectedCamera,
+			//SelectedItem = _cameraManager.SelectedCamera,
 		};
-		_cameraComboCustom.OnSelectionChanged += (_, _) =>
-		{
-			var newCamera = _cameraComboCustom.SelectedItem;
-			if (newCamera == null)
-			{
-				return;
-			}
-			
-			_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
-			_cameraManager.SelectedCamera = newCamera;
-			InitializeCamera();
-		};
+		// _cameraComboCustom.OnSelectionChanged += (_, _) =>
+		// {
+		// 	var newCamera = _cameraComboCustom.SelectedItem;
+		// 	if (newCamera == null)
+		// 	{
+		// 		return;
+		// 	}
+		// 	
+		// 	_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
+		// 	_cameraManager.SelectedCamera = newCamera;
+		// 	InitializeCamera();
+		// };
 	}
 
 	/// <summary>
@@ -155,7 +155,8 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 	public override void Dispose()
 	{
 		CleanupCameraControls();
-
+		_cameraCombo.Dispose();
+		
 		if (_presetsChangedHandler != null)
 		{
 			_presets.OnChange -= _presetsChangedHandler;
