@@ -119,6 +119,7 @@ public class Application
 		{
 			_mainWindow = T.New(_provider);
 			_mainWindow.Present();
+			previousWindow?.Close();
 			previousWindow?.Dispose();
 		}
 		catch (Exception ex)
