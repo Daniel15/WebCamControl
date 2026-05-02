@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Core.Extensions;
 using WebCamControl.Gtk.Extensions;
+using WebCamControl.Gtk.Widgets;
 using WebCamControl.Linux.Interop;
 using static WebCamControl.Core.Gettext;
 
@@ -73,7 +74,7 @@ public class Application
 		_app.ConfigureAction("quit", (_, _) => _app.Quit(), "<Ctrl>Q");
 		_app.ConfigureAction("save_preset", (_, _) =>
 		{
-			var dialog = SavePresetDialog.Create(_provider);
+			var dialog = SavePresetDialog.New(_provider);
 			dialog.Present(_mainWindow);
 		}, "<Ctrl>S");
 		
@@ -110,7 +111,7 @@ public class Application
 		ShowWindow<MiniWindow>();
 	}
 
-	private void ShowWindow<T>() where T : Window, IWindow<T>
+	private void ShowWindow<T>() where T : Window, IWidgetWithServiceLocator<T>
 	{
 		_logger.LogInformation("Creating new {WindowType}", typeof(T).Name);
 		var previousWindow = _mainWindow;

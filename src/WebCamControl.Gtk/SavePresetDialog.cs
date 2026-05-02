@@ -13,7 +13,7 @@ namespace WebCamControl.Gtk;
 
 [Subclass<Adw.AlertDialog>(qualifiedName: nameof(SavePresetDialog))]
 [Template<EntryAssemblyResource>("SavePresetDialog.ui")]
-public partial class SavePresetDialog
+public partial class SavePresetDialog : IWidgetWithServiceLocator<SavePresetDialog>
 {
 	private const string _changedSignalName = "changed";
 	private static readonly Signal<EntryRow> _changedSignal =
@@ -26,7 +26,7 @@ public partial class SavePresetDialog
 	[Connect] private EntryRow _name;
 	[Connect] private ComboRow _destination;
 	
-	public static SavePresetDialog Create(IServiceProvider provider)
+	public static SavePresetDialog New(IServiceProvider provider)
 	{
 		var cameraManager = provider.GetRequiredService<ICameraManager>();
 		var presets = provider.GetRequiredService<IPresets>();

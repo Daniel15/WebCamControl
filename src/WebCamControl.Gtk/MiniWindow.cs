@@ -16,7 +16,7 @@ namespace WebCamControl.Gtk;
 /// </summary>
 [GObject.Subclass<Adw.ApplicationWindow>(qualifiedName: nameof(MiniWindow))]
 [Template<EntryAssemblyResource>("MiniWindow.ui")]
-public partial class MiniWindow : IWindow<MiniWindow>
+public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 {
 	private const int _minPresetButtonCount = 6;
 	

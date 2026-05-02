@@ -5,7 +5,7 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-		<!-- https://github.com/gircore/gir.core/releases/tag/0.8.0-preview.1 -->
+        <!-- https://github.com/gircore/gir.core/releases/tag/0.8.0-preview.1 -->
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <SelfContained>true</SelfContained>
         <PublishTrimmed>false</PublishTrimmed>

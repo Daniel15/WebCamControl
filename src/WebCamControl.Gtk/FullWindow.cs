@@ -16,7 +16,7 @@ namespace WebCamControl.Gtk;
 /// </summary>
 [GObject.Subclass<Adw.ApplicationWindow>(qualifiedName: nameof(FullWindow))]
 [Template<EntryAssemblyResource>("FullWindow.ui")]
-public partial class FullWindow : IWindow<FullWindow>
+public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 {
 	private ICameraManager _cameraManager = null!;
 	private IPresets _presets = null!;
