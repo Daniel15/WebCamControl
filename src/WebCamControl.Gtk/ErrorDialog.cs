@@ -22,7 +22,7 @@ public partial class ErrorDialog
 
 	public static void ShowError(
 		Exception ex,
-		Adw.Application app,
+		Adw.Application? app,
 		Widget? parent
 	)
 	{
@@ -34,11 +34,11 @@ public partial class ErrorDialog
 			{
 				ReportBug(ex);
 			}
-			app.Release();
-			app.Quit();
+			app?.Release();
+			app?.Quit();
 		};
 		// .Hold() ensures the app does not close until the dialog is closed
-		app.Hold();
+		app?.Hold();
 		dialog.Present(parent);
 	}
 
