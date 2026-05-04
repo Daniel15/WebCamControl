@@ -2,12 +2,15 @@
 // SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
 
 using System.Globalization;
+using Gio;
 using Gtk;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WebCamControl.Core;
 using WebCamControl.Gtk.Extensions;
 using WebCamControl.Gtk.Widgets;
 using static WebCamControl.Core.Gettext;
+using Range = Gtk.Range;
 
 namespace WebCamControl.Gtk;
 
@@ -20,23 +23,26 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 {
 	private const int _minPresetButtonCount = 6;
 	
-	private ICamera _camera = null!;
+	private ICameraManager _cameraManager = null!;
+	private ILogger<MiniWindow> _logger = null!;
 	private IPresets _presets = null!;
 	private IServiceProvider _provider = null!;
-	private EventHandler? _presetsChangedHandler;
-	private EventHandler? _zoomChangedHandler;
 
 	[Connect] private Box _panAndTiltButtons;
 	[Connect] private Box _buttonsBox;
 	[Connect] private Scale _zoom;
+	[Connect] private Menu _cameraMenu;
+	
+	private SimpleAction? _cameraAction;
 
 	public static MiniWindow New(IServiceProvider provider)
 	{
 		var app = provider.GetRequiredService<Adw.Application>();
 		var cameraManager = provider.GetRequiredService<ICameraManager>();
 		var presets = provider.GetRequiredService<IPresets>();
+		var logger = provider.GetRequiredService<ILogger<MiniWindow>>();
 		var window = NewWithProperties([]);
-		window.Configure(app, provider, cameraManager, presets);
+		window.Configure(app, provider, cameraManager, presets, logger);
 		return window;
 	}
 
@@ -44,27 +50,38 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		Adw.Application app,
 		IServiceProvider provider,
 		ICameraManager cameraManager,
-		IPresets presets
+		IPresets presets,
+		ILogger<MiniWindow> logger
 	)
 	{
-		_camera = cameraManager.SelectedCamera;
+		_cameraManager = cameraManager;
 		_provider = provider;
 		_presets = presets;
+		_logger = logger;
 		Application = app;
-		Title = $"WebCamControl: {_camera.Name}";
 		// TODO: Configure proper icon
-
-		_panAndTiltButtons.Append(PanAndTiltButtons.New(_camera));
-		InitializePresets();
-		InitializeZoom();
-
-		_presetsChangedHandler = (_, _) => InitializePresets();
-		presets.OnChange += _presetsChangedHandler;
 		
-		CheckOutOfRangeControls();
+		InitializePresets();
+		InitializeMenus();
+		InitializeCamera();
+		
+		presets.OnChange += InitializePresets;
 	}
 
-	private void InitializePresets()
+	private void InitializeCamera()
+	{
+		var camera = _cameraManager.SelectedCamera;
+		_logger.LogInformation("Initializing controls for {CameraName}", camera.Name);
+		Title = $"WebCamControl: {camera.Name}";
+		
+		_panAndTiltButtons.Append(PanAndTiltButtons.New(camera));
+		
+		InitializeZoom();
+		CheckOutOfRangeControls();
+		_cameraAction?.SetState(GLib.Variant.NewString(camera.RawName));
+	}
+
+	private void InitializePresets(object? sender = null, EventArgs? args = null)
 	{
 		_buttonsBox.RemoveChildren();
 		var presetCount = _presets.PresetConfigs.Count;
@@ -88,7 +105,8 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		{
 			var thisPreset = _presets.PresetConfigs[index];
 			button.TooltipText = _($"Apply preset \"{thisPreset.Name}\"");
-			button.OnClicked += (_, _) => _presets.ApplyTo(thisPreset, _camera);
+			button.OnClicked += (_, _) =>
+				_presets.ApplyTo(thisPreset, _cameraManager.SelectedCamera);
 		}
 		else
 		{
@@ -99,63 +117,116 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 
 	private void InitializeZoom()
 	{
-		_zoom.DisableCameraControlIfUnsupported(_camera.Zoom);
-		if (_camera.Zoom != null)
+		var camera = _cameraManager.SelectedCamera;
+		_zoom.DisableCameraControlIfUnsupported(camera.Zoom);
+		if (camera.Zoom != null)
 		{
-			_zoom.OnChangeValue += (x, y) =>
-			{
-				_camera.Zoom.Value = (int)y.Value;
-				return true;
-			};
-			_zoomChangedHandler = (_, _) => UpdateZoomState();
-			_camera.Zoom.Changed += _zoomChangedHandler;
+			_zoom.OnChangeValue += OnChangeZoom;
+			camera.Zoom.Changed += UpdateZoomState;
 			_zoom.Adjustment = Adjustment.New(
-				value: _camera.Zoom.Value,
-				lower: _camera.Zoom.Minimum,
-				upper: _camera.Zoom.Maximum,
-				stepIncrement: _camera.Zoom.Step,
-				pageIncrement: _camera.Zoom.Step,
+				value: camera.Zoom.Value,
+				lower: camera.Zoom.Minimum,
+				upper: camera.Zoom.Maximum,
+				stepIncrement: camera.Zoom.Step,
+				pageIncrement: camera.Zoom.Step,
 				pageSize: 0
 			);
 			UpdateZoomState();
 		}
 	}
 
-	private void UpdateZoomState()
+	private void InitializeMenus()
 	{
-		if (_camera.Zoom == null)
+		_cameraAction = SimpleAction.NewStateful(
+			"camera",
+			GLib.VariantType.New("s"),
+			GLib.Variant.NewString(_cameraManager.SelectedCamera.RawName)
+		);
+		_cameraAction.OnActivate += OnChangeCamera;
+		AddAction(_cameraAction);
+		
+		// Remove placeholders from Blueprint
+		_cameraMenu.RemoveAll();
+		
+		foreach (var camera in _cameraManager.Cameras)
+		{
+			var item = MenuItem.New($"{camera.Name} ({camera.RawName})", null);
+			item.SetActionAndTargetValue(
+				"win.camera", 
+				GLib.Variant.NewString(camera.RawName)
+			);
+			_cameraMenu.AppendItem(item);
+		}
+	}
+	
+	private void UpdateZoomState(object? sender = null, EventArgs? args = null)
+	{
+		var camera = _cameraManager.SelectedCamera;
+		if (camera.Zoom == null)
 		{
 			return;
 		}
-		_zoom.SetValue(_camera.Zoom.Value);
-		_zoom.Sensitive = _camera.Zoom.IsEnabled;
-		_zoom.TooltipText = _($"Zoom: {_camera.Zoom.Value}%");
+		_zoom.SetValue(camera.Zoom.Value);
+		_zoom.Sensitive = camera.Zoom.IsEnabled;
+		_zoom.TooltipText = _($"Zoom: {camera.Zoom.Value}%");
 	}
 	
 	private void CheckOutOfRangeControls()
 	{
-		var detector = ActivatorUtilities.CreateInstance<OutOfRangeDetector>(_provider, _camera);
+		var detector = ActivatorUtilities.CreateInstance<OutOfRangeDetector>(
+			_provider,
+			_cameraManager.SelectedCamera
+		);
 		var outOfRange = detector.Detect().ToArray();
 		if (outOfRange.Length != 0)
 		{
 			OutOfRangeDialog.Show(outOfRange, this);
 		}
 	}
+	
+	private void OnChangeCamera(SimpleAction sender, SimpleAction.ActivateSignalArgs args)
+	{
+		var selectedRawName = args.Parameter?.GetString(out var _);
+		var newCamera = _cameraManager.Cameras.First(x => x.RawName == selectedRawName);
+		CleanupCamera();
+		_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
+		_cameraManager.SelectedCamera = newCamera;
+		InitializeCamera();
+	}
+	
+	private bool OnChangeZoom(Range _, Range.ChangeValueSignalArgs range)
+	{
+		var camera = _cameraManager.SelectedCamera;
+		camera.Zoom?.Value = (int)range.Value;
+		return true;
+	}
+	
+	
+	/// <summary>
+	/// Removes event handlers, controls, etc. for the current camera. Essentially,
+	/// undoes everything that <see cref="InitializeCamera"/> did.
+	/// </summary>
+	private void CleanupCamera()
+	{
+		var camera = _cameraManager.SelectedCamera;
+		_panAndTiltButtons.RemoveChildren();
+		_zoom.OnChangeValue -= OnChangeZoom;
+		camera.Zoom?.Changed -= UpdateZoomState;
+	}
 
 	public override void Dispose()
 	{
-		if (_presetsChangedHandler != null)
+		CleanupCamera();
+		
+		if (_cameraAction is not null)
 		{
-			_presets.OnChange -= _presetsChangedHandler;
-			_presetsChangedHandler = null;
+			_cameraAction.OnActivate -= OnChangeCamera;
+			RemoveAction(_cameraAction.Name!);
+			_cameraAction.Dispose();
+			_cameraAction = null;
 		}
-
-		if (_zoomChangedHandler != null && _camera.Zoom != null)
-		{
-			_camera.Zoom.Changed -= _zoomChangedHandler;
-			_zoomChangedHandler = null;
-		}
-
+		_presets.OnChange -= InitializePresets;
+		
 		base.Dispose();
 	}
 }
