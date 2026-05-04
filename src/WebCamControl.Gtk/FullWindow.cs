@@ -23,8 +23,14 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 	private ILogger<FullWindow> _logger = null!;
 	private CustomComboRow<ICamera> _cameraComboCustom = null!;
 	private EventHandler? _presetsChangedHandler;
+	
+	private VideoModeComboRows _videoModeComboRows = null!;
 
-	[Connect] private ComboRow _cameraCombo; 
+	[Connect] private ComboRow _cameraCombo;
+	[Connect] private ComboRow _resolutionCombo;
+	[Connect] private ComboRow _frameRateCombo;
+	[Connect] private ComboRow _pixelFormatCombo;
+	
 	[Connect] private ListBox _controls;
 	[Connect] private ActionRow _exampleRow;
 	[Connect] private ListBox _presetsList;
@@ -63,6 +69,13 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 	/// </summary>
 	private void InitializeWidgets()
 	{
+		_controls.Remove(_exampleRow);
+		_videoModeComboRows = new VideoModeComboRows(
+			_cameraManager,
+			_resolutionCombo,
+			_frameRateCombo,
+			_pixelFormatCombo
+		);
 		InitializeCameras();
 		InitializeCamera();
 		InitializePresets();
@@ -107,7 +120,6 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 
 		// Remove any existing controls so we don't end up with duplicate ones when changing camera.
 		_panAndTiltButtons.RemoveChildren();
-		_controls.Remove(_exampleRow);
 		CleanupCameraControls();
 		
 		// Create controls for the selected camera
@@ -125,6 +137,8 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 		{
 			_controls.Append(control!);
 		}
+
+		_videoModeComboRows.Initialize();
 	}
 
 	private void InitializePresets()
@@ -154,6 +168,7 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 	
 	public override void Dispose()
 	{
+		_videoModeComboRows.Dispose();
 		CleanupCameraControls();
 
 		if (_presetsChangedHandler != null)

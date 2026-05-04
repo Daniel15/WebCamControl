@@ -36,6 +36,30 @@ template $FullWindow : Adw.ApplicationWindow {
             Adw.ComboRow _cameraCombo {
               title: _("Camera");
             }
+            
+            Adw.ComboRow _resolutionCombo {
+              title: _("Resolution");
+              model: Gtk.StringList {
+                // Dummy data for testing
+                strings["3840x2160", "1920x1080"]
+              };
+            }
+            
+            Adw.ComboRow _frameRateCombo {
+              title: _("Frame Rate");
+              model: Gtk.StringList {
+                // Dummy data for testing
+                strings["60 fps", "30 fps"]
+              };
+            }
+            
+            Adw.ComboRow _pixelFormatCombo {
+              title: _("Pixel Format");
+              model: Gtk.StringList {
+                // Dummy data for testing
+                strings["H.264", "M-JPEG"]
+              };
+            }
           };
         }
         

@@ -113,6 +113,13 @@ public class LinuxCamera : ICamera
 				Type = BufferType.VideoCapture
 			};
 			InteropException.ThrowIfError(ioctl(_fd, IoctlCommand.GetFormat, ref format));
+			var pixelFormat = format.Data.PixelFormat;
+			_logger.LogInformation(
+				"GetFormat() = {Width}x{Height} {PixelFormat}",
+				pixelFormat.Width,
+				pixelFormat.Height,
+				_formatNames[pixelFormat.PixelFormatField]
+			);
 
 			var streamParams = new StreamParam
 			{
@@ -121,9 +128,13 @@ public class LinuxCamera : ICamera
 			InteropException.ThrowIfError(
 				ioctl(_fd, IoctlCommand.GetStreamParams, ref streamParams)
 			);
-
-			var pixelFormat = format.Data.PixelFormat;
 			var captureParams = streamParams.Data.Capture;
+			_logger.LogInformation(
+				"GetStreamParams() = {FrameRate} fps",
+				captureParams.TimePerFrame.Denominator / 
+				captureParams.TimePerFrame.Numerator
+			);
+			
 			return new VideoMode
 			{
 				FrameRate = captureParams.TimePerFrame.Denominator / 
@@ -149,6 +160,12 @@ public class LinuxCamera : ICamera
 					}
 				}
 			};
+			_logger.LogInformation(
+				"SetFormat({Width}x{Height} {PixelFormatName})",
+				value.Width,
+				value.Height,
+				value.PixelFormatName
+			);
 			InteropException.ThrowIfError(ioctl(_fd, IoctlCommand.SetFormat, ref format));
 			
 			var streamParams = new StreamParam
@@ -166,6 +183,7 @@ public class LinuxCamera : ICamera
 					}
 				}
 			};
+			_logger.LogInformation("SetStreamParams({FrameRate} fps)", value.FrameRate);
 			InteropException.ThrowIfError(
 				ioctl(_fd, IoctlCommand.SetStreamParams, ref streamParams)
 			);
