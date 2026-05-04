@@ -119,8 +119,14 @@ public class Application
 		{
 			_mainWindow = T.New(_provider);
 			_mainWindow.Present();
-			previousWindow?.Close();
-			previousWindow?.Dispose();
+			if (previousWindow != null)
+			{
+				GLib.Functions.IdleAdd(0, () =>
+				{
+					previousWindow.Dispose();
+					return false;
+				});
+			}
 		}
 		catch (Exception ex)
 		{
