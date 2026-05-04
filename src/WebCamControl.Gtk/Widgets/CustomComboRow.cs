@@ -3,25 +3,28 @@
 
 using Adw;
 using Gtk;
+using Object = GObject.Object;
 
-namespace WebCamControl.Gtk;
+namespace WebCamControl.Gtk.Widgets;
 
 /// <summary>
-/// Wrapper around <see cref="ComboRow"/> that allows C# types to be used as items.
+/// Wrapper around <see cref="ComboRow"/> that allows C# types to be used as items, and items to be
+/// disabled.
 /// </summary>
 /// <typeparam name="T">Type of item</typeparam>
-public class CustomComboRow<T> where T : notnull
+public class CustomComboRow<T> : IDisposable where T : notnull
 {
 	private readonly ComboRow _comboRow;
 	private T[] _items = [];
 	private Dictionary<string, T> _labelToItem = new();
+	private bool _shouldFireSelectionChanged = true;
 
 	public CustomComboRow(ComboRow comboRow)
 	{
 		_comboRow = comboRow;
-		_comboRow.OnNotify += (_, _) => OnSelectionChanged?.Invoke(this, EventArgs.Empty);
+		_comboRow.OnNotify += OnComboRowNotify;
 	}
-	
+
 	public event EventHandler? OnSelectionChanged;
 	
 	/// <summary>
@@ -37,31 +40,44 @@ public class CustomComboRow<T> where T : notnull
 	{
 		set
 		{
-			_items = value.ToArray();
-			var itemCount = _items.Length;
-			var labelToItem = new Dictionary<string, T>(itemCount);
-			var labels = new string[itemCount];
-
-			for (var i = 0; i < itemCount; i++)
+			// Don't call OnSelectionChanged while changing items.
+			_shouldFireSelectionChanged = false;
+			try
 			{
-				var item = _items[i];
-				var label = LabelCallback(item);
-				labels[i] = label;
-				if (!labelToItem.TryAdd(label, item))
-				{
-					throw new ArgumentException(
-						$"Two items have the same label '{label}'. All items must have a unique label"
-					);
-				}
-			}
+				_items = value.ToArray();
+				var itemCount = _items.Length;
+				var labelToItem = new Dictionary<string, T>(itemCount);
+				var labels = new string[itemCount];
 
-			_comboRow.Model = StringList.New(labels);
-			_labelToItem = labelToItem;
+				for (var i = 0; i < itemCount; i++)
+				{
+					var item = _items[i];
+					var label = LabelCallback(item);
+					labels[i] = label;
+					if (!labelToItem.TryAdd(label, item))
+					{
+						throw new ArgumentException(
+							$"Two items have the same label '{label}'. All items must have a unique label"
+						);
+					}
+				}
+
+				_comboRow.Model = StringList.New(labels);
+				_labelToItem = labelToItem;
+			}
+			finally
+			{
+				GLib.Functions.IdleAdd(0, () =>
+				{
+					_shouldFireSelectionChanged = true;
+					return false;
+				});
+			}
 		}
 	}
 
 	/// <summary>
-	/// Gets the currently selected item.
+	/// Gets or sets the currently selected item.
 	/// </summary>
 	public T? SelectedItem
 	{
@@ -72,8 +88,42 @@ public class CustomComboRow<T> where T : notnull
 		}
 		set
 		{
-			var index = (uint)Array.FindIndex(_items, item => Equals(item, value));
-			_comboRow.SetSelected(index);
+			try
+			{
+				// Don't fire SelectionChanged event if we're setting it programatically.
+				_shouldFireSelectionChanged = false;
+				var index = Array.FindIndex(_items, item => Equals(item, value));
+				if (index == -1)
+				{
+					throw new Exception($"Could not find {value?.ToString() ?? "<NULL>"} in list");
+				}
+
+				_comboRow.Selected = (uint)index;
+			}
+			finally
+			{
+				GLib.Functions.IdleAdd(0, () =>
+				{
+					_shouldFireSelectionChanged = true;
+					return false;
+				});
+			}
 		}
+	}
+	
+	/// <summary>
+	/// Handle Notify signals on the combo box
+	/// </summary>
+	private void OnComboRowNotify(Object _, Object.NotifySignalArgs args)
+	{
+		if (args.Pspec.GetName() == "selected" && _shouldFireSelectionChanged)
+		{
+			OnSelectionChanged?.Invoke(this, EventArgs.Empty);
+		}
+	}
+
+	public void Dispose()
+	{
+		_comboRow.OnNotify -= OnComboRowNotify;
 	}
 }
