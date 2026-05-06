@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2025 Daniel Lo Nigro <d@d.sb>
+// SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
+// https://d.sb/wcc
 
 using System.Globalization;
 using Gio;
@@ -31,9 +32,9 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 	[Connect] private Box _panAndTiltButtons;
 	[Connect] private Box _buttonsBox;
 	[Connect] private Scale _zoom;
-	[Connect] private Menu _cameraMenu;
-	
-	private SimpleAction? _cameraAction;
+	[Connect] private Menu _cameraMenuSection;
+
+	private RadioButtonSubmenu<CameraWrapper>? _cameraMenu;
 
 	public static MiniWindow New(IServiceProvider provider)
 	{
@@ -78,7 +79,7 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		
 		InitializeZoom();
 		CheckOutOfRangeControls();
-		_cameraAction?.SetState(GLib.Variant.NewString(camera.RawName));
+		_cameraMenu?.SelectedItem = new CameraWrapper(camera);
 	}
 
 	private void InitializePresets(object? sender = null, EventArgs? args = null)
@@ -137,28 +138,16 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 
 	private void InitializeMenus()
 	{
-		_cameraAction = SimpleAction.NewStateful(
-			"camera",
-			GLib.VariantType.New("s"),
-			GLib.Variant.NewString(_cameraManager.SelectedCamera.RawName)
-		);
-		_cameraAction.OnActivate += OnChangeCamera;
-		AddAction(_cameraAction);
-		
-		// Remove placeholders from Blueprint
-		_cameraMenu.RemoveAll();
-		
-		foreach (var camera in _cameraManager.Cameras)
+		var cameraMenu = new RadioButtonSubmenu<CameraWrapper>("camera", this)
 		{
-			var item = MenuItem.New($"{camera.Name} ({camera.RawName})", null);
-			item.SetActionAndTargetValue(
-				"win.camera", 
-				GLib.Variant.NewString(camera.RawName)
-			);
-			_cameraMenu.AppendItem(item);
-		}
+			Items = _cameraManager.Cameras.Select(x => new CameraWrapper(x)),
+			SelectedItem = new CameraWrapper(_cameraManager.SelectedCamera),
+		};
+		cameraMenu.SelectionChanged += OnChangeCamera;
+		_cameraMenuSection.AppendSubmenu(_("Camera"), cameraMenu);
+		_cameraMenu = cameraMenu;
 	}
-	
+
 	private void UpdateZoomState(object? sender = null, EventArgs? args = null)
 	{
 		var camera = _cameraManager.SelectedCamera;
@@ -184,10 +173,13 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		}
 	}
 	
-	private void OnChangeCamera(SimpleAction sender, SimpleAction.ActivateSignalArgs args)
+	private void OnChangeCamera(object? sender, CameraWrapper? newCameraWrapper)
 	{
-		var selectedRawName = args.Parameter?.GetString(out var _);
-		var newCamera = _cameraManager.Cameras.First(x => x.RawName == selectedRawName);
+		var newCamera = newCameraWrapper?.Camera;
+		if (newCamera is null)
+		{
+			return;
+		}
 		CleanupCamera();
 		_logger.LogInformation("Changing camera to {CameraName}", newCamera.Name);
 		_cameraManager.SelectedCamera = newCamera;
@@ -200,7 +192,6 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		camera.Zoom?.Value = (int)range.Value;
 		return true;
 	}
-	
 	
 	/// <summary>
 	/// Removes event handlers, controls, etc. for the current camera. Essentially,
@@ -217,16 +208,22 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 	public override void Dispose()
 	{
 		CleanupCamera();
-		
-		if (_cameraAction is not null)
+
+		if (_cameraMenu is not null)
 		{
-			_cameraAction.OnActivate -= OnChangeCamera;
-			RemoveAction(_cameraAction.Name!);
-			_cameraAction.Dispose();
-			_cameraAction = null;
+			_cameraMenu.Dispose();
+			_cameraMenu = null;
 		}
 		_presets.OnChange -= InitializePresets;
 		
 		base.Dispose();
+	}
+
+	/// <summary>
+	/// Wrapper around <see cref="ICamera"/> that adds the <see cref="IListItem"/> interface.
+	/// </summary>
+	private record CameraWrapper(ICamera Camera) : IListItem
+	{
+		public string Label => $"{Camera.Name} ({Camera.RawName})";
 	}
 }
