@@ -15,7 +15,6 @@ public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
 	private readonly ApplicationWindow _window;
 	private readonly SimpleAction _action;
 	private Dictionary<string, T> _items = new();
-	private List<MenuItem> _menuItems = new();
 	
 	public RadioButtonSubmenu(
 		string actionName,
@@ -48,7 +47,7 @@ public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
 		get => _items.Values;
 		set
 		{
-			DisposeMenuItems();
+			Menu.RemoveAll();
 			
 			var actionName = _action.GetName();
 			_items = [];
@@ -61,7 +60,6 @@ public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
 					GLib.Variant.NewString(key)
 				);
 				_items.Add(key, item);
-				_menuItems.Add(menuItem);
 				Menu.AppendItem(menuItem);
 			}
 		}
@@ -101,22 +99,10 @@ public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
 	/// Calculates a unique key for this item.
 	/// </summary>
 	private static string CalculateKey(T item) => $"{item.GetHashCode()}-{item.Label}";
-
-	private void DisposeMenuItems()
-	{
-		Menu.RemoveAll();
-		foreach (var menuItem in _menuItems)
-		{
-			menuItem.Dispose();
-		}
-		_menuItems = [];
-	}
 	
 	public void Dispose()
 	{
-		DisposeMenuItems();
 		_window.RemoveAction(_action.GetName());
 		_action.OnActivate -= OnChangeSelectedItem;
-		_action.Dispose();
 	}
 }
