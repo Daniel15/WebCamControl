@@ -35,6 +35,7 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 	[Connect] private Menu _cameraMenuSection;
 
 	private RadioButtonSubmenu<ICamera>? _cameraMenu;
+	private VideoModeMenu _videoModeMenus;
 
 	public static MiniWindow New(IServiceProvider provider)
 	{
@@ -72,14 +73,15 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 	private void InitializeCamera()
 	{
 		var camera = _cameraManager.SelectedCamera;
-		_logger.LogInformation("Initializing controls for {CameraName}", camera.Name);
-		Title = $"WebCamControl: {camera.Name}";
+		_logger.LogInformation("Initializing controls for {CameraName}", camera);
+		Title = $"WebCamControl: {camera}";
 		
 		_panAndTiltButtons.Append(PanAndTiltButtons.New(camera));
 		
 		InitializeZoom();
 		CheckOutOfRangeControls();
 		_cameraMenu?.SelectedItem = camera;
+		_videoModeMenus.Initialize();
 	}
 
 	private void InitializePresets(object? sender = null, EventArgs? args = null)
@@ -146,6 +148,9 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		cameraMenu.SelectionChanged += OnChangeCamera;
 		_cameraMenuSection.AppendSubmenu(_("Camera"), cameraMenu);
 		_cameraMenu = cameraMenu;
+
+		_videoModeMenus = new VideoModeMenu(_cameraManager, this);
+		_videoModeMenus.AppendToMenu(_cameraMenuSection);
 	}
 
 	private void UpdateZoomState(object? sender = null, EventArgs? args = null)

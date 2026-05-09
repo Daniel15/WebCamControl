@@ -6,7 +6,7 @@ namespace WebCamControl.Core;
 /// <summary>
 /// A video mode supported by a camera
 /// </summary>
-public class VideoMode
+public record VideoMode
 {
 	/// <summary>
 	/// Width of the video (e.g. 3840 for 4K)

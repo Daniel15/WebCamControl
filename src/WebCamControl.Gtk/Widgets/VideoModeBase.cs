@@ -2,13 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Daniel Lo Nigro <d@d.sb>
 
 using WebCamControl.Core;
+using static WebCamControl.Core.Gettext;
 
 namespace WebCamControl.Gtk.Widgets;
 
 /// <summary>
 /// Base class for widgets that deal with video modes.
 /// </summary>
-public abstract class VideoModeBase
+public abstract class VideoModeBase : IDisposable
 {
 	private readonly ICameraManager _cameraManager;
 	private readonly IListWidget<ResolutionItem> _resolution;
@@ -24,9 +25,9 @@ public abstract class VideoModeBase
 	{
 		_cameraManager = cameraManager;
 		_resolution = resolution;
-		_pixelFormat = pixelFormat;
 		_frameRate = frameRate;
-		
+		_pixelFormat = pixelFormat;
+
 		AttachEventListeners();
 	}
 	
@@ -86,7 +87,11 @@ public abstract class VideoModeBase
 		}
 		catch (Exception ex)
 		{
-			var wrappedEx = new Exception("Could not set video mode. Is another app using the camera?", ex);
+			var wrappedEx = new Exception(
+				_("Could not set video mode. To change the video mode, you will need to " +
+				  "stop any active streams."),
+				ex
+			);
 			ErrorDialog.ShowError(wrappedEx, null, null);
 			// Reset controls back to previous mode
 			UpdateSelection(camera.VideoMode);
@@ -105,27 +110,43 @@ public abstract class VideoModeBase
 		_pixelFormat.SelectedItem = new PixelFormatItem(mode.PixelFormatId, mode.PixelFormatName);
 	}
 
-	/// <summary>
-	/// An item in the resolution dropdown list.
-	/// </summary>
-	protected record ResolutionItem(uint Width, uint Height)
+	public void Dispose()
 	{
-		public override string ToString() => $"{Width} x {Height}";
+		if (_resolution is IDisposable resolution)
+		{
+			resolution.Dispose();
+		}
+		if (_frameRate is IDisposable frameRate)
+		{
+			frameRate.Dispose();
+		}
+		if (_pixelFormat is IDisposable pixelFormat)
+		{
+			pixelFormat.Dispose();
+		}
 	}
-
-	/// <summary>
-	/// An item in the frame rate dropdown list
-	/// </summary>
-	protected record FrameRateItem(uint FrameRate)
-	{
-		public override string ToString() => $"{FrameRate} fps";
-	}
-
-	/// <summary>
-	/// An item in the pixel format dropdown list.
-	/// </summary>
-	protected record PixelFormatItem(uint Id, string Label)
-	{
-		public override string ToString() => Label;
-	};
 }
+
+/// <summary>
+/// An item in the resolution dropdown list.
+/// </summary>
+public record ResolutionItem(uint Width, uint Height)
+{
+	public override string ToString() => $"{Width} x {Height}";
+}
+
+/// <summary>
+/// An item in the frame rate dropdown list
+/// </summary>
+public record FrameRateItem(uint FrameRate)
+{
+	public override string ToString() => $"{FrameRate} fps";
+}
+
+/// <summary>
+/// An item in the pixel format dropdown list.
+/// </summary>
+public record PixelFormatItem(uint Id, string Label)
+{
+	public override string ToString() => Label;
+};
