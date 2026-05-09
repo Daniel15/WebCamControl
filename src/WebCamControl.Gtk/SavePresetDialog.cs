@@ -64,7 +64,6 @@ public partial class SavePresetDialog : IWidgetWithServiceLocator<SavePresetDial
 		);
 		_destinationCombo = new CustomComboRow<DestinationRow>(_destination)
 		{
-			LabelCallback = destination => destination.Name,
 			Items = new[] { new DestinationRow(null, _("New preset")) }
 				.Concat(existingPresetOptions),
 		};
@@ -88,6 +87,9 @@ public partial class SavePresetDialog : IWidgetWithServiceLocator<SavePresetDial
 
 	private record DestinationRow(
 		int? Index,
-		string Name
-	);
+		string Label
+	)
+	{
+		public override string ToString() => Label;
+	};
 }

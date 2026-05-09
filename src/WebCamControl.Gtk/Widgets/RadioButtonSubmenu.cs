@@ -10,7 +10,7 @@ namespace WebCamControl.Gtk.Widgets;
 /// <summary>
 /// Represents a submenu that shows a list of radio buttons.
 /// </summary>
-public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
+public class RadioButtonSubmenu<T> : IListWidget<T>, IDisposable where T : notnull
 {
 	private readonly ApplicationWindow _window;
 	private readonly SimpleAction _action;
@@ -19,7 +19,6 @@ public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
 	public RadioButtonSubmenu(
 		string actionName,
 		ApplicationWindow window
-		
 	)
 	{
 		_window = window;
@@ -54,7 +53,8 @@ public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
 			foreach (var item in value)
 			{
 				var key = CalculateKey(item);
-				var menuItem = MenuItem.New(item.Label, null);
+				var label = item.ToString(); 
+				var menuItem = MenuItem.New(label, null);
 				menuItem.SetActionAndTargetValue(
 					$"win.{actionName}", 
 					GLib.Variant.NewString(key)
@@ -98,7 +98,7 @@ public class RadioButtonSubmenu<T> : IDisposable where T : IListItem
 	/// <summary>
 	/// Calculates a unique key for this item.
 	/// </summary>
-	private static string CalculateKey(T item) => $"{item.GetHashCode()}-{item.Label}";
+	private static string CalculateKey(T item) => $"{item.GetHashCode()}-{item.ToString()}";
 	
 	public void Dispose()
 	{

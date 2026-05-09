@@ -91,13 +91,11 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 		var cameras = _cameraManager.Cameras.ToArray();
 		_cameraComboCustom = new CustomComboRow<ICamera>(_cameraCombo)
 		{
-			LabelCallback = camera => $"{camera.Name} ({camera.RawName})",
 			Items = cameras,
 			SelectedItem = _cameraManager.SelectedCamera,
 		};
-		_cameraComboCustom.OnSelectionChanged += (_, _) =>
+		_cameraComboCustom.SelectionChanged += (_, newCamera) =>
 		{
-			var newCamera = _cameraComboCustom.SelectedItem;
 			if (newCamera == null)
 			{
 				return;
@@ -168,7 +166,6 @@ public partial class FullWindow : IWidgetWithServiceLocator<FullWindow>
 	
 	public override void Dispose()
 	{
-		_videoModeComboRows.Dispose();
 		CleanupCameraControls();
 
 		if (_presetsChangedHandler != null)

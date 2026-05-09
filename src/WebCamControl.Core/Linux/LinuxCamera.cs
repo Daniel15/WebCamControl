@@ -230,6 +230,8 @@ public class LinuxCamera : ICamera
 	/// </summary>
 	internal IReadOnlyDictionary<ControlID, LinuxCameraControl> RawIntegerControls { get; private set; }
 	
+	public override string ToString() => $"{Name} ({RawName})";
+	
 	private void CreateControls()
 	{
 		var integers = new Dictionary<ControlID, LinuxCameraControl>();

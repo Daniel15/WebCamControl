@@ -16,7 +16,7 @@ public static class MenuExtensions
 		this Menu menu,
 		string label,
 		RadioButtonSubmenu<T> submenu
-	) where T : IListItem
+	) where T : notnull
 	{
 		menu.AppendSubmenu(label, submenu.Menu);
 	}

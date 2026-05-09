@@ -12,7 +12,7 @@ namespace WebCamControl.Gtk.Widgets;
 /// disabled.
 /// </summary>
 /// <typeparam name="T">Type of item</typeparam>
-public class CustomComboRow<T> : IDisposable where T : notnull
+public class CustomComboRow<T> : IListWidget<T>, IDisposable where T : notnull
 {
 	private readonly ComboRow _comboRow;
 	private T[] _items = [];
@@ -25,19 +25,15 @@ public class CustomComboRow<T> : IDisposable where T : notnull
 		_comboRow.OnNotify += OnComboRowNotify;
 	}
 
-	public event EventHandler? OnSelectionChanged;
+	public event EventHandler<T?>? SelectionChanged;
 	
-	/// <summary>
-	/// Gets or sets a callback to get the label for the specified item.
-	/// </summary>
-	public Func<T, string> LabelCallback { get; set; } = item => item.ToString() ?? string.Empty;
-
 	/// <summary>
 	/// Gets or sets the list of items to show 
 	/// </summary>
 	/// <exception cref="ArgumentException">Thrown if multiple items have the same label</exception>
 	public IEnumerable<T> Items
 	{
+		get => _items;
 		set
 		{
 			// Don't call OnSelectionChanged while changing items.
@@ -52,7 +48,7 @@ public class CustomComboRow<T> : IDisposable where T : notnull
 				for (var i = 0; i < itemCount; i++)
 				{
 					var item = _items[i];
-					var label = LabelCallback(item);
+					var label = item.ToString() ?? string.Empty;
 					labels[i] = label;
 					if (!labelToItem.TryAdd(label, item))
 					{
@@ -118,7 +114,7 @@ public class CustomComboRow<T> : IDisposable where T : notnull
 	{
 		if (args.Pspec.GetName() == "selected" && _shouldFireSelectionChanged)
 		{
-			OnSelectionChanged?.Invoke(this, EventArgs.Empty);
+			SelectionChanged?.Invoke(this, SelectedItem);
 		}
 	}
 

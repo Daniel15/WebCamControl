@@ -34,7 +34,7 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 	[Connect] private Scale _zoom;
 	[Connect] private Menu _cameraMenuSection;
 
-	private RadioButtonSubmenu<CameraWrapper>? _cameraMenu;
+	private RadioButtonSubmenu<ICamera>? _cameraMenu;
 
 	public static MiniWindow New(IServiceProvider provider)
 	{
@@ -79,7 +79,7 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		
 		InitializeZoom();
 		CheckOutOfRangeControls();
-		_cameraMenu?.SelectedItem = new CameraWrapper(camera);
+		_cameraMenu?.SelectedItem = camera;
 	}
 
 	private void InitializePresets(object? sender = null, EventArgs? args = null)
@@ -138,10 +138,10 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 
 	private void InitializeMenus()
 	{
-		var cameraMenu = new RadioButtonSubmenu<CameraWrapper>("camera", this)
+		var cameraMenu = new RadioButtonSubmenu<ICamera>("camera", this)
 		{
-			Items = _cameraManager.Cameras.Select(x => new CameraWrapper(x)),
-			SelectedItem = new CameraWrapper(_cameraManager.SelectedCamera),
+			Items = _cameraManager.Cameras,
+			SelectedItem = _cameraManager.SelectedCamera,
 		};
 		cameraMenu.SelectionChanged += OnChangeCamera;
 		_cameraMenuSection.AppendSubmenu(_("Camera"), cameraMenu);
@@ -173,9 +173,8 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		}
 	}
 	
-	private void OnChangeCamera(object? sender, CameraWrapper? newCameraWrapper)
+	private void OnChangeCamera(object? sender, ICamera? newCamera)
 	{
-		var newCamera = newCameraWrapper?.Camera;
 		if (newCamera is null)
 		{
 			return;
@@ -219,11 +218,11 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		base.Dispose();
 	}
 
-	/// <summary>
-	/// Wrapper around <see cref="ICamera"/> that adds the <see cref="IListItem"/> interface.
-	/// </summary>
-	private record CameraWrapper(ICamera Camera) : IListItem
-	{
-		public string Label => $"{Camera.Name} ({Camera.RawName})";
-	}
+	// /// <summary>
+	// /// Wrapper around <see cref="ICamera"/> that adds the <see cref="IListItem"/> interface.
+	// /// </summary>
+	// private record CameraWrapper(ICamera Camera)
+	// {
+	// 	public string override ToString() => ;
+	// }
 }
