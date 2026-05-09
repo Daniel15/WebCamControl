@@ -35,7 +35,7 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 	[Connect] private Menu _cameraMenuSection;
 
 	private RadioButtonSubmenu<ICamera>? _cameraMenu;
-	private VideoModeMenu _videoModeMenus;
+	private VideoModeMenu? _videoModeMenus;
 
 	public static MiniWindow New(IServiceProvider provider)
 	{
@@ -81,7 +81,7 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		InitializeZoom();
 		CheckOutOfRangeControls();
 		_cameraMenu?.SelectedItem = camera;
-		_videoModeMenus.Initialize();
+		_videoModeMenus?.Initialize();
 	}
 
 	private void InitializePresets(object? sender = null, EventArgs? args = null)
