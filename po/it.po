@@ -1,22 +1,61 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WebCamControl\n"
-"POT-Creation-Date: 2025-03-23 19:27:50-0700\n"
+"POT-Creation-Date: 2026-05-09 16:18:35-0700\n"
 "PO-Revision-Date: 2026-05-09 23:26+0000\n"
 "Last-Translator: Daniel Lo Nigro <sites+weblate@d.sb>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/wcc/wcc/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2026.5-dev\n"
 
-#: WebCamControl.Core/Linux/LinuxCameraManager.cs:64
+#: WebCamControl.Gtk/MiniWindow.cs:165
+#, csharp-format
+msgid "Zoom: {0}%"
+msgstr "Ingrandimento: {0}%"
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:49
+msgid "Ignore"
+msgstr ""
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:90
+msgid ""
+"Some controls could not be reset. This is a bug with your webcam, NOT with "
+"WebCamControl."
+msgstr ""
+
+#: WebCamControl.Gtk/SavePresetDialog.cs:67
+msgid "New preset"
+msgstr "Nuovo preset"
+
+#: WebCamControl.Core/Linux/LinuxCameraManager.cs:91
 msgid "No cameras were found"
 msgstr "Non sono state trovate webcam"
 
-#: WebCamControl.Gtk/MiniWindow.cs:82
+#: WebCamControl.Gtk/AboutWindow.cs:24
+msgid "translator-credits"
+msgstr ""
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:98
+msgid "OK"
+msgstr "OK"
+
+#: WebCamControl.Gtk/Widgets/VideoModeBase.cs:91
+msgid ""
+"Could not set video mode. To change the video mode, you will need to stop "
+"any active streams."
+msgstr ""
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:50
+#, fuzzy
+#| msgid "Presets"
+msgid "Reset"
+msgstr "Preset"
+
+#: WebCamControl.Gtk/MiniWindow.cs:116
 msgid ""
 "No saved preset. Use the 'Save Preset' menu option or press Ctrl+S to save "
 "one."
@@ -24,33 +63,75 @@ msgstr ""
 "Nessun preset salvato. Usa l'opzione di menu 'Salva preset' o premi Ctrl+S "
 "per salvarne uno."
 
-#: WebCamControl.Gtk/Application.cs:155
-msgid "Exiting..."
-msgstr "Uscita..."
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:94
+msgid "An error has occurred"
+msgstr "Si è verificato un errore"
 
-#: WebCamControl.Gtk/MiniWindow.cs:116
+#: WebCamControl.Core/Linux/LinuxCameraControl.cs:100
 #, csharp-format
-msgid "Zoom: {0}%"
-msgstr "Ingrandimento: {0}%"
+msgid "Could not set {0}: {1} ({2})."
+msgstr ""
 
-#: WebCamControl.Gtk/SavePresetDialog.cs:55
-#, csharp-format
-msgid "Replace #{0}: {1}"
-msgstr "Sostituisci #{0}: {1}"
-
-#: WebCamControl.Gtk/SavePresetDialog.cs:58
-msgid "New preset"
-msgstr "Nuovo preset"
-
-#: WebCamControl.Gtk/ErrorDialog.cs:21
-#, csharp-format
-msgid "If this is unexpected, please report a bug. Error: {0}"
-msgstr "Se ciò non è previsto, segnala un bug. Errore: {0}"
-
-#: WebCamControl.Gtk/MiniWindow.cs:77
+#: WebCamControl.Gtk/MiniWindow.cs:110
 #, csharp-format
 msgid "Apply preset \"{0}\""
 msgstr "Applica preset \"{0}\""
+
+#: WebCamControl.Gtk/Widgets/VideoModeMenu.cs:56
+msgid "Resolution"
+msgstr ""
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:45
+msgid "Out of range values"
+msgstr ""
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:26
+msgid ""
+"Your camera has control values that are out of range. This is a bug with the "
+"camera's firmware or driver. To try and recover, WebCamControl can attempt "
+"to reset these controls to their default values."
+msgstr ""
+
+#: WebCamControl.Gtk/OutOfRangeDialog.cs:35
+#, csharp-format
+msgid "• {0}: Set to {1} but should be between {2} and {3}."
+msgstr ""
+
+#: WebCamControl.Gtk/Application.cs:169
+msgid "Exiting..."
+msgstr "Uscita..."
+
+#: WebCamControl.Gtk/ErrorDialog.cs:19
+#, fuzzy, csharp-format
+#| msgid "If this is unexpected, please report a bug. Error: {0}"
+msgid ""
+"Error: {0}\n"
+"\n"
+"If this is unexpected, please report a bug."
+msgstr "Se ciò non è previsto, segnala un bug. Errore: {0}"
+
+#: WebCamControl.Core/Linux/LinuxCameraControl.cs:107
+msgid ""
+"This could be caused by a bug in your camera's driver or firmware. Make sure "
+"the firmware is up-to-date."
+msgstr ""
+
+#: WebCamControl.Gtk/Widgets/VideoModeMenu.cs:58
+msgid "Pixel Format"
+msgstr ""
+
+#: WebCamControl.Gtk/MiniWindow.cs:149
+msgid "Camera"
+msgstr ""
+
+#: WebCamControl.Gtk/Widgets/VideoModeMenu.cs:57
+msgid "Frame Rate"
+msgstr ""
+
+#: WebCamControl.Gtk/SavePresetDialog.cs:63
+#, csharp-format
+msgid "Replace #{0}: {1}"
+msgstr "Sostituisci #{0}: {1}"
 
 #: WebCamControl.Gtk/MiniWindow.blp:13
 msgid "Main Menu"
@@ -64,43 +145,43 @@ msgstr "Visualizza tutte le impostazioni (Ctrl+T)"
 msgid "Save Preset..."
 msgstr "Salva Preset..."
 
-#: WebCamControl.Gtk/MiniWindow.blp:88
+#: WebCamControl.Gtk/MiniWindow.blp:89
 msgid "View all settings..."
 msgstr "Visualizza tutte le impostazioni..."
 
-#: WebCamControl.Gtk/MiniWindow.blp:89
+#: WebCamControl.Gtk/MiniWindow.blp:90
+msgid "About..."
+msgstr ""
+
+#: WebCamControl.Gtk/MiniWindow.blp:91
 msgid "Quit"
 msgstr "Esci"
-
-#: WebCamControl.Gtk/ErrorDialog.blp:5
-msgid "An error has occurred"
-msgstr "Si è verificato un errore"
 
 #: WebCamControl.Gtk/ErrorDialog.blp:18
 msgid "Details"
 msgstr "Dettagli"
 
-#: WebCamControl.Gtk/ErrorDialog.blp:34
-msgid "OK"
-msgstr "OK"
+#: WebCamControl.Gtk/ErrorDialog.blp:35
+msgid "Report a Bug"
+msgstr ""
 
 #: WebCamControl.Gtk/FullWindow.blp:20
 msgid "Switch to mini view (Ctrl+T)"
 msgstr "Passa alla visualizzazione mini (Ctrl+T)"
 
-#: WebCamControl.Gtk/FullWindow.blp:28
+#: WebCamControl.Gtk/FullWindow.blp:68
 msgid "Image"
 msgstr "Immagine"
 
-#: WebCamControl.Gtk/FullWindow.blp:37
+#: WebCamControl.Gtk/FullWindow.blp:77
 msgid "Pan and Tilt"
 msgstr "Panoramica e inclinazione"
 
-#: WebCamControl.Gtk/FullWindow.blp:48
+#: WebCamControl.Gtk/FullWindow.blp:88
 msgid "Brightness"
 msgstr "Luminosità"
 
-#: WebCamControl.Gtk/FullWindow.blp:67
+#: WebCamControl.Gtk/FullWindow.blp:108
 msgid "Presets"
 msgstr "Preset"
 
