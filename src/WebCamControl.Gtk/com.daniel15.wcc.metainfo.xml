@@ -44,6 +44,20 @@
 		<color type="primary" scheme_preference="dark">#08175b</color>
 	</branding>
 	<releases>
+		<release version="1.3.0" date="2026-05-09">
+			<url type="details">https://github.com/Daniel15/WebCamControl/releases/tag/v1.3.0</url>
+			<description>
+				<ul>
+					<li>Video mode (resolution, frame rate, and pixel format) can now be changed, in both mini and full views.</li>
+					<li>Camera can now be changed in mini view.</li>
+					<li>
+						An error is now shown on startup when controls are out of range. This is an issue usually caused
+						by firmware or driver bugs, but it was manifesting itself as a crash when trying to adjust any 
+						controls in WebCamControl.
+					</li>
+				</ul>
+			</description>
+		</release>	
 		<release version="1.2.1" date="2026-04-21">
 			<url type="details">https://github.com/Daniel15/WebCamControl/releases/tag/v1.2.1</url>
 			<description>
