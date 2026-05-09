@@ -217,12 +217,4 @@ public partial class MiniWindow : IWidgetWithServiceLocator<MiniWindow>
 		
 		base.Dispose();
 	}
-
-	// /// <summary>
-	// /// Wrapper around <see cref="ICamera"/> that adds the <see cref="IListItem"/> interface.
-	// /// </summary>
-	// private record CameraWrapper(ICamera Camera)
-	// {
-	// 	public string override ToString() => ;
-	// }
 }
