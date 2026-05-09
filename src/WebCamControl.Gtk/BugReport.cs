@@ -19,6 +19,11 @@ public static class BugReport
 		query["title"] = $"Bug: {ex?.Message ?? "[add details here]"}";
 		query["body"] = $"""
 		                 [Explain your bug report here]
+		                 
+		                 !!! NOTE: Please attach debug output from WebCamControl. Run it at the command line (`flatpak run com.daniel15.wcc` for Flatpak, `webcamcontrol` otherwise), and copy and paste ALL output below:
+		                 ```
+		                 !!! Put your debug log here
+		                 ```
 
 		                 Version: `{version}`
 		                 System: `{RuntimeInformation.OSDescription}`
