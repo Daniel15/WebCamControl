@@ -274,7 +274,11 @@ public class LinuxCamera : ICamera
 				case ControlType.Integer64:
 				case ControlType.String:
 				default:
-					_logger.LogInformation("=> Unsupported control type {Type}", controlData.Type);
+					_logger.LogInformation(
+						"=> Unsupported control type {Type} for {ID}",
+						controlData.Type,
+						controlData.ID
+					);
 					break;
 			}
 			
