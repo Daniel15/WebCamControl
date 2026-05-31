@@ -114,11 +114,13 @@ public class LinuxCamera : ICamera
 			};
 			InteropException.ThrowIfError(ioctl(_fd, IoctlCommand.GetFormat, ref format));
 			var pixelFormat = format.Data.PixelFormat;
+			_formatNames.TryGetValue(pixelFormat.PixelFormatField, out var formatName);
+			formatName ??= $"Unknown ({pixelFormat.PixelFormatField})";
 			_logger.LogInformation(
 				"GetFormat() = {Width}x{Height} {PixelFormat}",
 				pixelFormat.Width,
 				pixelFormat.Height,
-				_formatNames[pixelFormat.PixelFormatField]
+				formatName
 			);
 
 			var streamParams = new StreamParam
@@ -141,7 +143,7 @@ public class LinuxCamera : ICamera
 				            captureParams.TimePerFrame.Numerator,
 				Height = pixelFormat.Height,
 				PixelFormatId = pixelFormat.PixelFormatField,
-				PixelFormatName = _formatNames[pixelFormat.PixelFormatField],
+				PixelFormatName = formatName,
 				Width = pixelFormat.Width,
 			};
 		}
