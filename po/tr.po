@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WebCamControl\n"
 "POT-Creation-Date: 2026-05-09 16:18:35-0700\n"
-"PO-Revision-Date: 2026-05-09 23:26+0000\n"
-"Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
+"PO-Revision-Date: 2026-07-26 15:01+0000\n"
+"Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/wcc/wcc/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.5-dev\n"
+"X-Generator: Weblate 2026.8.dev0\n"
 
 #: WebCamControl.Gtk/MiniWindow.cs:165
 #, csharp-format
@@ -19,13 +19,15 @@ msgstr "Yakınlaştır: %{0}"
 
 #: WebCamControl.Gtk/OutOfRangeDialog.cs:49
 msgid "Ignore"
-msgstr ""
+msgstr "Yok say"
 
 #: WebCamControl.Gtk/OutOfRangeDialog.cs:90
 msgid ""
 "Some controls could not be reset. This is a bug with your webcam, NOT with "
 "WebCamControl."
 msgstr ""
+"Bazı denetimler sıfırlanamadı. Bu, WebCamControl ile ilgili DEĞİL, web "
+"kameranızla ilgili bir hatadır."
 
 #: WebCamControl.Gtk/SavePresetDialog.cs:67
 msgid "New preset"
@@ -37,7 +39,9 @@ msgstr "Kamera bulunamadı"
 
 #: WebCamControl.Gtk/AboutWindow.cs:24
 msgid "translator-credits"
-msgstr "Sabri Ünal <yakushabb@gmail.com>"
+msgstr ""
+"Sabri Ünal <yakushabb@gmail.com>\n"
+"Oğuz Ersen <oguz@ersen.moe>"
 
 #: WebCamControl.Gtk/OutOfRangeDialog.cs:98
 msgid "OK"
@@ -48,12 +52,12 @@ msgid ""
 "Could not set video mode. To change the video mode, you will need to stop "
 "any active streams."
 msgstr ""
+"Video modu ayarlanamadı. Video modunu değiştirmek için, etkin tüm yayınları "
+"durdurmanız gerekir."
 
 #: WebCamControl.Gtk/OutOfRangeDialog.cs:50
-#, fuzzy
-#| msgid "Presets"
 msgid "Reset"
-msgstr "Önayarlar"
+msgstr "Sıfırla"
 
 #: WebCamControl.Gtk/MiniWindow.cs:116
 msgid ""
@@ -70,7 +74,7 @@ msgstr "Bir hata oluştu"
 #: WebCamControl.Core/Linux/LinuxCameraControl.cs:100
 #, csharp-format
 msgid "Could not set {0}: {1} ({2})."
-msgstr ""
+msgstr "{0} ayarlanamadı: {1} ({2})."
 
 #: WebCamControl.Gtk/MiniWindow.cs:110
 #, csharp-format
@@ -79,11 +83,11 @@ msgstr "\"{0}\" önayarını uygula"
 
 #: WebCamControl.Gtk/Widgets/VideoModeMenu.cs:56
 msgid "Resolution"
-msgstr ""
+msgstr "Çözünürlük"
 
 #: WebCamControl.Gtk/OutOfRangeDialog.cs:45
 msgid "Out of range values"
-msgstr ""
+msgstr "Aralık dışı değerler"
 
 #: WebCamControl.Gtk/OutOfRangeDialog.cs:26
 msgid ""
@@ -91,11 +95,14 @@ msgid ""
 "camera's firmware or driver. To try and recover, WebCamControl can attempt "
 "to reset these controls to their default values."
 msgstr ""
+"Kameranızda aralık dışı denetim değerleri bulunuyor. Bu, kameranın ürün "
+"yazılımı veya sürücüsündeki bir hatadır. WebCamControl sorunu gidermek için "
+"bu denetimleri öntanımlı değerlerine sıfırlamayı deneyebilir."
 
 #: WebCamControl.Gtk/OutOfRangeDialog.cs:35
 #, csharp-format
 msgid "• {0}: Set to {1} but should be between {2} and {3}."
-msgstr ""
+msgstr "• {0}: {1} olarak ayarlandı ama {2} ve {3} arasında olmalı."
 
 #: WebCamControl.Gtk/Application.cs:169
 msgid "Exiting..."
@@ -117,10 +124,12 @@ msgid ""
 "This could be caused by a bug in your camera's driver or firmware. Make sure "
 "the firmware is up-to-date."
 msgstr ""
+"Bu, kameranızın sürücüsündeki veya ürün yazılımındaki bir hatadan "
+"kaynaklanıyor olabilir. Ürün yazılımının güncel olduğundan emin olun."
 
 #: WebCamControl.Gtk/Widgets/VideoModeMenu.cs:58
 msgid "Pixel Format"
-msgstr ""
+msgstr "Piksel Biçimi"
 
 #: WebCamControl.Gtk/MiniWindow.cs:149
 msgid "Camera"
@@ -128,7 +137,7 @@ msgstr "Kamera"
 
 #: WebCamControl.Gtk/Widgets/VideoModeMenu.cs:57
 msgid "Frame Rate"
-msgstr ""
+msgstr "Kare Hızı"
 
 #: WebCamControl.Gtk/SavePresetDialog.cs:63
 #, csharp-format
